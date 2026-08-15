@@ -33,4 +33,4 @@ createServer(async (req, res) => {
     res.writeHead(404, { 'content-type': 'text/plain' });
     res.end('Not found');
   }
-}).listen(PORT, () => console.log(`Executive Pulse → http://localhost:${PORT}`));
+}).listen(PORT, () => console.log(`Investment Pulse Operating System → http://localhost:${PORT}`));

@@ -3,7 +3,8 @@ export const REAL = [
   ['The gap counts','141 with no clear owner, 44 with no sharing mechanism, 43 below required granularity, 1 frequency misalignment. Computed from the file, not typed in.'],
   ['Standards and method labels','IMF BPM6 and OECD BD5 for FDI, SNA 2008 for GFCF, as set out in the methodology.'],
   ['Component structure','FDI equity, reinvested earnings and related-party debt; GFCF by asset type. Taken from the data dictionary.'],
-  ['FDI by country and sector','Immediate-country and ISIC sector cuts, 2016-2024, from the public Invest Saudi FDI Insights page. Country-year sums match the Inflows workbook. Not the certified Pulse Q1 2026 print.'],
+  ['FDI by country and sector','Immediate-country and ISIC sector cuts, 2016-2024, from the public Invest Saudi FDI Insights page. Pulled live via /api/intake/investsaudi. Country-year sums match the Inflows workbook. Not the certified Pulse Q1 2026 print.'],
+  ['Live public connectors','World Bank BX.KLT.DINV.CD.WD and NE.GDI.FTOT.CD, investsaudi.sa/fdi, and misa.gov.sa. Intake labels each as a direct pull. They do not overwrite the certified Pulse.'],
   ['Indicators pack 2026','Indicators_full_2026(v112082026).xlsx, Meeting 5 July 2026. FDI and GFCF quarter rows, leading-signal last readings, and the empty deal block. Traceable: file → sheet → period or row → field → issued or held.']
 ];
 export const MODELLED = [

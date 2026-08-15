@@ -2,7 +2,7 @@
   "name": "misa-pulse",
   "version": "0.1.0",
   "private": true,
-  "description": "Investment Performance - Executive Pulse. Prototype front end for the MISA FDI & GFCF performance management programme.",
+  "description": "Investment Pulse Operating System. Prototype desk for the MISA FDI and GFCF performance pack.",
   "type": "module",
   "scripts": {
     "start": "node server.mjs",

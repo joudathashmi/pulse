@@ -1,72 +1,103 @@
-# Architecture notes
+# Architecture
+
+Investment Pulse Operating System is a static front end plus a small Node
+server. No framework, no bundler, no database.
 
 ## Shape
 
-A static front end with no framework and no build step. Six views mount into six
-`<section>` elements; `main.js` toggles visibility and holds a small `state` object
-(`view`, `path`, `data`). There is no router - tabs are not URL-addressable yet. If you
-add deep-linking, put it in `main.js` and keep the views ignorant of it.
+`server.mjs` serves `public/` and two API prefixes:
 
-## The seam that matters
+| Prefix | Module | Role |
+|---|---|---|
+| `/api/intake/*` | `intake-api.mjs` | Live public connectors |
+| `/api/control/*` | `control-store.mjs` | Shared control ledger |
 
-`js/data/index.js` is the only module that knows where data comes from. Today:
+`public/js/main.js` holds `{ view, path, data }`, mounts tabs, the desk, the
+bell, login, Ask Me, and the floating nav. Tabs are not URL-addressable yet.
 
-```js
-export const loadInventory = () => get('./data/inventory.json');
-```
+Floating nav: Home / FDI / Alerts / More. More is a body-level sheet.
 
-Against the platform this becomes a call to the metric API. Views receive plain objects
-and do not know the difference. Keep it that way - if a view starts calling `fetch`,
-the seam is gone.
+## The pack seam
+
+`public/js/data/index.js` is the only module that knows where pack files live.
+Today it `fetch`es JSON under `public/data/`. Against a future metric API, swap
+those loaders. Views receive plain objects.
+
+Intake and the control client are allowed to call `/api/*` because they are the
+live path, not the certified pack. They must not write `brief.headlines`.
 
 ## Data contracts
 
-**inventory.json** - array of records, short keys for transport:
+**brief.json** — certified pack. `headlines.fdi.pulseValue` / `gfcf.pulseValue`
+are the orb. Read-only to the control loop.
+
+**inventory.json** — 326 metrics, short keys:
 
 | key | field |
 |---|---|
 | `c` | Category |
-| `s` | Sub-category (use case) |
+| `s` | Sub-category |
 | `m` | Data metric |
 | `o` | Responsible entity |
 | `a` | Data availability |
-| `f` | Frequency available |
-| `w` | Whitespace area (gap classification) |
+| `f` | Frequency |
+| `w` | Gap class |
 | `q` | Quality challenges |
 | `sh` | Sharing mechanism |
 
-**series.json** - `{ hist: [{p,y,q,fdi,gfcf}], cur: {…} }`, values in SAR bn.
-**nowcast.json** - `{ path: [{w,est,lo,hi}], official, printWeek }`, `w` = week of quarter.
-**backtest.json** - `[{p,est,act,err}]`, `err` = absolute percentage error.
+**series.json** — `{ hist: [{p,y,q,fdi,gfcf}], cur }`, SAR bn.
+**indicators-2026.json** — pack quarter rows and leading signals.
+**fdi-investsaudi.json** / **fdi-history.json** — country and annual cuts.
+**nowcast.json** — `{ synthetic, populated, disclaimer, path: [{w,est,lo,hi}], official, printWeek }`.
+**backtest.json** — `{ synthetic, populated, disclaimer, rows: [{p,est,act,err}] }`.
+`loadAll()` unwraps `backtest.rows` so charts still see an array.
+
+**control-ledger.json** (runtime, not in git) — `{ cases, updatedAt }`.
+
+## Control API
+
+| Method | Path | Body |
+|---|---|---|
+| GET | `/api/control/cases` | — |
+| POST | `/api/control/cases` | `{ cases: [...] }` upsert |
+| POST | `/api/control/cases/:id/assign` | `{ assignee, by }` |
+| POST | `/api/control/cases/:id/fix` | `{ note, mapping, evidence, proposed, by, byName }` |
+| POST | `/api/control/cases/:id/tick` | `{ status: approved\|returned, note, by, byName }` |
+
+Client: `public/js/lib/control.js`. If the API is down, the same operations
+write `localStorage` key `misa-pulse-control-v1`.
+
+## Auth (prototype)
+
+`public/js/lib/session.js` — seeded directory, `localStorage` session. Not SSO.
+Clearance is a label. See `docs/GOVERNANCE.md`.
 
 ## Chart specs
 
-Fixed across every chart, so they read as one system:
+Fixed across every chart:
 
 - Line 2px, round join and cap. Markers r ≥ 4 with a 2px surface ring.
 - Columns ≤ 24px, 4px rounded cap, square at the baseline.
-- Area fill at ~10% opacity - a wash, never a block.
-- Gridlines hairline, solid, one step off the surface. Never dashed.
-- Label selectively: endpoint or extreme, never a value on every point.
-- Text wears text tokens, never the series colour.
-- A legend for two or more series; none for one (the title names it).
+- Area fill at ~10% opacity.
+- Gridlines hairline, solid. Never dashed.
+- Label endpoint or extreme, never every point.
+- Text uses text tokens, never the series colour.
+- A legend for two or more series.
 
-## Colour
+The two-series pair (`#16845B` estimate, `#B4543E` official) needs dash +
+direct labels because CVD separation sits in the floor band. If you change
+either colour, re-validate before shipping.
 
-`styles/tokens.css` owns the brand. `js/config.js` mirrors the few values charts need.
-
-The two-series pair (`#0E8C68` estimate, `#B4543E` official) was checked with the dataviz
-palette validator: lightness, chroma, normal-vision separation and contrast all pass; CVD
-separation lands in the 6–8 floor band. That band is only acceptable with a second
-encoding, which is why the two lines differ in dash pattern and carry direct labels.
-**If you change either colour, re-run the validator before shipping.**
-
-Status colours are a reserved set and must never be reused for a data series.
+Status colours are reserved. Never reuse them for a series.
 
 ## Accessibility
 
 - Status: icon + word, never colour alone.
-- Charts: `role="img"` with a descriptive `aria-label`, plus a table view in `<details>`.
-- Filters and search inputs carry `aria-label`.
-- Tabs use `role="tab"` and `aria-selected`. Keyboard arrow-key navigation is not
-  implemented yet - worth adding.
+- Charts: `role="img"` plus a table in `<details>`.
+- Tabs: `role="tab"` and `aria-selected`. Arrow-key tab walking is not done.
+- Synthetic estimates: visible badge and sentence, not colour alone.
+
+## Cache
+
+`public/index.html` query-strings CSS and `main.js` (`?v=`). Bump those when
+you change styles or the boot module. The server sends `cache-control: no-store`.
