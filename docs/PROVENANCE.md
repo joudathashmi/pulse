@@ -26,8 +26,9 @@ so the map works before a live pull. Country-year sums match the Inflows workboo
 Marketing headlines on that page (119 / 80 / 977) are a different rounding and
 do not replace the certified Pulse.
 
-World Bank values are annual USD. Pulse Q1 2026 is quarterly SAR bn. That
-mismatch is a control case, not a conversion the machine is allowed to invent.
+World Bank values are annual USD. Intake compares them to a **synthetic** pack
+print (21.4 / 340 SAR bn), not the real orb. That mismatch is a control case,
+not a conversion the machine is allowed to invent.
 
 ## Pack — loaded from ministry files, not computed here
 

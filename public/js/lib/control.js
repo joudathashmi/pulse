@@ -4,6 +4,7 @@
  */
 import { GATES } from '../fixtures/quality.js';
 import { getUser, displayName } from './session.js';
+import { maskCases } from './syntheticPack.js';
 
 const KEY = 'misa-pulse-control-v1';
 
@@ -21,7 +22,7 @@ function readLocal() {
 }
 
 function setCache(cases) {
-  cache = Array.isArray(cases) ? cases : [];
+  cache = maskCases(Array.isArray(cases) ? cases : []);
   try {
     localStorage.setItem(KEY, JSON.stringify(cache));
   } catch { /* quota */ }

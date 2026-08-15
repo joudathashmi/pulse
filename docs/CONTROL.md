@@ -33,7 +33,8 @@ Quality counts are “N held this cycle” from live cases, not a static poster.
 
 ## How a case is born
 
-On **Pull live sources** (`public/js/views/intake.js`):
+On **Pull live sources** (`public/js/views/intake.js`). Comparison prints are
+synthetic (`21.4` / `340` SAR bn), never the real pack headlines.
 
 1. Run `verifyQueue()` — units/vintage (USD vs SAR, annual vs quarter), source
    hierarchy, Invest Saudi vintage, web copy as evidence, scrape issues.

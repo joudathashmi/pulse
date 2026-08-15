@@ -43,7 +43,7 @@ export function openControlCase(id, { onChanged } = {}) {
         <dl class="sig-meta">
           <div><dt>${s.setKpi || 'KPI'}</dt><dd>${esc((row.kpi || '—').toUpperCase())}</dd></div>
           <div><dt>${s.ctrlPulled || 'Pulled value'}</dt><dd>${esc(row.pulledValue || '—')} ${esc(row.unit || '')}</dd></div>
-          <div><dt>${s.ctrlPulse || 'Pulse print'}</dt><dd>${esc(row.pulseValue || '—')} ${esc(row.pulseUnit || '')}</dd></div>
+          <div><dt>${s.ctrlPulse || 'Pulse print'}</dt><dd>${esc(row.pulseValue || '—')} ${esc(row.pulseUnit || '')} · ${esc(s.synthBadge || 'Synthetic · populated')}</dd></div>
           <div><dt>${s.owner || 'Owner'}</dt><dd>${esc(row.owner || '—')}</dd></div>
           <div><dt>${s.workSource || 'Source'}</dt><dd>${esc(row.source || '—')}</dd></div>
           <div><dt>${s.ctrlAssignee || 'Assignee'}</dt><dd>${esc(assigneeName(row.assignee))}</dd></div>

@@ -3,6 +3,7 @@ import { num } from '../lib/format.js';
 import { nowStamp } from '../config.js';
 import { t } from '../i18n.js';
 import { casesFromWork, displayStatus, listCases, upsertCases } from '../lib/control.js';
+import { SYNTHETIC_PACK } from '../lib/syntheticPack.js';
 import { heldPackRows } from '../lib/work.js';
 import { openControlCase } from './controlCase.js';
 
@@ -59,14 +60,14 @@ function seriesTable(rows, unitLabel, indicator) {
   </div>`;
 }
 
-function verifyQueue(wb, web, brief, fdi) {
-  const packFdi = brief?.headlines?.fdi?.pulseValue;
-  const packGfcf = brief?.headlines?.gfcf?.pulseValue;
+function verifyQueue(wb, web, _brief, fdi) {
+  const packFdi = SYNTHETIC_PACK.fdi;
+  const packGfcf = SYNTHETIC_PACK.gfcf;
   const latestFdi = wb?.fdi?.[0];
   const latestGfcf = wb?.gfcf?.[0];
   const items = [];
   if (latestFdi) {
-    const reason = `World Bank ${latestFdi.year} is ${usdBn(latestFdi.value)} USD bn (BPM6, annual, current USD, BX.KLT.DINV.CD.WD). Pulse Q1 2026 is ${packFdi ?? '-'} SAR bn (net, quarterly). A steward must map USD→SAR, annual→quarter, and BPM6 net vs inflows before this row can enter the certified store.`;
+    const reason = `World Bank ${latestFdi.year} is ${usdBn(latestFdi.value)} USD bn (BPM6, annual, current USD, BX.KLT.DINV.CD.WD). The synthetic pack print used on this host is ${packFdi} SAR bn (net, quarterly) — not a MISA figure. A steward must map USD→SAR, annual→quarter, and BPM6 net vs inflows. The certified orb is not overwritten.`;
     items.push({
       id: 'v-units-fdi',
       title: 'FDI unit and vintage do not match the Pulse print',
@@ -84,7 +85,7 @@ function verifyQueue(wb, web, brief, fdi) {
     });
   }
   if (latestGfcf) {
-    const reason = `World Bank ${latestGfcf.year} is ${usdBn(latestGfcf.value)} USD bn (NE.GDI.FTOT.CD, annual). Pulse holds ${packGfcf ?? '-'} SAR bn (SNA 2008, quarterly, Economic Affairs overlay). Do not overwrite the certified GFCF.`;
+    const reason = `World Bank ${latestGfcf.year} is ${usdBn(latestGfcf.value)} USD bn (NE.GDI.FTOT.CD, annual). The synthetic pack print used on this host is ${packGfcf} SAR bn (SNA 2008, quarterly) — not a MISA or Economic Affairs figure. Do not overwrite the certified GFCF.`;
     items.push({
       id: 'v-units-gfcf',
       title: 'GFCF from World Bank is not the GASTAT quarterly print',
@@ -104,7 +105,7 @@ function verifyQueue(wb, web, brief, fdi) {
   if (fdi?.countries?.length) {
     const y24 = fdi.countries.filter(r => r.year === 2024);
     const inflow = y24.reduce((s, r) => s + (r.inflow || 0), 0);
-    const reason = `investsaudi.sa/fdi returned ${fdi.countries.length} country-year rows and ${fdi.sectors?.length || 0} sector-year rows. 2024 immediate-country inflow sums to ${num(inflow)} SAR bn and matches the Inflows workbook. Pulse Q1 2026 is ${packFdi ?? '-'} SAR bn net. Do not overwrite the certified print. The page’s marketing headlines (119 / 80 / 977) are a different rounding.`;
+    const reason = `investsaudi.sa/fdi returned ${fdi.countries.length} country-year rows and ${fdi.sectors?.length || 0} sector-year rows. 2024 immediate-country inflow sums to ${num(inflow)} SAR bn (public dashboard). The synthetic pack print on this host is ${packFdi} SAR bn net — not a MISA figure. Do not overwrite the certified print. The page’s marketing headlines (119 / 80 / 977) are a different rounding.`;
     items.push({
       id: 'v-investsaudi',
       title: 'Invest Saudi country cut is annual, not the Pulse quarter',
@@ -161,7 +162,7 @@ export async function renderIntake(root, data, { refreshBoard } = {}) {
     <div class="stage"><div class="panel" style="padding-top:20px">
       <h1>Intake</h1>
       <p class="lede">${t().ctrlLede || 'Live pulls are checked against six gates. Failed values are quarantined, assigned, fixed, and ticked. The certified Pulse is not overwritten here.'}</p>
-      <p class="wh-est">Public sources are pulled live on this page: World Bank API, investsaudi.sa/fdi, and misa.gov.sa. Those feeds stay labelled as a direct pull. In-quarter estimates on this host are populated synthetic figures, not MISA calculations.</p>
+      <p class="wh-est">Public sources are pulled live on this page: World Bank API, investsaudi.sa/fdi, and misa.gov.sa. Those feeds stay labelled as a direct pull. Any pack print shown here for comparison is a synthetic stand-in (${SYNTHETIC_PACK.fdi} / ${SYNTHETIC_PACK.gfcf} SAR bn), not a MISA figure.</p>
 
       <div class="wh-pipe" aria-label="Automated pipeline">
         <div class="wh-k">How the number arrives</div>

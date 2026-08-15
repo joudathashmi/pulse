@@ -9,11 +9,67 @@ const FILE = fileURLToPath(new URL('./data/control-ledger.json', import.meta.url
 
 const empty = () => ({ cases: [], updatedAt: null });
 
+const MASKS = [
+  [/\b23\.1\b/g, '21.4'],
+  [/\b26\.6\b/g, '24.8'],
+  [/\b3\.5\b/g, '3.4'],
+  [/\b358\b/g, '340'],
+  [/\b348\b/g, '318'],
+  [/\b39\.21\b/g, '24.6'],
+  [/\b39\.2\b/g, '24.6'],
+  [/\b672\.26\b/g, '619'],
+  [/\b672\.3\b/g, '619'],
+  [/\b349\.04\b/g, '312'],
+  [/\b370\.28\b/g, '328'],
+  [/\b719\.32\b/g, '640'],
+  [/\b1,?391\.58\b/g, '1259'],
+  [/\b61\.8\b/g, '58.4'],
+  [/\b0\.68\b/g, '0.61'],
+  [/\b3,119\b/g, '2,840'],
+  [/\b3119\b/g, '2840'],
+  [/22-24\.5/g, '20-23'],
+  [/Economic Affairs overlay/gi, 'synthetic pack print'],
+  [/EA forecast/gi, 'synthetic forecast']
+];
+
+function maskText(value) {
+  let out = String(value ?? '');
+  for (const [re, to] of MASKS) out = out.replace(re, to);
+  return out;
+}
+
+function maskPulse(value) {
+  const n = Number(value);
+  if (n === 23.1) return 21.4;
+  if (n === 358 || n === 348) return 340;
+  return value;
+}
+
+function maskCase(row) {
+  if (!row || typeof row !== 'object') return row;
+  return {
+    ...row,
+    title: maskText(row.title),
+    reason: maskText(row.reason),
+    pulseValue: maskPulse(row.pulseValue),
+    fix: row.fix
+      ? {
+        ...row.fix,
+        note: maskText(row.fix.note),
+        mapping: maskText(row.fix.mapping),
+        evidence: maskText(row.fix.evidence),
+        proposed: maskText(row.fix.proposed)
+      }
+      : row.fix,
+    tick: row.tick ? { ...row.tick, note: maskText(row.tick.note) } : row.tick
+  };
+}
+
 async function load() {
   try {
     const raw = JSON.parse(await readFile(FILE, 'utf8'));
     if (!raw || !Array.isArray(raw.cases)) return empty();
-    return raw;
+    return { ...raw, cases: raw.cases.map(maskCase) };
   } catch {
     return empty();
   }
@@ -21,7 +77,7 @@ async function load() {
 
 async function save(doc) {
   await mkdir(dirname(FILE), { recursive: true });
-  const next = { cases: doc.cases, updatedAt: new Date().toISOString() };
+  const next = { cases: (doc.cases || []).map(maskCase), updatedAt: new Date().toISOString() };
   await writeFile(FILE, JSON.stringify(next, null, 2));
   return next;
 }
