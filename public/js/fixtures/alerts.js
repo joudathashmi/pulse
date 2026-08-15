@@ -1,0 +1,57 @@
+/** Open signals - DEC-04 explanation+action, DEC-05 owner+deadline+closure. */
+export const ALERTS = [
+  {
+    id: 'a1',
+    metric: 'gfcf',
+    title: 'GFCF construction down 12% quarter on quarter',
+    titleAr: 'انخفاض تكوين رأس المال في الإنشاءات 12% ربعاً على ربع',
+    detail: 'Two mega-projects reclassified from construction to machinery. Not a decline.',
+    detailAr: 'مشروعان كبيران أُعيدا تصنيفهما من الإنشاءات إلى الآلات. ليس تراجعاً.',
+    value: 'Construction −12% QoQ',
+    raisedBy: 'Attribution · AI-assisted',
+    owner: 'Economic Affairs',
+    ownerContact: 'economic.affairs@misa.gov.sa',
+    action: 'Reclassification note for the pack',
+    actionAr: 'ملاحظة إعادة تصنيف للحزمة',
+    severity: 'watch',
+    deadline: '2026-08-14',
+    status: 'open',
+    qualifyPrompt: 'Please confirm the reclassification of the two mega-projects and whether the headline GFCF needs a qualification note for the Committee pack.'
+  },
+  {
+    id: 'a2',
+    metric: 'deals',
+    title: 'Six deal indicators still unpopulated',
+    titleAr: 'ستة مؤشرات صفقات ما زالت فارغة',
+    detail: 'Closure criteria differ between the two owning agencies. No value can be computed.',
+    detailAr: 'معايير الإغلاق تختلف بين الجهتين المالكتين. لا يمكن احتساب قيمة.',
+    value: 'no data',
+    raisedBy: 'Completeness gate',
+    owner: 'Investment Development Agency',
+    ownerContact: 'ida.steward@misa.gov.sa',
+    action: 'Agree one closure definition',
+    actionAr: 'الاتفاق على تعريف إغلاق واحد',
+    severity: 'risk',
+    deadline: '2026-08-10',
+    status: 'overdue',
+    qualifyPrompt: 'Please qualify why the six deal indicators remain unpopulated and confirm a single closure definition so values can be certified.'
+  },
+  {
+    id: 'a3',
+    metric: 'capgoods',
+    title: 'Imports of capital goods below tolerance',
+    titleAr: 'واردات السلع الرأسمالية دون الحد المسموح',
+    detail: 'Third consecutive fall. Leading link to GFCF at two quarters.',
+    detailAr: 'الانخفاض الثالث على التوالي. ارتباط استباقي بتكوين رأس المال بربعين.',
+    value: '21,481 (Apr-26)',
+    raisedBy: 'Range and plausibility gate',
+    owner: 'Economic Affairs',
+    ownerContact: 'economic.affairs@misa.gov.sa',
+    action: 'Confirm whether to flag in the pack',
+    actionAr: 'تأكيد إدراج الإشارة في الحزمة',
+    severity: 'watch',
+    deadline: '2026-08-18',
+    status: 'open',
+    qualifyPrompt: 'Please qualify the third consecutive fall in capital-goods imports and advise whether GFCF should carry a watch note.'
+  }
+];

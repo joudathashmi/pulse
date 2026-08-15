@@ -1,0 +1,187 @@
+/* Design language - one face, four sizes. Loaded last so it owns type. */
+
+html[dir="rtl"] {
+  --font: Cairo, Calibri, "Segoe UI", Arial, sans-serif;
+  --serif: Cairo, Calibri, "Segoe UI", Arial, sans-serif;
+  --mono: Cairo, Calibri, "Segoe UI", Arial, sans-serif;
+}
+
+html, body {
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-reg);
+  line-height: var(--lh);
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+h1, h2, h3,
+.wh-hl h2,
+.wh-dash-h h2,
+.wh-insight h2,
+.chat-title,
+.panel h1,
+.panel h2,
+.stage h1,
+.stage h2,
+.pulse-mast h1 {
+  font-family: var(--font);
+  font-size: var(--fs-title);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+.sig-page h1 {
+  font-size: var(--fs-display);
+  letter-spacing: -0.03em;
+}
+.alert .t {
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+p, .lede, .wh-est, .wh-web-list, .wh-note p,
+.alert .d, .alert .m, .alert .a, .sig-next,
+.chat-text, .chat-bubble, .sec-sub, .head-meta, .head-why,
+.pulse-q, .pulse-why-body, .row .name, .row .note {
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-reg);
+  line-height: var(--lh);
+}
+
+.k, .wh-k, .tab, .chip, .seg-opt, .seg-k, .top-ico, .top-live, .user-meta small, .desk-role, .desk-mail, .desk-row-m,
+.sys-kicker, .sys-dock-legal, .dock-ico,
+.wh-day b, .wh-day-sub, .wh-orb-k, .wh-orb-unit, .wh-orb-switch button, .wh-mon-h,
+.wh-kind, .wh-badge, .wh-link, .wh-act, .wh-cta,
+.wh-legend, .wh-tr, .wh-src, .wh-map button,
+.tag, .pulse-kicker, .level, .level .n,
+.ask-label, .btn-primary, .btn-ghost, .btn-ask, .btn-ask-inline,
+.synth-badge,
+.export-btn, .chat-sub, .chat-chip, .chat-action, .chat-send,
+.chat-fab, .foot, .meta, .small, .sub2, .chainrow,
+.gate .n, .gate .c, .wh-pipe-list b, .wh-pipe-list small,
+.wh-hl-meta, .wh-orb-hint, .drill-here {
+  font-family: var(--font);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-med);
+  letter-spacing: var(--track-label);
+}
+
+.wh-orb-switch button, .wh-orb-unit,
+.wh-day b, .wh-k, .k, .wh-mon-h, .wh-kind, .wh-orb-k, .wh-linkish,
+.seg-k, .sys-kicker, .dock-ico, .pulse-kicker,
+.ask-label, .tag, .level .n {
+  text-transform: uppercase;
+  font-weight: var(--fw-bold);
+}
+
+.wh-orb-v, .wh-gauge-val, .stat, .hero, .head-val,
+.pulse-mast .pulse-answers b,
+.wh-twin-v, .wh-ring-v, .wh-row-v {
+  font-family: var(--font);
+  font-size: var(--fs-display);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.wh-orb-vs, .wh-mon-row b, .wh-mon-row span,
+.wh-hl-stack b, .wh-pulse-nums span, .wh-pulse-nums em,
+.wh-pulse-nums b, .row .val, .sig .val {
+  font-family: var(--font);
+  font-size: var(--fs-num);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.wh-mon-row span, .wh-orb-vs, .wh-pulse-nums b, .wh-dash-h span {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-med);
+  font-variant-numeric: tabular-nums;
+}
+
+.wh-hl-stack b { font-size: var(--fs-label) }
+
+code, pre, .wh-pre, .mono, .kpi-mark-seal {
+  font-family: var(--font);
+  font-size: var(--fs-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.brand-name { font-size: 17px; font-weight: 500; letter-spacing: -0.03em }
+.wh-day-sub { font-size: var(--fs-label); letter-spacing: 0; text-transform: none; font-weight: var(--fw-reg) }
+.seg-opt, .top-ico, .top-live, .top-display-btn {
+  font-size: 12px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  font-weight: 600;
+}
+.tab {
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  font-weight: 550;
+}
+.seg-k { font-size: 10px; letter-spacing: 0.1em }
+.lede, .panel .lede { font-size: var(--fs-body); color: var(--ink-soft) }
+.row .name { font-weight: var(--fw-bold) }
+.row .note { font-size: var(--fs-label); font-weight: var(--fw-reg); letter-spacing: 0; text-transform: none }
+.chat-fab { letter-spacing: var(--track-label) }
+svg text { font-family: var(--font) }
+.ep-title { font-size: var(--fs-title); font-weight: var(--fw-bold) }
+.cut-n { font-size: var(--fs-title); font-weight: var(--fw-bold) }
+.cut-v { font-size: var(--fs-num); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums }
+.cut-k, .cut-s { font-size: var(--fs-label) }
+
+th, .wh-table th {
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: var(--fw-med);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: transparent;
+}
+td, .wh-table td, td.small, td .sub2 {
+  font-family: var(--font);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-reg);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+}
+td.num, .wh-table td.num {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--fw-med);
+}
+td .sub2 { font-size: var(--fs-label); color: var(--muted) }
+
+.tag {
+  font-size: 12px;
+  font-weight: var(--fw-med);
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+.gate .t b {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+}
+.gate .t span, .gate .c {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-reg);
+}
+.prov-h2 { font-size: var(--fs-title); font-weight: var(--fw-bold) }
+.prov-title { font-size: var(--fs-body); font-weight: var(--fw-bold) }
+.prov-desc { font-size: var(--fs-body); font-weight: var(--fw-reg) }
+.prov-tag { font-size: 12px; font-weight: var(--fw-med); letter-spacing: 0.02em; text-transform: none }
+.grid2 .val { font-size: var(--fs-body); font-weight: var(--fw-med) }
+.record .grid2 > div:first-child .val {
+  font-size: var(--fs-num);
+  font-weight: var(--fw-bold);
+  font-variant-numeric: tabular-nums;
+}

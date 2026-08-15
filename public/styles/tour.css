@@ -1,0 +1,79 @@
+body.tour-open .top { z-index: 86 }
+.tour { position: fixed; inset: 0; z-index: 80; pointer-events: none }
+.tour-veil {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  pointer-events: auto;
+}
+.tour-hole {
+  position: fixed;
+  z-index: 81;
+  border-radius: 14px;
+  box-shadow: 0 0 0 9999px rgba(8, 8, 10, 0.55);
+  outline: 1px solid color-mix(in srgb, var(--g800) 70%, #fff);
+  pointer-events: none;
+}
+.tour-card {
+  position: fixed;
+  z-index: 82;
+  pointer-events: auto;
+  background: var(--surf-raised);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 16px 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  max-width: min(360px, calc(100vw - 24px));
+}
+html[data-shell="phone"] .tour-card {
+  max-width: calc(min(var(--phone, 390px), 100vw) - 24px);
+}
+.tour-card-k {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.tour-card h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.tour-card p {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.tour-card-acts {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.tour-card-nav { display: flex; gap: 6px }
+.tour-skip {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+.tour-skip:hover { color: var(--ink) }
+.is-tour { z-index: 81 }
+.top .is-tour,
+.topin .is-tour,
+.brand.is-tour,
+.top-tour.is-tour,
+.user-btn.is-tour {
+  position: static;
+  z-index: auto;
+}
+body.tour-open { overflow: hidden }

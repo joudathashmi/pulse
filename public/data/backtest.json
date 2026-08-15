@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "populated": true,
+  "disclaimer": "These estimate values are populated synthetic figures for a publicly hosted prototype. They are not MISA calculations and are not confidential internal estimates.",
+  "rows": [
+    { "p": "2024 Q2", "est": 21.8, "act": 22.4, "err": 2.7 },
+    { "p": "2024 Q3", "est": 23.1, "act": 22.6, "err": 2.2 },
+    { "p": "2024 Q4", "est": 23.9, "act": 24.5, "err": 2.4 },
+    { "p": "2025 Q1", "est": 22.0, "act": 21.5, "err": 2.3 },
+    { "p": "2025 Q2", "est": 23.4, "act": 23.8, "err": 1.7 },
+    { "p": "2025 Q3", "est": 24.1, "act": 24.6, "err": 2.0 },
+    { "p": "2025 Q4", "est": 23.7, "act": 23.3, "err": 1.7 }
+  ]
+}

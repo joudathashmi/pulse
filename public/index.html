@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" data-theme="night" data-shell="desk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111114">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Investment Pulse Operating System · Ministry of Investment</title>
+<link rel="icon" type="image/png" href="./brand/misa-logo-dark.png">
+<link rel="apple-touch-icon" href="./brand/misa-logo-dark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles/tokens.css?v=62">
+<link rel="stylesheet" href="./styles/layout.css?v=72">
+<link rel="stylesheet" href="./styles/components.css?v=62">
+<link rel="stylesheet" href="./styles/system.css?v=62">
+<link rel="stylesheet" href="./styles/whoop.css?v=70">
+<link rel="stylesheet" href="./styles/fdi.css?v=62">
+<link rel="stylesheet" href="./styles/type.css?v=72">
+<link rel="stylesheet" href="./styles/tour.css?v=62">
+<link rel="stylesheet" href="./styles/desk.css?v=63">
+<link rel="stylesheet" href="./styles/auth.css?v=72">
+<link rel="stylesheet" href="./styles/settings.css?v=63">
+<link rel="stylesheet" href="./styles/float.css?v=65">
+</head>
+<body class="signed-out">
+
+<header class="top"><div class="topin">
+  <a class="brand" href="#pulse" data-go="pulse" data-tour="brand">
+    <img class="brand-logo brand-logo-on-dark" src="./brand/misa-logo-white.svg" alt="Ministry of Investment">
+    <img class="brand-logo brand-logo-on-light" src="./brand/misa-logo-dark.svg" alt="Ministry of Investment">
+    <b class="brand-name" data-brand>Pulse OS</b>
+  </a>
+  <div class="top-tools no-print">
+    <div class="top-live" data-live tabindex="0" role="status" aria-label="Live · the certified pack is current" title="Live · the certified pack is current" data-tip="Live · the certified pack is current"><i aria-hidden="true"></i><span data-live-word>Live</span></div>
+    <button type="button" class="top-bell" data-apr-open aria-haspopup="dialog" aria-controls="pulse-approvals" aria-expanded="false" data-tour="approvals">
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 1.5c-1.8 0-3.2 1.4-3.2 3.1v1.6c0 .9-.3 1.7-.9 2.4L3 9.6h10l-.9-1c-.6-.7-.9-1.5-.9-2.4V4.6C11.2 2.9 9.8 1.5 8 1.5zm-1.1 10.6h2.2c0 .6-.5 1.1-1.1 1.1s-1.1-.5-1.1-1.1z"/></svg>
+      <span class="user-badge hide" data-apr-badge>0</span>
+    </button>
+    <div class="top-display" data-display>
+      <button type="button" class="top-display-btn" data-display-open aria-haspopup="true" aria-expanded="false" aria-controls="pulse-display">
+        <span data-display-word>Display</span>
+        <span class="top-display-caret" aria-hidden="true"></span>
+      </button>
+      <div id="pulse-display" class="top-display-menu" hidden>
+        <button type="button" class="top-tour" data-tour-start>Guide</button>
+        <div class="top-display-k" data-set-menu-k>Settings</div>
+        <button type="button" class="top-set" data-open-settings="help">Help</button>
+        <button type="button" class="top-set" data-open-settings="glossary">Glossary</button>
+        <button type="button" class="top-set" data-open-settings="owners">KPI owners</button>
+        <button type="button" class="top-set" data-open-settings="mail">Email alerts</button>
+        <div class="seg" role="group" aria-label="Theme" data-theme-menu></div>
+        <div class="seg" role="group" aria-label="Layout" data-shell-menu></div>
+        <div class="seg" role="group" aria-label="Language" data-lang-menu></div>
+        <button type="button" class="top-out" data-sign-out>Sign out</button>
+      </div>
+    </div>
+    <button type="button" class="user-btn no-print" data-desk-open aria-haspopup="dialog" aria-controls="pulse-desk" aria-expanded="false" data-tour="desk">
+      <span class="user-ava" data-user-ava>RA</span>
+      <span class="user-meta">
+        <b data-user-name>Rana</b>
+        <small data-user-dept>Admin</small>
+      </span>
+      <span class="user-badge hide" data-desk-badge>0</span>
+    </button>
+  </div>
+</div></header>
+
+<nav class="tabs" data-tour="tabs"><div class="tabsin" role="tablist" id="tabs"></div></nav>
+
+<div class="wrap">
+  <section id="v-pulse" aria-label="Investment Pulse Operating System"></section>
+  <section id="v-fdi" class="hide" aria-label="FDI inflows"></section>
+  <section id="v-drill" class="hide" aria-label="Drill-down"></section>
+  <section id="v-now" class="hide" aria-label="In-quarter estimate"></section>
+  <section id="v-alerts" class="hide" aria-label="Signals"></section>
+  <section id="v-qual" class="hide" aria-label="Data quality"></section>
+  <section id="v-intake" class="hide" aria-label="Intake"></section>
+  <section id="v-inv" class="hide" aria-label="Indicator inventory"></section>
+  <section id="v-about" class="hide" aria-label="Provenance"></section>
+</div>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+<div id="auth-root" hidden></div>
+<div id="desk-root"></div>
+<div id="approve-root"></div>
+<div id="float-root" class="float-dock no-print"></div>
+<div id="chat-root"></div>
+<script type="module" src="./js/main.js?v=72"></script>
+</body>
+</html>

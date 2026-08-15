@@ -1,0 +1,24 @@
+{
+  "source": {
+    "title": "FDI Inflows Report 2016-2024",
+    "files": [
+      "FDI_Inflows_Report_2016_2024.xlsx",
+      "FDI_WorldMap_Report_2016_2024.xlsx"
+    ],
+    "sheet": "Inflows",
+    "unit": "SAR bn",
+    "note": "Both workbooks are the same Inflows sheet: national FDI stock, net flow and inflow. Counterpart economies and sectors come from investsaudi.sa/fdi, whose country-year sums match these national totals."
+  },
+  "years": [
+    { "year": 2016, "stock": 496.24, "net": 79.05, "inflow": 110.08 },
+    { "year": 2017, "stock": 501.81, "net": 1.68, "inflow": 28.09 },
+    { "year": 2018, "stock": 550.08, "net": 41.47, "inflow": 70.31 },
+    { "year": 2019, "stock": 559.4, "net": 10.45, "inflow": 31.83 },
+    { "year": 2020, "stock": 570.72, "net": 4.67, "inflow": 29.86 },
+    { "year": 2021, "stock": 680.74, "net": 97.6, "inflow": 121.79 },
+    { "year": 2022, "stock": 791.04, "net": 100.62, "inflow": 118.94 },
+    { "year": 2023, "stock": 897.35, "net": 83.24, "inflow": 95.98 },
+    { "year": 2024, "stock": 903.91, "net": 77.33, "inflow": 116.02 }
+  ],
+  "origins": []
+}

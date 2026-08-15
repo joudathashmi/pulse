@@ -1,0 +1,107 @@
+/* Closed login. The board is not visible until a session exists. */
+
+body.signed-out .tabs,
+body.signed-out .wrap,
+body.signed-out #chat-root,
+body.signed-out #desk-root,
+body.signed-out .user-btn,
+body.signed-out .top-bell,
+body.signed-out .top-live,
+body.signed-out .top-tour,
+body.signed-out .brand { display: none !important }
+
+#auth-root[hidden] { display: none !important }
+#auth-root:not([hidden]) {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+}
+.auth-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 28px 20px 40px;
+  overflow: auto;
+  background: var(--page);
+}
+.auth-card {
+  width: min(400px, 100%);
+  padding: 28px 28px 32px;
+  background: var(--surf-raised);
+  border: 1px solid var(--line-soft);
+  border-radius: 20px;
+}
+.auth-mark {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 18px;
+}
+.auth-logo {
+  height: 92px;
+  width: auto;
+  max-width: min(320px, 100%);
+  object-fit: contain;
+  display: none;
+}
+html[data-theme="night"] .auth-logo-on-dark { display: block }
+html[data-theme="aurora"] .auth-logo-on-light { display: block }
+.auth-prod {
+  margin: 0 0 6px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  max-width: 22em;
+  margin-inline: auto;
+  color: var(--ink-soft);
+}
+.auth-title {
+  margin: 0;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+.auth-lede {
+  margin: 8px 0 22px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.auth-form { display: grid; gap: 12px }
+.auth-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--ink-soft);
+}
+.auth-form input {
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--page);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 500;
+  padding: 0 12px;
+}
+.auth-form input:focus {
+  outline: 2px solid color-mix(in srgb, var(--g800) 45%, transparent);
+  border-color: var(--g800);
+}
+.auth-err { margin: 0; font-size: 13px; color: var(--risk) }
+.auth-err.hide { display: none }
+.auth-go { width: 100%; min-height: 42px }
+
+html[data-theme="night"] .auth-card {
+  background: #161618;
+  border-color: #2a2a2e;
+}
+html[data-theme="night"] .auth-form input {
+  background: #1c1c1f;
+  border-color: #2f2f34;
+}

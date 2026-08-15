@@ -1,0 +1,14 @@
+{
+  "name": "misa-pulse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Investment Performance - Executive Pulse. Prototype front end for the MISA FDI & GFCF performance management programme.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs",
+    "data": "python3 tools/extract_inventory.py",
+    "ingest:brief": "python3 tools/ingest_performance_brief.py"
+  },
+  "engines": { "node": ">=18" }
+}
