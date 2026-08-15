@@ -4,7 +4,7 @@ export function packFile(pack) {
   return pack?.source || {
     file: 'Indicators_full_2026(v112082026).xlsx',
     sheet: 'FDI و GFCF التفصيلية',
-    owners: 'Economic Affairs forecast · GASTAT actual'
+    owners: 'Synthetic forecast · GASTAT actual'
   };
 }
 
@@ -24,18 +24,18 @@ export function packSignal(pack, id) {
 
 export function fdiFields(row) {
   return [
-    { id: 'inflowF', label: 'Inflow forecast', value: row.inflowF, role: 'Economic Affairs forecast' },
+    { id: 'inflowF', label: 'Inflow forecast', value: row.inflowF, role: 'Synthetic populated forecast' },
     { id: 'inflowA', label: 'Inflow actual', value: row.inflowA, role: 'GASTAT actual' },
-    { id: 'outflowF', label: 'Outflow forecast', value: row.outflowF, role: 'Economic Affairs forecast' },
+    { id: 'outflowF', label: 'Outflow forecast', value: row.outflowF, role: 'Synthetic populated forecast' },
     { id: 'outflowA', label: 'Outflow actual', value: row.outflowA, role: 'GASTAT actual' },
-    { id: 'netF', label: 'Net forecast', value: row.netF, role: 'Economic Affairs forecast' },
+    { id: 'netF', label: 'Net forecast', value: row.netF, role: 'Synthetic populated forecast' },
     { id: 'netA', label: 'Net actual', value: row.netA, role: 'GASTAT actual' }
   ];
 }
 
 export function gfcfFields(row) {
   return [
-    { id: 'forecast', label: 'Forecast', value: row.forecast, role: 'Economic Affairs forecast' },
+    { id: 'forecast', label: 'Forecast', value: row.forecast, role: 'Synthetic populated forecast' },
     { id: 'actual', label: 'Actual', value: row.actual, role: 'GASTAT actual' }
   ];
 }

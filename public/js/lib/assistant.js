@@ -455,7 +455,7 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
   if (wantsOpen && aboutGfcf) {
     actions.push({ label: 'Open GFCF path', run: () => ctx.openDrill?.(['gfcf']) });
     return {
-      text: `Opening GFCF. Pulse value ${n(gfcf?.pulseValue, 0)} SAR bn (EA Q1 forecast). Year target ${n(gfcf?.yearTarget, 0)} SAR bn.`,
+      text: `Opening GFCF. Pulse value ${n(gfcf?.pulseValue, 0)} SAR bn (Q1 issued actual). Year target ${n(gfcf?.yearTarget, 0)} SAR bn.`,
       actions
     };
   }
@@ -489,7 +489,7 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
   if (aboutFdi && aboutWhy) {
     actions.push({ label: 'Open FDI components', run: () => ctx.openDrill?.(['fdi']) });
     return {
-      text: `FDI net ${n(fdi?.netQ1)} SAR bn is the certified headline (BPM6). Inflow ${n(fdi?.inflowQ1)} minus outflow ${n(fdi?.outflowQ1)}. EA Q1 forecast band was ${n(fdi?.eaForecastQ1Low)}–${n(fdi?.eaForecastQ1High)}. Open the drill path for equity / reinvested earnings / debt, then sector and source records.`,
+      text: `FDI net ${n(fdi?.netQ1)} SAR bn is the certified headline (BPM6). Inflow ${n(fdi?.inflowQ1)} minus outflow ${n(fdi?.outflowQ1)}. The Q1 forecast band on this host is synthetic (${n(fdi?.eaForecastQ1Low)}–${n(fdi?.eaForecastQ1High)}). Open the drill path for equity / reinvested earnings / debt, then sector and source records.`,
       actions
     };
   }
@@ -505,7 +505,7 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
   if (aboutGfcf && aboutWhy) {
     actions.push({ label: 'Open GFCF', run: () => ctx.openDrill?.(['gfcf']) });
     return {
-      text: `GFCF is on watch because Pulse is showing the Economic Affairs Q1 forecast (${n(gfcf?.pulseValue, 0)} SAR bn). A display actual of ${n(gfcf?.displayActualQ1, 0)} also appears. Q2 actual is not issued by GASTAT yet. Leading signals (capex, imports, PMI) explain movement - open the drill for components and attribution.`,
+      text: `GFCF is on watch. Pulse shows the Q1 issued actual (${n(gfcf?.pulseValue, 0)} SAR bn). Unissued quarters on this host use a synthetic populated forecast, not an Economic Affairs calculation. Q2 actual is not issued by GASTAT yet.`,
       actions
     };
   }
@@ -526,7 +526,7 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
       }
     });
     return {
-      text: `GFCF · ${gfcf?.status || 'watch'}\n${n(gfcf?.pulseValue, 0)} SAR bn · ${gfcf?.pulseLabel || 'Q1'}\nEA Q2 forecast ${n(gfcf?.eaForecastQ2, 0)} · H1 ${n(gfcf?.h1Forecast, 0)}\n2026 target ${n(gfcf?.yearTarget, 0)} SAR bn\nCumulative: ${gfcf?.cumulativeActual2025Tn} / ${gfcf?.cumulativeTarget2030Tn} trillion toward 2030.`,
+      text: `GFCF · ${gfcf?.status || 'watch'}\n${n(gfcf?.pulseValue, 0)} SAR bn · ${gfcf?.pulseLabel || 'Q1'}\nSynthetic Q2 forecast ${n(gfcf?.eaForecastQ2, 0)} · H1 ${n(gfcf?.h1Forecast, 0)}\n2026 target ${n(gfcf?.yearTarget, 0)} SAR bn\nCumulative: ${gfcf?.cumulativeActual2025Tn} / ${gfcf?.cumulativeTarget2030Tn} trillion toward 2030.`,
       actions
     };
   }

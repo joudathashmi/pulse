@@ -4,21 +4,22 @@
     "sheet": "FDI و GFCF التفصيلية",
     "title": "Meeting 5 · July 2026",
     "unit": "SAR bn",
-    "owners": "Economic Affairs forecast · GASTAT actual",
-    "note": "Transcribed from the 11 Aug 2026 extract. Blank and ?? stay blank. Q2-Q4 2026 actuals are not issued by GASTAT. Country arrows stop at 2024."
+    "owners": "Synthetic forecast · GASTAT actual",
+    "syntheticForecasts": true,
+    "note": "Forecast columns are populated synthetic figures for a publicly hosted prototype. They are not Economic Affairs or MISA calculations. Q2-Q4 2026 actuals are not issued by GASTAT. Country arrows stop at 2024."
   },
   "fdi": {
     "cumulative2025Stock": 592,
     "target2026": 175.6,
     "target2030": 1800,
     "rows": [
-      { "id": "q1", "period": "Q1 2026", "inflowF": "22-24.5", "inflowA": 26.6, "outflowF": null, "outflowA": 3.5, "netF": null, "netA": 23.1, "issued": true, "note": "Actual issued" },
-      { "id": "q2", "period": "Q2 2026", "inflowF": 22.85, "inflowA": null, "outflowF": 4.8, "outflowA": null, "netF": 27.7, "netA": null, "issued": false, "note": "Actual not issued" },
-      { "id": "h1", "period": "H1 2026", "inflowF": 49.45, "inflowA": null, "outflowF": null, "outflowA": null, "netF": null, "netA": null, "issued": false, "note": "H1 forecast" },
-      { "id": "q3", "period": "Q3 2026", "inflowF": 26.9, "inflowA": null, "outflowF": 6, "outflowA": null, "netF": 19.3, "netA": null, "issued": false, "note": "EA net forecast" },
-      { "id": "q4", "period": "Q4 2026", "inflowF": 27.35, "inflowA": null, "outflowF": 1.3, "outflowA": null, "netF": 24, "netA": null, "issued": false, "note": "EA net forecast" },
-      { "id": "h2", "period": "H2 2026", "inflowF": 54.25, "inflowA": null, "outflowF": 7.3, "outflowA": null, "netF": 43.3, "netA": null, "issued": false, "note": "EA net forecast" },
-      { "id": "y2026", "period": "To end-2026", "inflowF": 103.3, "inflowA": null, "outflowF": 14.6, "outflowA": null, "netF": 81.6, "netA": null, "issued": false, "note": "Forecast sum" }
+      { "id": "q1", "period": "Q1 2026", "inflowF": "20-23", "inflowA": 26.6, "outflowF": null, "outflowA": 3.5, "netF": null, "netA": 23.1, "issued": true, "note": "Actual issued" },
+      { "id": "q2", "period": "Q2 2026", "inflowF": 20.4, "inflowA": null, "outflowF": 4.1, "outflowA": null, "netF": 16.3, "netA": null, "issued": false, "note": "Synthetic forecast · actual not issued" },
+      { "id": "h1", "period": "H1 2026", "inflowF": 43.2, "inflowA": null, "outflowF": null, "outflowA": null, "netF": null, "netA": null, "issued": false, "note": "Synthetic H1 forecast" },
+      { "id": "q3", "period": "Q3 2026", "inflowF": 23.1, "inflowA": null, "outflowF": 5.0, "outflowA": null, "netF": 18.1, "netA": null, "issued": false, "note": "Synthetic forecast" },
+      { "id": "q4", "period": "Q4 2026", "inflowF": 23.8, "inflowA": null, "outflowF": 1.8, "outflowA": null, "netF": 22.0, "netA": null, "issued": false, "note": "Synthetic forecast" },
+      { "id": "h2", "period": "H2 2026", "inflowF": 46.9, "inflowA": null, "outflowF": 6.8, "outflowA": null, "netF": 40.1, "netA": null, "issued": false, "note": "Synthetic forecast" },
+      { "id": "y2026", "period": "To end-2026", "inflowF": 90.1, "inflowA": null, "outflowF": 10.9, "outflowA": null, "netF": 56.4, "netA": null, "issued": false, "note": "Synthetic forecast sum" }
     ]
   },
   "gfcf": {
@@ -27,18 +28,18 @@
     "target2030Tn": 12.4,
     "targetNote": "Strategy is revising NIS 2026 and 2030 targets",
     "rows": [
-      { "id": "q1", "period": "Q1 2026", "forecast": 348, "actual": 358, "issued": true, "note": "Actual issued" },
-      { "id": "q2", "period": "Q2 2026", "forecast": 324.26, "actual": null, "issued": false, "note": "Actual not issued" },
-      { "id": "h1", "period": "H1 2026", "forecast": 672.26, "actual": null, "issued": false, "note": "" },
-      { "id": "q3", "period": "Q3 2026", "forecast": 349.04, "actual": null, "issued": false, "note": "" },
-      { "id": "q4", "period": "Q4 2026", "forecast": 370.28, "actual": null, "issued": false, "note": "" },
-      { "id": "h2", "period": "H2 2026", "forecast": 719.32, "actual": null, "issued": false, "note": "" },
-      { "id": "y2026", "period": "To end-2026", "forecast": 1391.58, "actual": null, "issued": false, "note": "Forecast sum vs 1,295 target" }
+      { "id": "q1", "period": "Q1 2026", "forecast": 318, "actual": 358, "issued": true, "note": "Actual issued" },
+      { "id": "q2", "period": "Q2 2026", "forecast": 301, "actual": null, "issued": false, "note": "Synthetic forecast · actual not issued" },
+      { "id": "h1", "period": "H1 2026", "forecast": 619, "actual": null, "issued": false, "note": "Synthetic forecast" },
+      { "id": "q3", "period": "Q3 2026", "forecast": 312, "actual": null, "issued": false, "note": "Synthetic forecast" },
+      { "id": "q4", "period": "Q4 2026", "forecast": 328, "actual": null, "issued": false, "note": "Synthetic forecast" },
+      { "id": "h2", "period": "H2 2026", "forecast": 640, "actual": null, "issued": false, "note": "Synthetic forecast" },
+      { "id": "y2026", "period": "To end-2026", "forecast": 1259, "actual": null, "issued": false, "note": "Synthetic forecast sum" }
     ]
   },
   "signals": [
-    { "id": "env", "name": "Investment environment index", "value": "61.8", "asOf": "2025", "source": "Ministry of Investment", "owner": "Investment Development Agency", "freq": "Annual", "sheet": "ملخص المؤشرات", "row": 10 },
-    { "id": "investor", "name": "Investor confidence", "value": "0.68", "asOf": "H1 2026", "source": "Ministry of Investment", "owner": "Investment Development Agency", "freq": "Half-year", "sheet": "ملخص المؤشرات", "row": 11 },
+    { "id": "env", "name": "Investment environment index", "value": "58.4", "asOf": "2025", "source": "Synthetic · populated", "owner": "Investment Development Agency", "freq": "Annual", "sheet": "ملخص المؤشرات", "row": 10, "note": "Populated synthetic figure. Not a MISA calculation." },
+    { "id": "investor", "name": "Investor confidence", "value": "0.61", "asOf": "H1 2026", "source": "Synthetic · populated", "owner": "Investment Development Agency", "freq": "Half-year", "sheet": "ملخص المؤشرات", "row": 11, "note": "Populated synthetic figure. Not a MISA calculation." },
     { "id": "cds", "name": "Credit default spread", "value": "59.807", "asOf": "Jun 2026", "source": "Bloomberg", "owner": "Economic Affairs", "freq": "Daily / monthly", "sheet": "ملخص المؤشرات", "row": 12, "note": "Sheet stores 59,807. Pulse reads 59.8 bp." },
     { "id": "bci", "name": "Business confidence", "value": "56.6", "asOf": "Jun 2026", "source": "GASTAT", "owner": "Economic Affairs", "freq": "Monthly", "sheet": "البيانات التاريخية", "row": 4 },
     { "id": "pmi", "name": "Purchasing managers index", "value": "53.3", "asOf": "Jun 2026", "source": "Riyad Bank", "owner": "Economic Affairs", "freq": "Monthly", "sheet": "البيانات التاريخية", "row": 3, "note": "Latest June 2026. An earlier column is 56.3." },
@@ -47,7 +48,7 @@
     { "id": "pif", "name": "PIF capital expenditure", "value": "22.3", "asOf": "Q1 2026", "source": "PIF", "owner": "Economic Affairs", "freq": "Quarterly", "sheet": "ملخص المؤشرات", "row": 27 },
     { "id": "shareek", "name": "Shareek capital expenditure", "value": "166.6", "asOf": "Q1 2026", "source": "Shareek", "owner": "Economic Affairs", "freq": "Quarterly", "sheet": "ملخص المؤشرات", "row": 28 },
     { "id": "bonds", "name": "Corporate bond issuance", "value": "200,000", "asOf": "Jul 2026", "source": "Bloomberg", "owner": "Economic Affairs", "freq": "Monthly", "sheet": "ملخص المؤشرات", "row": 29 },
-    { "id": "regs", "name": "Investment registrations", "value": "3,119", "asOf": "Jun 2026", "source": "Ministry of Investment", "owner": "Investor Services", "freq": "Monthly", "sheet": "ملخص المؤشرات", "row": 30 },
+    { "id": "regs", "name": "Investment registrations", "value": "2,840", "asOf": "Jun 2026", "source": "Synthetic · populated", "owner": "Investor Services", "freq": "Monthly", "sheet": "ملخص المؤشرات", "row": 30, "note": "Populated synthetic figure. Not a MISA calculation." },
     { "id": "capgoods", "name": "Imports of capital goods", "value": "21,481", "asOf": "Apr 2026", "source": "GASTAT", "owner": "Economic Affairs", "freq": "Monthly", "sheet": "ملخص المؤشرات", "row": 31 },
     { "id": "surplus", "name": "Operating surplus", "value": "713,545,798", "asOf": "2024", "source": "GASTAT", "owner": "Economic Affairs", "freq": "Annual", "sheet": "ملخص المؤشرات", "row": 32 },
     { "id": "sme", "name": "SME credit facilities", "value": "11.85%", "asOf": "Q1 2026", "source": "SAMA", "owner": "Economic Affairs", "freq": "Quarterly", "sheet": "ملخص المؤشرات", "row": 33 },

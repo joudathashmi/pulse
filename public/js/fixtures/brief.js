@@ -109,14 +109,14 @@ export const LEADING = [
     id: 'regs',
     name: 'Investment registrations',
     nameAr: 'عدد السجلات الاستثمارية',
-    source: 'MISA',
+    source: 'Synthetic · populated',
     freq: 'Monthly',
     impact: 'positive',
     scope: ['fdi'],
-    latest: '3,119',
+    latest: '2,840',
     period: 'Jun-26',
-    delta: '+590',
-    series: [2560, 2488, 2580, 3373, 2529, 3119]
+    delta: '+310',
+    series: [2410, 2380, 2460, 2680, 2530, 2840]
   },
   {
     id: 'imports',
@@ -161,14 +161,14 @@ export const LEADING = [
     id: 'env',
     name: 'Composite investment environment',
     nameAr: 'مؤشر البيئة الاستثمارية المركب',
-    source: 'MISA',
+    source: 'Synthetic · populated',
     freq: 'Annual',
     impact: 'negative',
     scope: ['fdi', 'gfcf'],
-    latest: '61.8',
+    latest: '58.4',
     period: '2025',
-    delta: '−1.7 pts',
-    series: [59.8, 61.9, 63.5, 61.8]
+    delta: '−1.2 pts',
+    series: [57.1, 58.9, 59.6, 58.4]
   },
   {
     id: 'tasi',
@@ -187,14 +187,14 @@ export const LEADING = [
     id: 'investor',
     name: 'Investor confidence',
     nameAr: 'مؤشر ثقة المستثمر',
-    source: 'MISA',
+    source: 'Synthetic · populated',
     freq: 'Semi-annual',
     impact: 'positive',
     scope: ['fdi'],
-    latest: '0.68',
+    latest: '0.61',
     period: 'H1-26',
     delta: '+0.02',
-    series: [0.66, 0.65, 0.67, 0.66, 0.68]
+    series: [0.58, 0.57, 0.59, 0.59, 0.61]
   },
   {
     id: 'cds',

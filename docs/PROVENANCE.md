@@ -38,7 +38,8 @@ mismatch is a control case, not a conversion the machine is allowed to invent.
 | Method stamps | IMF BPM6 / OECD BD5 for FDI, SNA 2008 for GFCF |
 | Component structure | FDI equity / reinvested earnings / related-party debt; GFCF by asset type |
 | Certified Pulse headlines (orb) | Indicators pack / performance brief → `public/data/brief.json` |
-| 2026 quarter rows and leading-signal last readings | `Indicators_full_2026(v112082026).xlsx` → `public/data/indicators-2026.json` |
+| 2026 issued actuals (Q1) | Indicators pack, labelled issued / GASTAT |
+| 2026 forecast columns | **Replaced.** Populated synthetic figures in `indicators-2026.json`. Not EA or MISA calculations. |
 | FDI stock, net, inflow 2016–2024 | `FDI_Inflows_Report_2016_2024.xlsx` → `public/data/fdi-history.json` |
 
 The gold orb is this pack print. Refresh, intake, fix, and tick do not write

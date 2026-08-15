@@ -19,7 +19,7 @@ export const KPI_META = {
     id: 'gfcf',
     name: 'Gross Fixed Capital Formation',
     definition: 'Total GFCF under SNA 2008: construction & structures, machinery & equipment, intellectual property, and cultivated biological assets.',
-    source: 'GASTAT national accounts · Economic Affairs forecast overlay',
+    source: 'GASTAT national accounts · synthetic forecast overlay on this host',
     method: 'SNA 2008',
     calculatedAt: '2026-08-12T09:41:00+03:00',
     calculatedLabel: '09:41, 12 Aug 2026',

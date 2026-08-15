@@ -29,7 +29,7 @@ export function heldPackRows(data = {}) {
     quarantine.push({
       id: `q-gfcf-${row.id}`,
       title: `GFCF ${row.period} actual`,
-      detail: 'GASTAT has not issued the actual. Economic Affairs forecast is on the sheet only.',
+      detail: 'GASTAT has not issued the actual. The forecast on this host is synthetic and populated, not an Economic Affairs calculation.',
       owner: 'Economic Affairs',
       source: pack.source?.file || 'Indicators pack',
       gate: 'Completeness · vintage',

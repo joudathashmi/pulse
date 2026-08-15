@@ -166,7 +166,7 @@ export async function renderFdi(root, data, { openDrill } = {}) {
   root.innerHTML = `
     <div class="stage"><div class="panel fdi-panel" style="padding-top:20px">
       <h1>FDI</h1>
-      <p class="lede">2016-2024 is the Inflows workbook and the Invest Saudi country cut. 2026 is the Indicators pack sheet - forecast versus GASTAT actual. Blanks stay blank.</p>
+      <p class="lede">2016-2024 is the public Inflows / Invest Saudi country cut. 2026 forecast columns on this host are synthetic and populated — not MISA calculations. Issued actuals stay as issued. Blanks stay blank.</p>
 
       <div class="fdi-kpis" data-kpis></div>
       <div class="fdi-years" data-years role="tablist" aria-label="Year"></div>
@@ -289,7 +289,7 @@ export async function renderFdi(root, data, { openDrill } = {}) {
     $('[data-kpis]', root).innerHTML = `
       <div class="fdi-kpi"><div class="k">Year</div><div class="stat">2026</div><div class="meta">Indicators pack</div></div>
       <div class="fdi-kpi"><div class="k">FDI net · Q1 actual</div><div class="stat">${sheetCell(q1?.netA)}</div><div class="meta">SAR bn · issued</div></div>
-      <div class="fdi-kpi"><div class="k">FDI net · Q2 forecast</div><div class="stat">${sheetCell(q2?.netF)}</div><div class="meta">GASTAT actual not issued</div></div>
+      <div class="fdi-kpi"><div class="k">FDI net · Q2 synthetic forecast</div><div class="stat">${sheetCell(q2?.netF)}</div><div class="meta">Populated · not a MISA calculation · GASTAT actual not issued</div></div>
       <div class="fdi-kpi"><div class="k">Stock to 2025</div><div class="stat">${sheetCell(fdi?.cumulative2025Stock)}</div><div class="meta">SAR bn cumulative</div></div>`;
     $('[data-pack]', root).innerHTML = `
       <p class="wh-est">${pack2026?.source?.file || ''} · ${pack2026?.source?.sheet || ''} · ${pack2026?.source?.owners || ''}</p>

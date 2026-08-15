@@ -11,7 +11,7 @@ export const GLOSSARY = [
     id: 'gfcf',
     term: 'GFCF',
     termAr: 'تكوين رأس المال الثابت',
-    body: 'Gross fixed capital formation under SNA 2008. The Pulse value can be an Economic Affairs forecast when GASTAT has not issued the quarter.',
+    body: 'Gross fixed capital formation under SNA 2008. When GASTAT has not issued the quarter, this host shows a populated synthetic forecast, not an Economic Affairs calculation.',
     bodyAr: 'إجمالي تكوين رأس المال الثابت وفق SNA 2008. قيمة النبض قد تكون توقع الشؤون الاقتصادية إذا لم تصدر الهيئة الرقم الفصلي.'
   },
   {

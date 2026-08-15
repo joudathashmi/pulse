@@ -8,10 +8,11 @@ a public URL. That fact decides what may live in the repo.
 Public connector data may be pulled and shown, and must stay labelled as a
 direct pull (World Bank, Invest Saudi, misa.gov.sa).
 
-Internal estimates created by MISA calculations are confidential to the
-ministry. They are not to be placed on this host. The in-quarter path and
-back-test on this prototype are **populated synthetic figures**, marked as such
-in the JSON and on every screen that shows them.
+Internal estimates and Economic Affairs forecasts created by MISA calculations
+are confidential to the ministry. They are not to be placed on this host. The
+in-quarter path, back-test, unissued pack forecast cards, and MISA-sourced
+leading signals on this prototype are **populated synthetic figures**, marked
+as such in the JSON and on every screen that shows them.
 
 A later in-Kingdom system may load real estimates. This public prototype must
 not.
