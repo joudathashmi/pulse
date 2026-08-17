@@ -97,6 +97,16 @@ html[data-shell="phone"] .tour-card {
   position: relative;
   overflow: hidden;
 }
+.tour-mini svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 8px 10px;
+  color: var(--g800);
+  box-sizing: border-box;
+}
+.tour-mini:has(svg)::before,
+.tour-mini:has(svg)::after { display: none }
 .tour-mini::before,
 .tour-mini::after {
   content: "";

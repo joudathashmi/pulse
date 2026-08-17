@@ -396,7 +396,7 @@ export function renderFsa(root) {
     <div class="stage"><div class="panel fsa">
       <header class="fsa-mast">
         <div class="wh-k">IAS 1 · IFRS</div>
-        <h1>${esc(f.title || 'Financial statements')}</h1>
+        <h1>${esc(f.title || 'Financial Statements')}</h1>
         <p class="lede">${esc(f.lede || '')}</p>
       </header>
 

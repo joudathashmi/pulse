@@ -38,7 +38,7 @@ export const STRINGS = {
       alerts: 'Alerts and owners',
       tasks: 'My tasks',
       intake: 'How data arrives',
-      fsa: 'Financial statements',
+      fsa: 'Financial Statements',
       settings: 'Settings',
     },
     tabHints: {
@@ -64,7 +64,7 @@ export const STRINGS = {
       tasks: 'Tasks',
       qual: 'Quality',
       intake: 'Intake',
-      fsa: 'Statements',
+      fsa: 'Financial Statements',
       inv: 'Inventory',
       about: 'Source',
       settings: 'Settings'
@@ -419,7 +419,7 @@ export const STRINGS = {
     ctrlChecked: 'live cases',
     ctrlNoCases: 'No quarantined cases this cycle. Pull live sources on Intake.',
     fsa: {
-      title: 'Financial statements',
+      title: 'Financial Statements',
       lede: 'Upload a filing. The extract opens below. Ask stays on that filing.',
       synthNote: 'The sample is synthetic. Do not upload real investee books to a public host.',
       pipe: 'How a filing is read',

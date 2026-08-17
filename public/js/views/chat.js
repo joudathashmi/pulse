@@ -75,7 +75,7 @@ export function mountChat(host, { getData, openDrill, go, openAskOwner, openDesk
       alerts: ['Show alerts', 'Ask owner about GFCF', 'My questions to owners'],
       qual: ['How do I use this page?', 'Show alerts', 'Open FDI'],
       intake: ['How do I use this page?', 'Open FDI', 'Show alerts'],
-      fsa: ['How do I use this page?', 'Open financial statements', 'Show alerts'],
+      fsa: ['How do I use this page?', 'Open Financial Statements', 'Show alerts'],
       inv: ['How do I use this page?', 'Where do we stand?', 'Open FDI'],
       about: ['How do I use this page?', 'Open FDI', 'Show alerts'],
       settings: ['Start the guide', 'Open the data glossary', 'Configure email alerts']

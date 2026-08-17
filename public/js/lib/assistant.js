@@ -177,7 +177,7 @@ export const PAGE_HELP = {
     hint: 'Live connectors pull published feeds. A person certifies. The certified Pulse is not overwritten.'
   },
   fsa: {
-    name: 'Financial statements',
+    name: 'Financial Statements',
     hint: 'A separate desk. Upload an IFRS PDF or Excel, extract line items in English or Arabic, gate them, then ask the selected filing. It does not write the Pulse. Use the chat on that page, not this pack assistant.'
   },
   inv: {
@@ -210,7 +210,7 @@ export function nudgeHelp(view) {
     inv: { label: 'Where do we stand?', prompt: 'Where do we stand?' },
     qual: { label: 'Show alerts', prompt: 'Show alerts' },
     intake: { label: 'Show alerts', prompt: 'Show alerts' },
-    fsa: { label: 'Open financial statements', prompt: 'Open financial statements' },
+    fsa: { label: 'Open Financial Statements', prompt: 'Open Financial Statements' },
     about: { label: 'Open FDI', prompt: 'Open FDI' },
     settings: { label: 'Start the guide', prompt: 'Start the guide' }
   };
@@ -259,9 +259,9 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
   const aboutFsa = /\b(financial statement|ifrs|القوائم المالية|قائمة مالية)\b/i.test(q);
 
   if (aboutFsa) {
-    actions.push({ label: 'Open financial statements', run: () => ctx.go?.('fsa') });
+    actions.push({ label: 'Open Financial Statements', run: () => ctx.go?.('fsa') });
     return {
-      text: 'Financial statements is its own desk. Upload an IFRS PDF or Excel, extract English or Arabic line items, then ask that filing. It does not write the certified Pulse. Use the chat on that page for the numbers.',
+      text: 'Financial Statements is its own desk. Upload an IFRS PDF or Excel, extract English or Arabic line items, then ask that filing. It does not write the certified Pulse. Use the chat on that page for the numbers.',
       actions
     };
   }

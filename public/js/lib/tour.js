@@ -12,9 +12,9 @@ const STEPS = [
     body: 'Investment Pulse OS is the certified operating picture for FDI and GFCF. The gold ring is the signed pack. Tabs around it are how you trace a number, pull a feed, hold a value, or read a filing. Nothing here overwrites the Pulse until a named person signs.',
     shots: [
       { id: 'home', view: 'pulse', cap: 'Live board', blurb: 'One gold ring. Two headlines. Twenty signals.' },
-      { id: 'fdi', view: 'fdi', cap: 'World map', blurb: 'Who invests into the Kingdom, year by year.' },
-      { id: 'work', view: 'alerts', cap: 'Work', blurb: 'Open signals, quarantine, and the next action.' },
-      { id: 'fsa', view: 'fsa', cap: 'Statements', blurb: 'Upload an IFRS filing, extract, gate, and ask.' }
+      { id: 'fdi', view: 'fdi', cap: 'FDI by country', blurb: 'Who invests into the Kingdom, year by year.' },
+      { id: 'work', view: 'alerts', cap: 'Alerts and owners', blurb: 'Open signals, quarantine, and the next action.' },
+      { id: 'fsa', view: 'fsa', cap: 'Financial Statements', blurb: 'Upload an IFRS filing, extract, gate, and ask.' }
     ]
   },
   {
@@ -164,7 +164,7 @@ const STEPS = [
   {
     view: 'fsa',
     sel: '.fsa-mast',
-    title: 'Financial statements',
+    title: 'Financial Statements',
     body: 'A separate desk. It never writes the certified Pulse. Upload an IFRS PDF or Excel. The extractor maps English and Arabic line items.'
   },
   {
@@ -212,9 +212,23 @@ function firstFeatureIndex(view) {
   return i < 0 ? STEPS.findIndex(s => s.kind !== 'deck') : i;
 }
 
+function shotIcon(id) {
+  const icons = {
+    home: '<svg viewBox="0 0 72 40" fill="none"><circle cx="20" cy="20" r="11" stroke="currentColor" stroke-width="2.4"/><circle cx="20" cy="20" r="5" fill="currentColor" opacity="0.35"/><path d="M38 12h26M38 20h20M38 28h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+    fdi: '<svg viewBox="0 0 72 40" fill="none"><ellipse cx="36" cy="20" rx="16" ry="16" stroke="currentColor" stroke-width="2.2"/><ellipse cx="36" cy="20" rx="7" ry="16" stroke="currentColor" stroke-width="1.6"/><path d="M20 20h32M22 13h28M22 27h28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="50" cy="12" r="3.2" fill="currentColor"/><path d="M50 15.2v8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+    work: '<svg viewBox="0 0 72 40" fill="none"><rect x="14" y="8" width="44" height="8" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="14" y="20" width="44" height="8" rx="2" stroke="currentColor" stroke-width="1.6"/><circle cx="20" cy="12" r="1.8" fill="currentColor"/><circle cx="20" cy="24" r="1.8" fill="currentColor"/><path d="M58 8l4 7h-8l4-7z" fill="currentColor"/></svg>',
+    fsa: '<svg viewBox="0 0 72 40" fill="none"><path d="M24 6h18l10 10v18H24V6z" stroke="currentColor" stroke-width="1.8"/><path d="M42 6v10h10" stroke="currentColor" stroke-width="1.8"/><path d="M30 22h16M30 28h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    trace: '<svg viewBox="0 0 72 40" fill="none"><path d="M12 20h16l8-10 8 20 8-10h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="60" cy="20" r="3" fill="currentColor"/></svg>',
+    intake: '<svg viewBox="0 0 72 40" fill="none"><circle cx="14" cy="20" r="4" fill="currentColor"/><circle cx="32" cy="20" r="4" fill="currentColor"/><circle cx="50" cy="20" r="4" fill="currentColor"/><circle cx="64" cy="20" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M18 20h10M36 20h10M54 20h7" stroke="currentColor" stroke-width="1.6"/></svg>',
+    quality: '<svg viewBox="0 0 72 40" fill="none"><rect x="10" y="12" width="8" height="16" rx="1.5" fill="currentColor"/><rect x="22" y="12" width="8" height="16" rx="1.5" fill="currentColor" opacity="0.7"/><rect x="34" y="12" width="8" height="16" rx="1.5" fill="currentColor"/><rect x="46" y="12" width="8" height="16" rx="1.5" fill="currentColor" opacity="0.45"/><rect x="58" y="12" width="8" height="16" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>',
+    ask: '<svg viewBox="0 0 72 40" fill="none"><path d="M14 10h32a8 8 0 0 1 8 8v6a8 8 0 0 1-8 8H28l-10 6v-6h-4a8 8 0 0 1-8-8v-6a8 8 0 0 1 8-8z" stroke="currentColor" stroke-width="1.8"/><circle cx="58" cy="28" r="7" fill="currentColor"/></svg>'
+  };
+  return icons[id] || '';
+}
+
 function shotHtml(shot) {
   return `<button type="button" class="tour-shot" data-jump-view="${shot.view}" data-jump-sel="${shot.sel || ''}">
-    <span class="tour-mini is-${shot.id}" aria-hidden="true"></span>
+    <span class="tour-mini is-${shot.id}" aria-hidden="true">${shotIcon(shot.id)}</span>
     <b>${shot.cap}</b>
     <span>${shot.blurb}</span>
   </button>`;
