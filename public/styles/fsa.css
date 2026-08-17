@@ -1,17 +1,99 @@
-/* Financial statement desk. IFRS paper on Pulse tokens. */
+/* Financial statement desk. Upload, then extract, then Ask. Clear cards. */
 
 .fsa {
+  display: grid;
+  gap: 16px;
   padding: 8px 4px 28px;
 }
-.fsa-mast {
-  margin-bottom: 14px;
-}
+.fsa-mast { margin: 0 }
 .fsa-mast .wh-k { margin-bottom: 6px }
 .fsa-mast h1 { margin: 0 }
 .fsa-mast .lede {
   margin: 6px 0 0;
   max-width: 58ch;
 }
+
+.fsa-upload { padding: 16px }
+.fsa-upload-h .fsa-card-lede { margin-bottom: 12px }
+.fsa-upload-row {
+  display: grid;
+  gap: 10px;
+}
+@media (min-width: 640px) {
+  .fsa-upload-row {
+    grid-template-columns: minmax(160px, auto) minmax(0, 1fr);
+    align-items: stretch;
+  }
+}
+.fsa-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  width: 100%;
+  padding: 0 18px;
+}
+.fsa-lib {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+}
+.fsa-page {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+@media (min-width: 960px) {
+  html[data-shell="desk"] .fsa-page {
+    grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+    align-items: start;
+  }
+}
+.fsa-analysis,
+.fsa-ask {
+  min-width: 0;
+  isolation: isolate;
+  overflow: hidden;
+}
+.fsa-analysis { padding: 0 0 14px }
+.fsa-analysis-h {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.fsa-analysis-h h2 {
+  margin: 2px 0 4px;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+.fsa-analysis-h .fsa-id-row p { margin: 0; color: var(--muted); font-size: 13px }
+.fsa-analysis .fsa-kpis { margin: 12px 0 0 }
+.fsa-analysis .fsa-verify { margin-top: 14px }
+.fsa-analysis .fsa-toolbar { padding: 10px 12px 0 }
+.fsa-analysis .fsa-body { padding: 12px 12px 0 }
+.fsa-analysis .fsa-tick-wrap { padding: 0 4px }
+
+.fsa-ask {
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  padding: 0;
+  overflow: hidden;
+}
+@media (min-width: 960px) {
+  html[data-shell="desk"] .fsa-ask {
+    position: sticky;
+    top: 72px;
+    max-height: calc(100dvh - 96px);
+  }
+}
+.fsa-ask .fsa-stream {
+  flex: 1;
+  min-height: 160px;
+  max-height: none;
+}
+.fsa-ask .fsa-form { margin-top: auto }
+
+.fsa-process { display: none }
 
 .fsa-process { margin: 0 0 18px }
 .fsa-path {
@@ -123,16 +205,22 @@
 
 .fsa-card {
   background: var(--surf-raised);
-  outline: 1px solid var(--line-soft);
-  border-radius: 12px;
+  border: 1px solid var(--line);
+  outline: none;
+  border-radius: 16px;
   padding: 14px 16px 16px;
   min-width: 0;
 }
 html[data-theme="night"] .fsa-card,
 html[data-theme="night"] .fsa-path,
 html[data-theme="night"] .fsa-stage {
-  outline-color: color-mix(in srgb, #fff 12%, transparent);
+  border-color: color-mix(in srgb, #fff 16%, transparent);
 }
+.fsa-card.fsa-analysis,
+.fsa-card.fsa-ask { padding: 0 }
+.fsa-card.fsa-analysis { padding-bottom: 14px }
+.fsa-card.fsa-analysis.fsa-empty { padding: 20px 16px 18px }
+.fsa-card.fsa-upload { padding: 16px }
 .fsa-card-k {
   font-size: 10px;
   font-weight: 700;
@@ -149,6 +237,7 @@ html[data-theme="night"] .fsa-stage {
 }
 .fsa-empty h2 { margin: 0 0 6px; font-size: 1.2rem; }
 .fsa-empty p { margin: 0; color: var(--muted); max-width: 46ch; }
+.fsa-empty .btn-primary { margin-top: 14px }
 .fsa-empty-line {
   margin: 0;
   font-size: 13px;
@@ -247,6 +336,13 @@ html[data-theme="night"] .fsa-stage {
 .fsa-sample:disabled { opacity: 0.45; cursor: wait }
 .fsa-inbox.is-over {
   outline-color: var(--g600);
+}
+.fsa-upload.is-over {
+  border-color: var(--g600);
+}
+.fsa-upload .fsa-dropzone {
+  min-height: 52px;
+  padding: 10px 14px;
 }
 .fsa-inbox.is-busy .fsa-dropzone { cursor: wait }
 
@@ -689,20 +785,12 @@ html[dir="rtl"] .fsa-id-meta { justify-content: flex-start }
 html[data-theme="night"] .fsa-stmt.is-on { background: var(--tint-deep) }
 
 @media (min-width: 960px) {
-  html[data-shell="desk"] .fsa-pane-nav { display: none }
+  html[data-shell="desk"] .fsa-pane-nav { display: flex }
 }
 
 .fsa-body { display: grid; gap: 14px; min-width: 0 }
-@media (min-width: 960px) {
-  html[data-shell="desk"] .fsa-body {
-    grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
-    align-items: start;
-  }
-}
-@media (max-width: 959px) {
-  .fsa-body.is-extract .fsa-viewer,
-  .fsa-body.is-source .fsa-extract { display: none }
-}
+.fsa-body.is-extract .fsa-viewer,
+.fsa-body.is-source .fsa-extract { display: none }
 
 .fsa-extract, .fsa-viewer { min-width: 0 }
 
@@ -1237,7 +1325,7 @@ html[dir="rtl"] .fsa-bubble.me { justify-self: start; border-radius: 12px 12px 1
 }
 .fsa-form .chat-send:disabled { opacity: 0.45; cursor: wait }
 
-html[data-shell="desk"] #v-fsa .stage { max-width: none }
+html[data-shell="desk"] #v-fsa .stage { max-width: 1080px; margin-inline: auto }
 
 .fsa-kpis {
   display: grid;
@@ -1528,7 +1616,7 @@ html[data-theme="night"] .fsa-jobbox { background: rgba(8, 8, 10, 0.62); }
 .fsa-jobbox-hint.is-ok { color: var(--ok); font-weight: 650; }
 .fsa-jobbox-hint.is-fail { color: var(--risk); font-weight: 650; }
 
-.fsa-upload-btn { display: none }
+.fsa-upload-btn { display: inline-flex }
 
 .fsa-fold > summary {
   list-style: none;
@@ -1564,25 +1652,28 @@ html[data-theme="night"] .fsa-jobbox { background: rgba(8, 8, 10, 0.62); }
 }
 
 html[data-shell="phone"] .fsa {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  gap: 14px;
   padding-bottom: 108px;
   touch-action: pan-y;
 }
-html[data-shell="phone"] .fsa-mast { order: 0 }
-html[data-shell="phone"] .fsa-desk { order: 1 }
-html[data-shell="phone"] .fsa-process { order: 2; margin: 12px 0 0 }
 html[data-shell="phone"] .fsa-mast .lede { display: none }
 html[data-shell="phone"] .fsa-upload-btn {
   display: flex;
   width: 100%;
   min-height: 48px;
-  margin: 0 0 10px;
+  margin: 0;
   justify-content: center;
   align-items: center;
 }
-html[data-shell="phone"] .fsa-dropzone { display: none }
-html[data-shell="phone"] .fsa-fold > summary { display: flex }
+html[data-shell="phone"] .fsa-upload-row { grid-template-columns: 1fr }
+html[data-shell="phone"] .fsa-dropzone { min-height: 88px }
+html[data-shell="phone"] .fsa-ask {
+  position: static;
+  min-height: 360px;
+  max-height: none;
+}
+html[data-shell="phone"] .fsa-fold > summary { display: none }
 html[data-shell="phone"] .fsa-process > .fsa-fold {
   background: var(--surf-raised);
   outline: 1px solid var(--line-soft);

@@ -416,7 +416,7 @@ export const STRINGS = {
     ctrlNoCases: 'No quarantined cases this cycle. Pull live sources on Intake.',
     fsa: {
       title: 'Financial statements',
-      lede: 'A steward desk for IFRS filings. A person still signs. The Pulse is not written here.',
+      lede: 'Upload a filing. The extract opens below. Ask stays on that filing.',
       synthNote: 'The sample is synthetic. Do not upload real investee books to a public host.',
       pipe: 'How a filing is read',
       stepFile: 'Upload',
@@ -951,7 +951,7 @@ export const STRINGS = {
     ctrlNoCases: 'لا حالات محجوزة في هذه الدورة. اسحب المصادر الحية من الورود.',
     fsa: {
       title: 'القوائم المالية',
-      lede: 'مكتب وصاية لقوائم IFRS. الشخص يوقّع. النبض لا يُكتب هنا.',
+      lede: 'ارفع قائمة. يظهر المستخرج أسفلها. السؤال يبقى على هذه القائمة.',
       synthNote: 'العينة تركيبية. لا ترفع دفاتر مستثمر حقيقية على مستضيف عام.',
       pipe: 'كيف تُقرأ القائمة',
       stepFile: 'رفع',
