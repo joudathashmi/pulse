@@ -250,8 +250,8 @@ function fdiCutLine(cut) {
     .filter(c => c.year === 2024 && (c.inflow || 0) > 0)
     .sort((a, b) => (b.inflow || 0) - (a.inflow || 0));
   const top = rows[0];
-  if (!top) return 'Country and sector · open FDI';
-  return `${top.name} leads 2024 inflow · ${num(top.inflow)} · open FDI`;
+  if (!top) return 'Country and sector cut of 2024 inflow';
+  return `${top.name} leads 2024 inflow · ${num(top.inflow)}`;
 }
 
 function toast(msg) {
