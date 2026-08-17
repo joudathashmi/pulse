@@ -16,7 +16,7 @@ import { initShell, applyShell, getShell } from './lib/shell.js';
 import { renderIntake } from './views/intake.js';
 import { renderFsa, releaseFsa } from './views/fsa.js';
 import { renderFdi } from './views/fdi.js';
-import { mountTour } from './lib/tour.js';
+import { mountTour, stampPageGuide } from './lib/tour.js';
 import { mountDesk } from './views/desk.js';
 import { mountApprovals } from './views/approvals.js';
 import { mountLogin } from './views/login.js';
@@ -42,8 +42,14 @@ function paintChrome() {
   }
   const displayWord = $('[data-display-word]');
   if (displayWord) displayWord.textContent = s.display;
-  const guideBtn = $('[data-tour-start]');
-  if (guideBtn) guideBtn.textContent = s.guide;
+  const guideLabel = s.guide || 'Guide';
+  for (const word of $$('[data-guide-word]')) word.textContent = guideLabel;
+  const headerGuide = $('.top-tools > [data-tour-start]');
+  if (headerGuide) {
+    const tip = s.guideTip || 'What this system is, and how each tab works';
+    headerGuide.setAttribute('title', tip);
+    headerGuide.setAttribute('aria-label', guideLabel);
+  }
   const outBtn = $('[data-sign-out]');
   if (outBtn) outBtn.textContent = s.signOut || 'Sign out';
   const setK = $('[data-set-menu-k]');
@@ -96,6 +102,7 @@ function go(view, { scroll } = {}) {
   floatNav?.closeMore();
   floatNav?.refresh();
   if (scroll ?? changing) window.scrollTo({ top: 0, behavior: 'auto' });
+  stampPageGuide($(`#v-${view}`), view);
 }
 
 function openView(id) {

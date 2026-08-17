@@ -6,6 +6,7 @@ import { casesFromWork, displayStatus, listCases, upsertCases } from '../lib/con
 import { SYNTHETIC_PACK } from '../lib/syntheticPack.js';
 import { heldPackRows } from '../lib/work.js';
 import { openControlCase } from './controlCase.js';
+import { bindNumberDefs } from '../lib/kpiMark.js';
 
 const PIPELINE = [
   ['S1', 'Acquire', 'Connectors pull published feeds', 'pull'],
@@ -67,7 +68,7 @@ function verifyQueue(wb, web, _brief, fdi) {
   const latestGfcf = wb?.gfcf?.[0];
   const items = [];
   if (latestFdi) {
-    const reason = `World Bank ${latestFdi.year} is ${usdBn(latestFdi.value)} USD bn (BPM6, annual, current USD, BX.KLT.DINV.CD.WD). The synthetic pack print used on this host is ${packFdi} SAR bn (net, quarterly) — not a MISA figure. A steward must map USD→SAR, annual→quarter, and BPM6 net vs inflows. The certified orb is not overwritten.`;
+    const reason = `World Bank ${latestFdi.year} is ${usdBn(latestFdi.value)} USD bn (BPM6, annual, current USD, BX.KLT.DINV.CD.WD). The synthetic pack print used on this host is ${packFdi} SAR bn (net, quarterly), not a MISA figure. A steward must map USD to SAR, annual to quarter, and BPM6 net vs inflows. The certified orb is not overwritten.`;
     items.push({
       id: 'v-units-fdi',
       title: 'FDI unit and vintage do not match the Pulse print',
@@ -85,7 +86,7 @@ function verifyQueue(wb, web, _brief, fdi) {
     });
   }
   if (latestGfcf) {
-    const reason = `World Bank ${latestGfcf.year} is ${usdBn(latestGfcf.value)} USD bn (NE.GDI.FTOT.CD, annual). The synthetic pack print used on this host is ${packGfcf} SAR bn (SNA 2008, quarterly) — not a MISA or Economic Affairs figure. Do not overwrite the certified GFCF.`;
+    const reason = `World Bank ${latestGfcf.year} is ${usdBn(latestGfcf.value)} USD bn (NE.GDI.FTOT.CD, annual). The synthetic pack print used on this host is ${packGfcf} SAR bn (SNA 2008, quarterly), not a MISA or Economic Affairs figure. Do not overwrite the certified GFCF.`;
     items.push({
       id: 'v-units-gfcf',
       title: 'GFCF from World Bank is not the GASTAT quarterly print',
@@ -105,7 +106,7 @@ function verifyQueue(wb, web, _brief, fdi) {
   if (fdi?.countries?.length) {
     const y24 = fdi.countries.filter(r => r.year === 2024);
     const inflow = y24.reduce((s, r) => s + (r.inflow || 0), 0);
-    const reason = `investsaudi.sa/fdi returned ${fdi.countries.length} country-year rows and ${fdi.sectors?.length || 0} sector-year rows. 2024 immediate-country inflow sums to ${num(inflow)} SAR bn (public dashboard). The synthetic pack print on this host is ${packFdi} SAR bn net — not a MISA figure. Do not overwrite the certified print. The page’s marketing headlines (119 / 80 / 977) are a different rounding.`;
+    const reason = `investsaudi.sa/fdi returned ${fdi.countries.length} country-year rows and ${fdi.sectors?.length || 0} sector-year rows. 2024 immediate-country inflow sums to ${num(inflow)} SAR bn (public dashboard). The synthetic pack print on this host is ${packFdi} SAR bn net, not a MISA figure. Do not overwrite the certified print. The page's marketing headlines (119 / 80 / 977) are a different rounding.`;
     items.push({
       id: 'v-investsaudi',
       title: 'Invest Saudi country cut is annual, not the Pulse quarter',
@@ -190,7 +191,7 @@ export async function renderIntake(root, data, { refreshBoard } = {}) {
                 <td>${f.via}</td>
                 <td>${f.last}</td>
                 <td>${f.cadence}</td>
-                <td class="num">${f.n}</td>
+                <td class="num" data-kpi-def="pack">${f.n}</td>
                 <td class="${f.state}">${f.state === 'live' ? 'Live' : f.state === 'watch' ? 'Watch' : f.state}</td>
               </tr>`).join('')}
             </tbody>
@@ -259,8 +260,8 @@ export async function renderIntake(root, data, { refreshBoard } = {}) {
         </tr></thead>
         <tbody>${cases.map(c => `<tr>
           <td>${(c.kpi || c.title).toString().toUpperCase()}</td>
-          <td>${(c.failedGates || [])[0] || '—'}</td>
-          <td>${c.owner || '—'}</td>
+          <td>${(c.failedGates || [])[0] || '-'}</td>
+          <td>${c.owner || '-'}</td>
           <td>${displayStatus(c, s)}</td>
           <td><button type="button" class="btn-ask-inline" data-open="${c.id}">${s.ctrlOpen || 'Open'}</button></td>
         </tr>`).join('')}</tbody>
@@ -309,5 +310,6 @@ export async function renderIntake(root, data, { refreshBoard } = {}) {
 
   $('[data-pull]', root).onclick = pull;
   $('[data-refresh]', root)?.addEventListener('click', () => refreshBoard?.());
+  bindNumberDefs(root);
   pull();
 }

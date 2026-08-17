@@ -1,6 +1,6 @@
 # Documentation
 
-Investment Pulse Operating System — start at the root [README](../README.md).
+Investment Pulse Operating System. Start at the root [README](../README.md).
 
 | Document | Read it when you need to… |
 |---|---|

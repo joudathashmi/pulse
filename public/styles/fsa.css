@@ -576,12 +576,20 @@ html[data-theme="night"] .fsa-stage {
   outline-offset: 1px;
 }
 .fsa-gates i {
+  box-sizing: border-box;
   width: 8px;
   height: 8px;
+  min-width: 8px;
+  min-height: 8px;
+  max-width: 8px;
+  max-height: 8px;
   border-radius: 50%;
   background: var(--watch);
   margin-top: 5px;
   grid-row: 1 / span 2;
+  align-self: start;
+  justify-self: center;
+  display: block;
 }
 .fsa-gates .ok i { background: var(--ok); }
 .fsa-gates .risk i { background: var(--risk); }
@@ -671,12 +679,13 @@ html[data-theme="night"] .fsa-stage {
 }
 .fsa-file-main > span {
   flex: 0 1 auto;
-  max-width: 38%;
+  max-width: 46%;
   font-size: 11px;
   color: var(--muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 .fsa-file-st {
   flex: 0 0 auto;
@@ -865,13 +874,45 @@ html[data-theme="night"] .fsa-stmt.is-on { background: var(--tint-deep) }
     grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
     align-items: start;
   }
+  html[data-shell="desk"] .fsa-body.is-scan {
+    grid-template-columns: minmax(220px, 0.4fr) minmax(0, 1.6fr);
+  }
 }
 @media (max-width: 959px) {
   .fsa-body.is-extract .fsa-viewer,
   .fsa-body.is-source .fsa-extract { display: none }
 }
 
-.fsa-extract, .fsa-viewer { min-width: 0 }
+.fsa-scan-note {
+  padding: 16px 14px 14px;
+  border-radius: 10px;
+  background: var(--tint);
+  outline: 1px solid var(--line-soft);
+  height: auto;
+  align-self: start;
+}
+.fsa-scan-note h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+}
+.fsa-scan-note p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.fsa-scan-note .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  margin-top: 12px;
+  padding: 0 16px;
+}
 
 .fsa-paper {
   background: #f7f4ee;
@@ -1809,7 +1850,9 @@ html[data-shell="phone"] .fsa-stmt-nav {
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
 }
-html[data-shell="phone"] .fsa-file-main > span { display: none }
+html[data-shell="phone"] .fsa-file-main > span {
+  max-width: 42%;
+}
 html[data-shell="phone"] .fsa-lib-list { max-height: 132px }
 html[data-shell="phone"] .fsa-view-frame,
 html[data-shell="phone"] .fsa-view-img { max-height: 42vh; height: 42vh }

@@ -520,15 +520,45 @@ function looksLikeWorkbook(buffer) {
   }
 }
 
-const SCAN_WARN = 'This PDF is a scan with no text the extractor can read. Upload the MCI iFile Excel (MCI_*.xlsx) from the same pack. The PDF is kept as the signed copy.';
-const MAP_WARN = 'The PDF was read, but IFRS lines could not be mapped cleanly. Upload the MCI iFile Excel (MCI_*.xlsx) from the same pack. The PDF is kept as the signed copy.';
+const SCAN_WARN = 'This PDF is a picture scan. The numbers you see are not selectable text. Upload the MCI iFile Excel (MCI_*.xlsx) or the zip from the same folder. The PDF stays as the signed copy.';
+const MAP_WARN = 'The PDF was read, but no relevant statement fields were found (assets, equity, revenue, profit). Upload the MCI iFile Excel (MCI_*.xlsx) from the same pack. The PDF is kept as the signed copy.';
+const GARBLE_WARN = 'This PDF has no usable statement text. The letters in the file are not readable as accounts. Upload the MCI iFile Excel (MCI_*.xlsx) from the same folder. The PDF stays as the signed copy.';
 const MCI_FAIL_WARN = 'This looks like an MCI iFile workbook, but the statement sheets could not be read. Use the Ministry Excel from the same pack, not a PDF scan.';
+
+const CORE_KEYS = new Set([
+  'cash', 'current_assets', 'total_assets', 'current_liab', 'total_liab',
+  'equity', 'equity_liab', 'revenue', 'net_profit', 'gross_profit', 'operating_profit'
+]);
 
 function pdfScanKind(pages) {
   const text = pages.map(p => p.text || '').join('\n');
   const compact = text.replace(/\s+/g, '');
   if (!pages.length || compact.length < 80) return 'empty';
   return '';
+}
+
+function warnForKind(kind) {
+  if (kind === 'scan') return SCAN_WARN;
+  if (kind === 'garbled') return GARBLE_WARN;
+  if (kind === 'unmapped' || kind === 'thin') return MAP_WARN;
+  return '';
+}
+
+export function classifyExtract(pages = [], lines = []) {
+  const text = pages.map(p => p.text || '').join('\n');
+  const compact = text.replace(/\s+/g, '');
+  const ar = (text.match(/[\u0600-\u06FF]/g) || []).length;
+  const la = (text.match(/[A-Za-z]/g) || []).length;
+  const letters = ar + la;
+  const core = lines.filter(l => CORE_KEYS.has(l.key) && Math.abs(Number(l.current) || 0) >= 100);
+  const mapped = lines.length;
+  let kind = 'ok';
+  if (!pages.length || compact.length < 80) kind = 'scan';
+  else if (letters < 200 || letters / Math.max(compact.length, 1) < 0.22) kind = 'garbled';
+  else if (core.length >= 3 || (mapped >= 8 && core.length >= 2)) kind = 'ok';
+  else if (!mapped) kind = 'unmapped';
+  else kind = 'thin';
+  return { kind, usable: kind === 'ok', core: core.length };
 }
 
 function decodeXml(s) {
@@ -745,14 +775,15 @@ export function assembleFiling({ id, file, pages, lines, identity, synthetic = f
     statements[row.statement].lines.push(row);
   }
   const assessment = assess(lines, identity, pages, sourceSheets || []);
+  const quality = classifyExtract(pages, lines);
   const text = pages.map(p => p.text).join('\n\n');
   const ar = (text.match(/[\u0600-\u06FF]/g) || []).length;
-  const defaultWarn = 'No IFRS line items could be mapped. Check that the file is a text-layer PDF or an MCI iFile Excel pack.';
+  const defaultWarn = quality.usable ? [] : [warnForKind(quality.kind) || MAP_WARN];
   return {
     id,
     synthetic,
     source,
-    status: lines.length ? assessment.status : (pages.length ? 'watch' : 'failed'),
+    status: quality.usable ? assessment.status : (pages.length ? 'watch' : 'failed'),
     file: {
       name: file?.name || 'statement.pdf',
       mime: file?.mime || 'application/pdf',
@@ -773,10 +804,12 @@ export function assembleFiling({ id, file, pages, lines, identity, synthetic = f
       language: identity.language,
       arabicChars: ar,
       mapped: lines.length,
+      kind: quality.kind,
+      usable: quality.usable,
       confidence: lines.length
         ? lines.reduce((s, l) => s + (l.confidence || 0), 0) / lines.length
         : 0,
-      warnings: warnings || (lines.length ? [] : [defaultWarn]),
+      warnings: warnings || defaultWarn,
       preview: text.slice(0, 1200)
     },
     createdAt: new Date().toISOString(),
@@ -859,41 +892,19 @@ async function extractPdfFiling(buffer, name, mime) {
     });
     return filing;
   }
-  const scan = pdfScanKind(pages);
-  const compact = pages.map(p => p.text || '').join('').replace(/\s+/g, '');
-  if (scan) {
-    const identity = detectIdentity(pages.flatMap(p => p.lines), name);
-    return assembleFiling({
-      id: newId('fs'),
-      file: { name, mime: mime || 'application/pdf', bytes: buffer.length },
-      pages,
-      lines: [],
-      identity,
-      source: 'upload',
-      warnings: [SCAN_WARN]
-    });
-  }
   const allLines = pages.flatMap(p => p.lines);
   const identity = detectIdentity(allLines, name);
-  const lines = mapPages(pages);
-  if (lines.length) {
-    return assembleFiling({
-      id: newId('fs'),
-      file: { name, mime: mime || 'application/pdf', bytes: buffer.length },
-      pages,
-      lines,
-      identity,
-      source: 'upload'
-    });
-  }
+  const mapped = pdfScanKind(pages) ? [] : mapPages(pages);
+  const quality = classifyExtract(pages, mapped);
+  const lines = quality.usable ? mapped : [];
   return assembleFiling({
     id: newId('fs'),
     file: { name, mime: mime || 'application/pdf', bytes: buffer.length },
     pages,
-    lines: [],
+    lines,
     identity,
     source: 'upload',
-    warnings: [compact.length >= 80 ? MAP_WARN : SCAN_WARN]
+    warnings: quality.usable ? null : [warnForKind(quality.kind)]
   });
 }
 

@@ -10,7 +10,7 @@ function esc(value) {
 }
 
 function when(iso) {
-  if (!iso) return '—';
+  if (!iso) return '-';
   try {
     return new Date(iso).toLocaleString();
   } catch {
@@ -19,7 +19,7 @@ function when(iso) {
 }
 
 function assigneeName(id) {
-  if (!id) return '—';
+  if (!id) return '-';
   const user = listUsers().find(u => u.id === id);
   return user ? displayName(user) : id;
 }
@@ -41,15 +41,15 @@ export function openControlCase(id, { onChanged } = {}) {
         <div class="k" id="control-case-title">${esc(row.title)}</div>
         <p class="wh-est">${esc(row.reason)}</p>
         <dl class="sig-meta">
-          <div><dt>${s.setKpi || 'KPI'}</dt><dd>${esc((row.kpi || '—').toUpperCase())}</dd></div>
-          <div><dt>${s.ctrlPulled || 'Pulled value'}</dt><dd>${esc(row.pulledValue || '—')} ${esc(row.unit || '')}</dd></div>
-          <div><dt>${s.ctrlPulse || 'Pulse print'}</dt><dd>${esc(row.pulseValue || '—')} ${esc(row.pulseUnit || '')} · ${esc(s.synthBadge || 'Synthetic · populated')}</dd></div>
-          <div><dt>${s.owner || 'Owner'}</dt><dd>${esc(row.owner || '—')}</dd></div>
-          <div><dt>${s.workSource || 'Source'}</dt><dd>${esc(row.source || '—')}</dd></div>
+          <div><dt>${s.setKpi || 'KPI'}</dt><dd>${esc((row.kpi || '-').toUpperCase())}</dd></div>
+          <div><dt>${s.ctrlPulled || 'Pulled value'}</dt><dd>${esc(row.pulledValue || '-')} ${esc(row.unit || '')}</dd></div>
+          <div><dt>${s.ctrlPulse || 'Pulse print'}</dt><dd>${esc(row.pulseValue || '-')} ${esc(row.pulseUnit || '')} · ${esc(s.synthBadge || 'Synthetic · populated')}</dd></div>
+          <div><dt>${s.owner || 'Owner'}</dt><dd>${esc(row.owner || '-')}</dd></div>
+          <div><dt>${s.workSource || 'Source'}</dt><dd>${esc(row.source || '-')}</dd></div>
           <div><dt>${s.ctrlAssignee || 'Assignee'}</dt><dd>${esc(assigneeName(row.assignee))}</dd></div>
           <div><dt>${s.alertState || 'State'}</dt><dd>${esc(displayStatus(row, s))}</dd></div>
         </dl>
-        <p class="wh-est"><b>${s.ctrlGates || 'Failed gates'}</b> · ${esc((row.failedGates || []).join(' · ') || '—')}</p>
+        <p class="wh-est"><b>${s.ctrlGates || 'Failed gates'}</b> · ${esc((row.failedGates || []).join(' · ') || '-')}</p>
         <p class="wh-est">${s.ctrlReadyHint || 'Ready means fit to consider for the next signed pack. The gold orb does not move until a later pack sign-off.'}</p>
 
         <label class="ask-label">${s.ctrlAssignee || 'Assignee'}
@@ -83,8 +83,8 @@ export function openControlCase(id, { onChanged } = {}) {
         <ul class="case-audit">
           <li>${esc(s.ctrlOpened || 'Opened')} · ${esc(when(row.createdAt))}</li>
           ${row.assignee ? `<li>${esc(s.ctrlAssign || 'Assign')} · ${esc(assigneeName(row.assignee))}</li>` : ''}
-          ${row.fix ? `<li>${esc(s.ctrlStatusFix || 'In fix')} · ${esc(row.fix.byName || row.fix.by || '—')} · ${esc(when(row.fix.at))}${row.fix.mapping ? ` · ${esc(row.fix.mapping)}` : ''}</li>` : ''}
-          ${row.tick ? `<li>${esc(s.ctrlTick || 'Tick')} · ${esc(row.tick.status)} · ${esc(row.tick.byName || row.tick.by || '—')} · ${esc(when(row.tick.at))}${row.tick.note ? ` · ${esc(row.tick.note)}` : ''}</li>` : ''}
+          ${row.fix ? `<li>${esc(s.ctrlStatusFix || 'In fix')} · ${esc(row.fix.byName || row.fix.by || '-')} · ${esc(when(row.fix.at))}${row.fix.mapping ? ` · ${esc(row.fix.mapping)}` : ''}</li>` : ''}
+          ${row.tick ? `<li>${esc(s.ctrlTick || 'Tick')} · ${esc(row.tick.status)} · ${esc(row.tick.byName || row.tick.by || '-')} · ${esc(when(row.tick.at))}${row.tick.note ? ` · ${esc(row.tick.note)}` : ''}</li>` : ''}
           <li>${esc(s.ctrlUpdated || 'Updated')} · ${esc(when(row.updatedAt))}${me ? ` · ${esc(displayName(me))}` : ''}</li>
         </ul>
       </div>`;

@@ -3,6 +3,7 @@ import { num } from '../lib/format.js';
 import { exportCsv } from '../lib/export.js';
 import { hideTip } from '../lib/tooltip.js';
 import { bindInfo } from '../lib/infoMark.js';
+import { bindNumberDefs } from '../lib/kpiMark.js';
 import { loadWorld, renderFdiWorld } from '../charts/world.js';
 import { bindCharts } from '../lib/crosshair.js';
 import { pullFdiInvestSaudi } from '../data/index.js';
@@ -104,7 +105,7 @@ function scaleMax(cut, fromYear) {
 }
 
 function sheetCell(v) {
-  if (v == null || v === '' || v === '??' || v === '؟؟') return '—';
+  if (v == null || v === '' || v === '??' || v === '؟؟') return '-';
   if (typeof v === 'number') return num(v);
   return String(v);
 }
@@ -167,9 +168,9 @@ export async function renderFdi(root, data, { openDrill } = {}) {
   root.innerHTML = `
     <div class="stage"><div class="panel fdi-panel" style="padding-top:20px">
       <h1>FDI</h1>
-      <p class="lede">2016-2024 is the public Inflows / Invest Saudi country cut. 2026 forecast columns on this host are synthetic and populated — not MISA calculations. Issued actuals stay as issued. Blanks stay blank.</p>
+      <p class="lede">2016-2024 is the public Inflows / Invest Saudi country cut. 2026 forecast columns on this host are synthetic and populated, not MISA calculations. Issued actuals stay as issued. Blanks stay blank.</p>
 
-      <div class="fdi-kpis" data-kpis></div>
+      <div class="fdi-kpis" data-kpis data-tour="fdi-kpis"></div>
       <div class="fdi-years" data-years role="tablist" aria-label="Year"></div>
 
       <div data-pack class="hide"></div>
@@ -288,10 +289,10 @@ export async function renderFdi(root, data, { openDrill } = {}) {
     const q1 = fdi?.rows?.find(r => r.id === 'q1');
     const q2 = fdi?.rows?.find(r => r.id === 'q2');
     $('[data-kpis]', root).innerHTML = `
-      <div class="fdi-kpi"><div class="k">Year</div><div class="stat">2026</div><div class="meta">Indicators pack</div></div>
-      <div class="fdi-kpi"><div class="k">FDI net · Q1 actual</div><div class="stat">${sheetCell(q1?.netA)}</div><div class="meta">SAR bn · issued</div></div>
-      <div class="fdi-kpi"><div class="k">FDI net · Q2 synthetic forecast</div><div class="stat">${sheetCell(q2?.netF)}</div><div class="meta">Populated · not a MISA calculation · GASTAT actual not issued</div></div>
-      <div class="fdi-kpi"><div class="k">Stock to 2025</div><div class="stat">${sheetCell(fdi?.cumulative2025Stock)}</div><div class="meta">SAR bn cumulative</div></div>`;
+      <div class="fdi-kpi"><div class="k">Year</div><div class="stat" data-kpi-def="year">2026</div><div class="meta">Indicators pack</div></div>
+      <div class="fdi-kpi"><div class="k">FDI net · Q1 actual</div><div class="stat" data-kpi-def="fdi-q1">${sheetCell(q1?.netA)}</div><div class="meta">SAR bn · issued</div></div>
+      <div class="fdi-kpi"><div class="k">FDI net · Q2 synthetic forecast</div><div class="stat" data-kpi-def="fdi-q2">${sheetCell(q2?.netF)}</div><div class="meta">Populated · not a MISA calculation · GASTAT actual not issued</div></div>
+      <div class="fdi-kpi"><div class="k">Stock to 2025</div><div class="stat" data-kpi-def="fdi-stock-2025">${sheetCell(fdi?.cumulative2025Stock)}</div><div class="meta">SAR bn cumulative</div></div>`;
     $('[data-pack]', root).innerHTML = `
       <p class="wh-est">${pack2026?.source?.file || ''} · ${pack2026?.source?.sheet || ''} · ${pack2026?.source?.owners || ''}</p>
       <div class="wh-k">FDI · 2026 sheet</div>
@@ -300,13 +301,13 @@ export async function renderFdi(root, data, { openDrill } = {}) {
           <thead><tr><th>Period</th><th>Inflow fcast</th><th>Inflow actual</th><th>Outflow fcast</th><th>Outflow actual</th><th>Net fcast</th><th>Net actual</th><th>Note</th></tr></thead>
           <tbody>${(fdi?.rows || []).map(r => `<tr class="${r.issued ? 'is-on' : ''}" data-pack-row="${r.id}" tabindex="0">
             <td>${r.period}</td>
-            <td class="num">${sheetCell(r.inflowF)}</td>
-            <td class="num">${r.issued ? sheetCell(r.inflowA) : 'Not issued'}</td>
-            <td class="num">${sheetCell(r.outflowF)}</td>
-            <td class="num">${r.issued ? sheetCell(r.outflowA) : 'Not issued'}</td>
-            <td class="num">${sheetCell(r.netF)}</td>
-            <td class="num">${r.issued ? sheetCell(r.netA) : 'Not issued'}</td>
-            <td>${r.note || '—'}</td>
+            <td class="num" data-kpi-def="inflow">${sheetCell(r.inflowF)}</td>
+            <td class="num" data-kpi-def="inflow">${r.issued ? sheetCell(r.inflowA) : 'Not issued'}</td>
+            <td class="num" data-kpi-def="netflow">${sheetCell(r.outflowF)}</td>
+            <td class="num" data-kpi-def="netflow">${r.issued ? sheetCell(r.outflowA) : 'Not issued'}</td>
+            <td class="num" data-kpi-def="fdi">${sheetCell(r.netF)}</td>
+            <td class="num" data-kpi-def="fdi-q1">${r.issued ? sheetCell(r.netA) : 'Not issued'}</td>
+            <td>${r.note || '-'}</td>
           </tr>`).join('')}</tbody>
         </table>
       </div>
@@ -317,9 +318,9 @@ export async function renderFdi(root, data, { openDrill } = {}) {
           <thead><tr><th>Period</th><th>Forecast</th><th>Actual</th><th>Note</th></tr></thead>
           <tbody>${(gfcf?.rows || []).map(r => `<tr class="${r.issued ? 'is-on' : ''}" data-gfcf-row="${r.id}" tabindex="0">
             <td>${r.period}</td>
-            <td class="num">${sheetCell(r.forecast)}</td>
-            <td class="num">${r.issued ? sheetCell(r.actual) : 'Not issued'}</td>
-            <td>${r.note || '—'}</td>
+            <td class="num" data-kpi-def="gfcf">${sheetCell(r.forecast)}</td>
+            <td class="num" data-kpi-def="gfcf">${r.issued ? sheetCell(r.actual) : 'Not issued'}</td>
+            <td>${r.note || '-'}</td>
           </tr>`).join('')}</tbody>
         </table>
       </div>
@@ -333,6 +334,7 @@ export async function renderFdi(root, data, { openDrill } = {}) {
       tr.style.cursor = 'pointer';
       tr.onclick = () => openDrill?.(['gfcf', 'pack', tr.dataset.gfcfRow]);
     }
+    bindNumberDefs(root);
   };
 
   const paint = ({ boards = true } = {}) => {
@@ -375,17 +377,17 @@ export async function renderFdi(root, data, { openDrill } = {}) {
       tr.classList.toggle('is-on', Number(tr.dataset.y) === year);
     }
     $('[data-kpis]', root).innerHTML = `
-      <div class="fdi-kpi"><div class="k">Year</div><div class="stat">${row.year}</div></div>
-      <div class="fdi-kpi"><div class="k">FDI stock</div><div class="stat">${num(row.stock)}</div><div class="meta">SAR bn</div></div>
-      <div class="fdi-kpi"><div class="k">Net flow</div><div class="stat">${num(row.net)}</div><div class="meta">SAR bn</div></div>
-      <div class="fdi-kpi"><div class="k">Inflow</div><div class="stat">${num(row.inflow)}</div><div class="meta">SAR bn</div></div>`;
+      <div class="fdi-kpi"><div class="k">Year</div><div class="stat" data-kpi-def="year">${row.year}</div></div>
+      <div class="fdi-kpi"><div class="k">FDI stock</div><div class="stat" data-kpi-def="stock">${num(row.stock)}</div><div class="meta">SAR bn</div></div>
+      <div class="fdi-kpi"><div class="k">Net flow</div><div class="stat" data-kpi-def="netflow">${num(row.net)}</div><div class="meta">SAR bn</div></div>
+      <div class="fdi-kpi"><div class="k">Inflow</div><div class="stat" data-kpi-def="inflow">${num(row.inflow)}</div><div class="meta">SAR bn</div></div>`;
     $('[data-map-meta]', root).textContent = arrows.length
       ? `${arrows.length} flows · largest named on the map · ${countries.length} counterparts`
       : 'National totals · country cut not loaded';
     $('[data-insight-title]', root).textContent = insight.title;
     $('[data-insight-body]', root).textContent = insight.body;
     $('[data-flag-legend]', root).innerHTML = arrows.map(o =>
-      `<button type="button" class="fdi-flag-chip${pinned.has(o.id) ? ' on' : ''}" data-pin="${o.id}">${flagImg(o.id, o.name)}<span>${o.name}</span><b class="num">${num(o.value)}</b></button>`
+      `<button type="button" class="fdi-flag-chip${pinned.has(o.id) ? ' on' : ''}" data-pin="${o.id}">${flagImg(o.id, o.name)}<span>${o.name}</span><b class="num" data-kpi-def="inflow">${num(o.value)}</b></button>`
     ).join('');
     $('[data-map-note]', root).textContent = playing
       ? ''
@@ -402,9 +404,9 @@ export async function renderFdi(root, data, { openDrill } = {}) {
       $('[data-origins]', root).innerHTML = countries.map((o, i) => `<tr data-id="${o.id || ''}" class="${pinned.has(o.id) ? 'is-on' : ''}">
         <td class="num">${i + 1}</td>
         <td>${flagImg(o.id, o.name)} ${o.name}</td>
-        <td class="num">${o.inflow == null ? '-' : num(o.inflow)}</td>
-        <td class="num">${o.net == null ? '-' : num(o.net)}</td>
-        <td class="num">${o.stock == null ? '-' : num(o.stock)}</td>
+        <td class="num" data-kpi-def="inflow">${o.inflow == null ? '-' : num(o.inflow)}</td>
+        <td class="num" data-kpi-def="netflow">${o.net == null ? '-' : num(o.net)}</td>
+        <td class="num" data-kpi-def="stock">${o.stock == null ? '-' : num(o.stock)}</td>
       </tr>`).join('') || '<tr><td colspan="5">Country cut did not load.</td></tr>';
       $('[data-sectors]', root).innerHTML = sectors.length
         ? sectorBars(sectors)
@@ -434,6 +436,7 @@ export async function renderFdi(root, data, { openDrill } = {}) {
         paint();
       }
     });
+    bindNumberDefs(root);
   };
 
   const togglePin = id => {

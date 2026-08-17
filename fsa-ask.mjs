@@ -13,7 +13,7 @@ function ratio(filing, id) {
 }
 
 function fmt(n, lang, { pct = false, digits = 0 } = {}) {
-  if (n == null || Number.isNaN(Number(n))) return lang === 'ar' ? '—' : '—';
+  if (n == null || Number.isNaN(Number(n))) return lang === 'ar' ? '-' : '-';
   if (pct) {
     return `${(Number(n) * 100).toLocaleString(lang === 'ar' ? 'ar-SA' : 'en-GB', {
       minimumFractionDigits: 1,
@@ -114,7 +114,7 @@ export function answerFiling(filing, raw, lang = 'en') {
   if (/gate|بواب|جودة|assess|تقييم|articulation|اتساق/i.test(q)) {
     const gates = filing.assessment?.gates || [];
     const lines = gates.map(g =>
-      `${ar ? g.nameAr : g.name}: ${g.status} — ${ar ? g.detailAr : g.detail}`
+      `${ar ? g.nameAr : g.name}: ${g.status}. ${ar ? g.detailAr : g.detail}`
     );
     return {
       text: (ar
@@ -152,8 +152,8 @@ export function answerFiling(filing, raw, lang = 'en') {
       citeLine(row);
       const ch = yoy(row);
       parts.push(ar
-        ? `${row.labelAr}: ${fmt(row.current, 'ar')} ← ${fmt(row.prior, 'ar')} (${ch == null ? '—' : fmt(ch, 'ar', { pct: true })})`
-        : `${row.label}: ${fmt(row.current, 'en')} vs ${fmt(row.prior, 'en')} (${ch == null ? '—' : fmt(ch, 'en', { pct: true })})`);
+        ? `${row.labelAr}: ${fmt(row.current, 'ar')} ← ${fmt(row.prior, 'ar')} (${ch == null ? '-' : fmt(ch, 'ar', { pct: true })})`
+        : `${row.label}: ${fmt(row.current, 'en')} vs ${fmt(row.prior, 'en')} (${ch == null ? '-' : fmt(ch, 'en', { pct: true })})`);
     }
     return {
       text: parts.join('\n') || (ar ? 'لا أرقام مقارنة كافية.' : 'Not enough comparative figures.'),
@@ -174,8 +174,8 @@ export function answerFiling(filing, raw, lang = 'en') {
       const ch = yoy(row);
       return {
         text: ar
-          ? `${row.labelAr} · ${id.periodLabel || ''} · ${fmt(row.current, 'ar')} ${unit}${row.prior != null ? ` · ${id.comparative || 'المقارنة'} ${fmt(row.prior, 'ar')}` : ''}${ch != null ? ` · التغير ${fmt(ch, 'ar', { pct: true })}` : ''}. ${row.ifrs} · صفحة ${row.page || '—'}. المصدر: «${row.sourceLabel}».`
-          : `${row.label} · ${id.periodLabel || ''} · ${fmt(row.current, 'en')} ${unit}${row.prior != null ? ` · ${id.comparative || 'prior'} ${fmt(row.prior, 'en')}` : ''}${ch != null ? ` · change ${fmt(ch, 'en', { pct: true })}` : ''}. ${row.ifrs} · page ${row.page || '—'}. Source label: “${row.sourceLabel}”.`,
+          ? `${row.labelAr} · ${id.periodLabel || ''} · ${fmt(row.current, 'ar')} ${unit}${row.prior != null ? ` · ${id.comparative || 'المقارنة'} ${fmt(row.prior, 'ar')}` : ''}${ch != null ? ` · التغير ${fmt(ch, 'ar', { pct: true })}` : ''}. ${row.ifrs} · صفحة ${row.page || '-'}. المصدر: «${row.sourceLabel}».`
+          : `${row.label} · ${id.periodLabel || ''} · ${fmt(row.current, 'en')} ${unit}${row.prior != null ? ` · ${id.comparative || 'prior'} ${fmt(row.prior, 'en')}` : ''}${ch != null ? ` · change ${fmt(ch, 'en', { pct: true })}` : ''}. ${row.ifrs} · page ${row.page || '-'}. Source label: “${row.sourceLabel}”.`,
         cites
       };
     }

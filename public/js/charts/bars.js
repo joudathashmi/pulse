@@ -42,6 +42,6 @@ export function renderBacktest(host, tableHost, rows) {
   });
   tableHost.innerHTML = tableScroll(`<table class="wh-table is-static" style="margin-top:8px">
     <thead><tr><th>Quarter</th><th>Estimate</th><th>Official</th><th>Error</th></tr></thead><tbody>
-    ${rows.map(r => `<tr><td>${r.p}</td><td class="num">${num(r.est)}</td><td class="num">${num(r.act)}</td><td class="num">${num(r.err)}%</td></tr>`).join('')}
+    ${rows.map(r => `<tr><td>${r.p}</td><td class="num" data-kpi-def="nowcast">${num(r.est)}</td><td class="num" data-kpi-def="official">${num(r.act)}</td><td class="num">${num(r.err)}%</td></tr>`).join('')}
     </tbody></table>`);
 }

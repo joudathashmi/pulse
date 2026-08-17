@@ -2,6 +2,7 @@ import { el, $ } from '../lib/dom.js';
 import { ALERTS } from '../fixtures/alerts.js';
 import { getLang, t } from '../i18n.js';
 import { bindInfo } from '../lib/infoMark.js';
+import { bindNumberDefs } from '../lib/kpiMark.js';
 import {
   loadQueries, createQuery, answerQuery, closeQuery, pendingCount
 } from '../lib/queries.js';
@@ -42,9 +43,9 @@ export function renderAlerts(root, data = {}, ctx = {}) {
         </div>
         <div class="seg" data-tabs>
           <span class="seg-track">
-            <button type="button" class="seg-opt" data-tab="signals">${s.alertSignals || 'Open'} (${work.counts.open})</button>
-            <button type="button" class="seg-opt" data-tab="quarantine">${s.workQuarantine || 'Quarantine'} (${work.counts.quarantine})</button>
-            <button type="button" class="seg-opt" data-tab="actions">${s.workActions || 'Actions'} (${work.counts.actions})</button>
+            <button type="button" class="seg-opt" data-tab="signals">${s.alertSignals || 'Open'} (<b data-kpi-def="open">${work.counts.open}</b>)</button>
+            <button type="button" class="seg-opt" data-tab="quarantine">${s.workQuarantine || 'Quarantine'} (<b data-kpi-def="quarantine">${work.counts.quarantine}</b>)</button>
+            <button type="button" class="seg-opt" data-tab="actions">${s.workActions || 'Actions'} (<b data-kpi-def="actions">${work.counts.actions}</b>)</button>
             <button type="button" class="seg-opt" data-tab="queries">${s.myQueries || 'Questions'}${pending ? ` (${pending})` : ''}</button>
           </span>
         </div>
@@ -251,6 +252,7 @@ export function renderAlerts(root, data = {}, ctx = {}) {
   }
   show(start);
   bindInfo(root);
+  bindNumberDefs(root);
 }
 
 /** Compact ask-owner control for Pulse / chat. */

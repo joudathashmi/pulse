@@ -2,7 +2,7 @@ import { el, $ } from '../lib/dom.js';
 import { getLang, t } from '../i18n.js';
 import {
   getUser, userOwns, loadReadIds, markRead, canOpenAdmin,
-  listUsers, addUser, setUserStatus, ROLES, ROLE_ORDER,
+  listUsers, addUser, patchUser, setUserStatus, ROLES, ROLE_ORDER, CLEARANCE,
   displayName, displayRole, displayDept, signOut
 } from '../lib/session.js';
 import { ownerForMetric, loadQueries } from '../lib/queries.js';
@@ -12,6 +12,98 @@ import { ALERTS } from '../fixtures/alerts.js';
 import { displayStatus, isOpenCase, listCases } from '../lib/control.js';
 import { renderSettings, setSettingsSection } from './settings.js';
 import { openControlCase } from './controlCase.js';
+
+function agencies() {
+  return [
+    'Economic Affairs',
+    'Investment Development Agency',
+    'Digital Transformation',
+    'Quality · Economic Affairs',
+    'Assistant Minister office',
+    'Data Council'
+  ];
+}
+
+function paintPeople(pane, user, s, ar) {
+  const people = listUsers();
+  const active = people.filter(u => u.status !== 'disabled').length;
+  const roleOpts = (selected) => ROLES.map(r =>
+    `<option value="${r.id}" ${r.id === selected ? 'selected' : ''}>${ar ? r.nameAr : r.name}</option>`
+  ).join('');
+  const clearOpts = (selected) => CLEARANCE.map(c =>
+    `<option value="${c.id}" ${c.id === selected ? 'selected' : ''}>${ar ? c.nameAr : c.name}</option>`
+  ).join('');
+  const deptOpts = (selected) => agencies().map(d =>
+    `<option value="${d}" ${d === selected ? 'selected' : ''}>${d}</option>`
+  ).join('');
+
+  pane.innerHTML = `
+    <div class="desk-people">
+      <div class="wh-k">${s.adminTitle || 'User console'}</div>
+      <p class="desk-lede">${s.adminSub || ''}</p>
+      <p class="desk-lede">${s.adminSeedNote || ''}</p>
+
+      <div class="wh-k">${s.adminAdd || 'Create user'}</div>
+      <form class="desk-add is-stack" data-add-user>
+        <label>${s.adminPerson || 'Name'}
+          <input name="name" required autocomplete="off" placeholder="${s.adminPerson || 'Name'}" />
+        </label>
+        <label>${s.adminEmail || 'Email'}
+          <input name="email" type="email" autocomplete="off" placeholder="name@misa.gov.sa" />
+        </label>
+        <label>${s.signInPass || 'Password'}
+          <input name="pass" type="password" required autocomplete="new-password" />
+        </label>
+        <label>${s.adminRole || 'Role'}
+          <select name="roleId">${roleOpts('owner')}</select>
+        </label>
+        <label>${s.adminAgency || 'Agency'}
+          <select name="dept">${deptOpts('Economic Affairs')}</select>
+        </label>
+        <label>${s.adminClear || 'Clearance'}
+          <select name="clearance">${clearOpts('restricted')}</select>
+        </label>
+        <button type="submit" class="btn-primary">${s.adminCreate || s.adminAddBtn || 'Create user'}</button>
+      </form>
+
+      <div class="wh-k">${s.adminDirectory || 'Directory'} · ${active} ${s.adminActive || 'active desks'}</div>
+    </div>`;
+
+  const wrap = $('.desk-people', pane);
+  for (const roleId of ROLE_ORDER) {
+    const group = people.filter(u => u.roleId === roleId);
+    if (!group.length) continue;
+    wrap.appendChild(el(`<div class="desk-role-h">${displayRole(group[0], ar)}</div>`));
+    for (const u of group) {
+      const self = u.id === user.id;
+      const row = el(`<article class="desk-person ${u.status === 'disabled' ? 'is-off' : ''}" data-person="${u.id}">
+        <div class="desk-person-id">
+          <b>${displayName(u, ar)}</b>
+          <span class="desk-row-m">${u.email || ''} · ${displayDept(u, ar)}</span>
+        </div>
+        <label class="desk-person-lab">${s.adminRole || 'Role'}
+          <select data-role ${self ? 'disabled' : ''}>${roleOpts(u.roleId)}</select>
+        </label>
+        <label class="desk-person-lab">${s.adminClear || 'Clearance'}
+          <select data-clear>${clearOpts(u.clearance || 'restricted')}</select>
+        </label>
+        ${self ? `<span class="desk-row-m">${s.adminOn || 'Active'}</span>`
+          : `<button type="button" class="desk-mini" data-toggle>${u.status === 'disabled' ? (s.adminEnable || 'Enable') : (s.adminDisable || 'Disable')}</button>`}
+      </article>`);
+      wrap.appendChild(row);
+    }
+  }
+
+  wrap.appendChild(el(`<div class="wh-k">${s.adminRoles || 'Roles'}</div>`));
+  wrap.appendChild(el(`<p class="desk-lede">${s.adminRolesNote || ''}</p>`));
+  const roleList = el('<ul class="desk-role-list"></ul>');
+  for (const r of ROLES) {
+    roleList.appendChild(el(`<li><b>${ar ? r.nameAr : r.name}</b> ${ar ? r.helpAr : r.help}</li>`));
+  }
+  wrap.appendChild(roleList);
+  wrap.appendChild(el(`<div class="wh-k">${s.adminAccess || 'Access'}</div>`));
+  wrap.appendChild(el(`<p class="desk-lede">${s.adminAccessNote || ''}</p>`));
+}
 
 function kindLabel(kind, s) {
   if (kind === 'reply') return s.deskReply || 'Owner reply';
@@ -218,6 +310,7 @@ export function mountDesk(host, { getData, go, openDrill, startTour, openAskOwne
       <div class="desk-body" data-body></div>`;
 
     const pane = $('[data-body]', body);
+    panel.classList.toggle('is-people', tab === 'people');
     if (tab === 'messages') {
       if (!messages.length) {
         pane.innerHTML = `<div class="empty-filter">${s.deskNoMessages || 'No messages on this desk.'}</div>`;
@@ -232,43 +325,45 @@ export function mountDesk(host, { getData, go, openDrill, startTour, openAskOwne
         }
       }
     } else if (tab === 'people' && canOpenAdmin(user)) {
-      for (const roleId of ROLE_ORDER) {
-        const group = listUsers().filter(u => u.roleId === roleId);
-        if (!group.length) continue;
-        pane.appendChild(el(`<div class="wh-k">${displayRole(group[0], ar)}</div>`));
-        for (const u of group) {
-          const row = el(`<div class="desk-row desk-person ${u.status === 'disabled' ? 'is-off' : ''}">
-            <b>${displayName(u, ar)}</b>
-            <span class="desk-row-m">${displayRole(u, ar)}${u.roleId === 'owner' ? ` · ${displayDept(u, ar)}` : ''}${u.status === 'disabled' ? ` · ${s.adminDisabled || 'Off'}` : ''}</span>
-          </div>`);
-          if (u.id !== user.id) {
-            const tog = el(`<button type="button" class="desk-mini">${u.status === 'disabled' ? (s.adminEnable || 'On') : (s.adminDisable || 'Off')}</button>`);
-            tog.onclick = () => {
-              setUserStatus(u.id, u.status === 'disabled' ? 'active' : 'disabled');
-              render();
-            };
-            row.appendChild(tog);
-          }
-          pane.appendChild(row);
-        }
-      }
-      const form = el(`<form class="desk-add">
-        <input name="name" required autocomplete="off" placeholder="${s.adminPerson || 'Name'}" />
-        <input name="pass" type="password" required autocomplete="new-password" placeholder="${s.signInPass || 'Password'}" />
-        <select name="roleId">${ROLES.map(r => `<option value="${r.id}">${ar ? r.nameAr : r.name}</option>`).join('')}</select>
-        <button type="submit" class="btn-primary">${s.adminAddBtn || 'Add'}</button>
-      </form>`);
-      form.onsubmit = (e) => {
+      paintPeople(pane, user, s, ar);
+      const form = $('[data-add-user]', pane);
+      if (form) form.onsubmit = (e) => {
         e.preventDefault();
         const fd = new FormData(form);
         addUser({
           name: String(fd.get('name') || ''),
+          email: String(fd.get('email') || ''),
+          pass: String(fd.get('pass') || ''),
           roleId: String(fd.get('roleId') || 'owner'),
-          pass: String(fd.get('pass') || '')
+          dept: String(fd.get('dept') || ''),
+          clearance: String(fd.get('clearance') || 'restricted')
         });
         render();
       };
-      pane.appendChild(form);
+      for (const row of pane.querySelectorAll('[data-person]')) {
+        const id = row.dataset.person;
+        const roleSel = row.querySelector('[data-role]');
+        const clearSel = row.querySelector('[data-clear]');
+        const tog = row.querySelector('[data-toggle]');
+        if (roleSel) {
+          roleSel.onchange = () => {
+            patchUser(id, { roleId: roleSel.value });
+            render();
+          };
+        }
+        if (clearSel) {
+          clearSel.onchange = () => {
+            patchUser(id, { clearance: clearSel.value });
+          };
+        }
+        if (tog) {
+          tog.onclick = () => {
+            const person = listUsers().find(u => u.id === id);
+            setUserStatus(id, person?.status === 'disabled' ? 'active' : 'disabled');
+            render();
+          };
+        }
+      }
     } else if (tab === 'settings') {
       renderSettings(pane, getData?.() || {}, {
         startSection: undefined,
@@ -363,6 +458,7 @@ export function mountDesk(host, { getData, go, openDrill, startTour, openAskOwne
     open = true;
     render();
     paintChrome();
+    panel.classList.toggle('is-people', tab === 'people');
     scrim.classList.remove('hide');
     panel.classList.remove('hide');
     document.body.classList.add('desk-open');

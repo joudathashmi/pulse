@@ -8,7 +8,7 @@ ministry pack file, which are modelled to exercise the board, and which are
 The in-product page **What is sourced** (`public/js/fixtures/provenance.js`)
 must stay in step with this document.
 
-## Public — pulled live, and labelled as a pull
+## Public: pulled live, and labelled as a pull
 
 These feeds are fetched by the Node server. The browser talks only to
 `/api/intake/*`. Intake states the connector, the pull time, and that the
@@ -18,7 +18,7 @@ certified Pulse is not overwritten.
 |---|---|---|
 | FDI net inflows, annual, current USD | World Bank `BX.KLT.DINV.CD.WD` | `GET /api/intake/worldbank` |
 | GFCF, annual, current USD | World Bank `NE.GDI.FTOT.CD` | `GET /api/intake/worldbank` |
-| Immediate-country and ISIC sector FDI, 2016–2024, SAR bn | [investsaudi.sa/fdi](https://investsaudi.sa/fdi) | `GET /api/intake/investsaudi` |
+| Immediate-country and ISIC sector FDI, 2016-2024, SAR bn | [investsaudi.sa/fdi](https://investsaudi.sa/fdi) | `GET /api/intake/investsaudi` |
 | Dissemination headlines | misa.gov.sa (scrape) | `GET /api/intake/misa` |
 
 A snapshot of the Invest Saudi cut also lives at `public/data/fdi-investsaudi.json`
@@ -30,7 +30,7 @@ World Bank values are annual USD. Intake compares them to a **synthetic** pack
 print (21.4 / 340 SAR bn), not the real orb. That mismatch is a control case,
 not a conversion the machine is allowed to invent.
 
-## Pack — loaded from ministry files, not computed here
+## Pack: loaded from ministry files, not computed here
 
 | What | Source |
 |---|---|
@@ -41,12 +41,12 @@ not a conversion the machine is allowed to invent.
 | Certified Pulse headlines (orb) | Indicators pack / performance brief → `public/data/brief.json` |
 | 2026 issued actuals (Q1) | Indicators pack, labelled issued / GASTAT |
 | 2026 forecast columns | **Replaced.** Populated synthetic figures in `indicators-2026.json`. Not EA or MISA calculations. |
-| FDI stock, net, inflow 2016–2024 | `FDI_Inflows_Report_2016_2024.xlsx` → `public/data/fdi-history.json` |
+| FDI stock, net, inflow 2016-2024 | `FDI_Inflows_Report_2016_2024.xlsx` → `public/data/fdi-history.json` |
 
 The gold orb is this pack print. Refresh, intake, fix, and tick do not write
 `brief.headlines`.
 
-## Modelled — to exercise the board
+## Modelled: to exercise the board
 
 | What | Why |
 |---|---|
@@ -54,7 +54,7 @@ The gold orb is this pack print. Refresh, intake, fix, and tick do not write
 | Illustrative source-record identifiers at drill level 4 | so the four-tap path can be walked |
 | Seeded alerts, inbox, and directory | so the desk can be demonstrated |
 
-## Synthetic — populated because this host is public
+## Synthetic: populated because this host is public
 
 Internal MISA-calculated estimates are **not** stored on this prototype.
 

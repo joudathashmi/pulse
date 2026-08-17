@@ -1,4 +1,5 @@
 import { $, intoViewIfNeeded } from '../lib/dom.js';
+import { bindNumberDefs } from '../lib/kpiMark.js';
 
 const uniq = a => [...new Set(a)].filter(Boolean).sort();
 
@@ -7,10 +8,10 @@ export function renderInventory(root, inventory) {
   for (const r of inventory) gaps[r.w] = (gaps[r.w] || 0) + 1;
   const avail = inventory.filter(r => /^Available/i.test(r.a || '')).length;
   const cards = [
-    ['Metrics', inventory.length],
-    ['Available', avail],
-    ['No owner', gaps['No clear owner'] || 0],
-    ['Sharing', gaps['Sharing mechanism challenge'] || 0]
+    ['Metrics', inventory.length, 'inv-metrics'],
+    ['Available', avail, 'inv-available'],
+    ['No owner', gaps['No clear owner'] || 0, 'inv-owner'],
+    ['Sharing', gaps['Sharing mechanism challenge'] || 0, 'inv-sharing']
   ];
   root.innerHTML = `
     <div class="stage"><div class="panel" style="padding-top:20px">
@@ -18,7 +19,7 @@ export function renderInventory(root, inventory) {
       <p class="lede">${inventory.length} ministry metrics from the indicator workbook. The Pulse board shows the certified pack only - 2 headlines and 20 leading signals. This catalogue is the rest: series that are available, held for an owner, or waiting on a share.</p>
       <div class="grid four" style="margin:16px 0">
         ${cards.map(c => `<div class="card"><div class="k">${c[0]}</div>
-          <div class="stat">${c[1]}</div></div>`).join('')}
+          <div class="stat" data-kpi-def="${c[2]}">${c[1]}</div></div>`).join('')}
       </div>
       <div class="ctl">
         <input data-q type="search" placeholder="Search…" aria-label="Search">
@@ -75,4 +76,5 @@ export function renderInventory(root, inventory) {
   for (const s of [fc, fw, fa]) s.onchange = draw;
   q.oninput = draw;
   draw();
+  bindNumberDefs(root);
 }

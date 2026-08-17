@@ -28,10 +28,10 @@ live path, not the certified pack. They must not write `brief.headlines`.
 
 ## Data contracts
 
-**brief.json** — certified pack. `headlines.fdi.pulseValue` / `gfcf.pulseValue`
+**brief.json**: certified pack. `headlines.fdi.pulseValue` / `gfcf.pulseValue`
 are the orb. Read-only to the control loop.
 
-**inventory.json** — 326 metrics, short keys:
+**inventory.json**: 326 metrics, short keys:
 
 | key | field |
 |---|---|
@@ -45,20 +45,20 @@ are the orb. Read-only to the control loop.
 | `q` | Quality challenges |
 | `sh` | Sharing mechanism |
 
-**series.json** — `{ hist: [{p,y,q,fdi,gfcf}], cur }`, SAR bn.
-**indicators-2026.json** — pack quarter rows and leading signals.
-**fdi-investsaudi.json** / **fdi-history.json** — country and annual cuts.
-**nowcast.json** — `{ synthetic, populated, disclaimer, path: [{w,est,lo,hi}], official, printWeek }`.
-**backtest.json** — `{ synthetic, populated, disclaimer, rows: [{p,est,act,err}] }`.
+**series.json**: `{ hist: [{p,y,q,fdi,gfcf}], cur }`, SAR bn.
+**indicators-2026.json**: pack quarter rows and leading signals.
+**fdi-investsaudi.json** / **fdi-history.json**: country and annual cuts.
+**nowcast.json**: `{ synthetic, populated, disclaimer, path: [{w,est,lo,hi}], official, printWeek }`.
+**backtest.json**: `{ synthetic, populated, disclaimer, rows: [{p,est,act,err}] }`.
 `loadAll()` unwraps `backtest.rows` so charts still see an array.
 
-**control-ledger.json** (runtime, not in git) — `{ cases, updatedAt }`.
+**control-ledger.json** (runtime, not in git): `{ cases, updatedAt }`.
 
 ## Control API
 
 | Method | Path | Body |
 |---|---|---|
-| GET | `/api/control/cases` | — |
+| GET | `/api/control/cases` | - |
 | POST | `/api/control/cases` | `{ cases: [...] }` upsert |
 | POST | `/api/control/cases/:id/assign` | `{ assignee, by }` |
 | POST | `/api/control/cases/:id/fix` | `{ note, mapping, evidence, proposed, by, byName }` |
@@ -69,7 +69,7 @@ write `localStorage` key `misa-pulse-control-v1`.
 
 ## Auth (prototype)
 
-`public/js/lib/session.js` — seeded directory, `localStorage` session. Not SSO.
+`public/js/lib/session.js`: seeded directory, `localStorage` session. Not SSO.
 Clearance is a label. See `docs/GOVERNANCE.md`.
 
 ## Chart specs

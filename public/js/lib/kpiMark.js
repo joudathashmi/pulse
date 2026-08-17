@@ -1,5 +1,6 @@
 import { el } from './dom.js';
 import { getKpiMeta } from '../fixtures/kpiMeta.js';
+import { t } from '../i18n.js';
 
 let activePop = null;
 
@@ -19,36 +20,78 @@ export function kpiMarkHtml(id) {
   </button>`;
 }
 
-export function bindKpiMarks(root, { brief, onAskDefinition } = {}) {
-  for (const btn of root.querySelectorAll('.kpi-mark')) {
-    if (btn.dataset.bound) continue;
-    btn.dataset.bound = '1';
-    const id = btn.dataset.kpi;
-    const show = () => openMarkPopover(btn, id, brief, onAskDefinition);
-    const hide = () => {
-      setTimeout(() => {
-        if (activePop && !activePop.matches(':hover') && !activePop.contains(document.activeElement)) {
-          closePop();
-        }
-      }, 180);
-    };
-    btn.addEventListener('mouseenter', show);
-    btn.addEventListener('focus', show);
-    btn.addEventListener('mouseleave', hide);
-    btn.addEventListener('blur', hide);
-    btn.addEventListener('click', (e) => {
+function bindHover(node, id, brief, onAskDefinition) {
+  if (node.dataset.kpiBound) return;
+  node.dataset.kpiBound = '1';
+  const currentId = () => node.dataset.kpiDef || node.dataset.kpi || id;
+  const show = () => openMarkPopover(node, currentId(), brief, onAskDefinition);
+  const hide = () => {
+    setTimeout(() => {
+      if (activePop && !activePop.matches(':hover') && !activePop.contains(document.activeElement)) {
+        closePop();
+      }
+    }, 180);
+  };
+  node.addEventListener('mouseenter', show);
+  node.addEventListener('focus', show);
+  node.addEventListener('mouseleave', hide);
+  node.addEventListener('blur', hide);
+  node.addEventListener('click', (e) => {
+    if (node.classList.contains('kpi-mark')) {
       e.preventDefault();
       e.stopPropagation();
-      if (activePop?.dataset.kpi === id) closePop();
+      if (activePop?.dataset.kpi === currentId()) closePop();
       else show();
-    });
+    }
+  });
+}
+
+export function bindKpiMarks(root, { brief, onAskDefinition } = {}) {
+  for (const btn of root.querySelectorAll('.kpi-mark')) {
+    bindHover(btn, btn.dataset.kpi, brief, onAskDefinition);
   }
+}
+
+/** Hover definition on a printed number. Uses data-kpi-def, plus name/body overrides. */
+export function bindNumberDefs(root, { brief, onAskDefinition } = {}) {
+  if (!root) return;
+  for (const node of root.querySelectorAll('[data-kpi-def]')) {
+    bindHover(node, node.dataset.kpiDef, brief, onAskDefinition);
+  }
+}
+
+export function bindKpiHelp(root, opts = {}) {
+  bindKpiMarks(root, opts);
+  bindNumberDefs(root, opts);
+}
+
+function resolveMeta(id, brief, node) {
+  const base = getKpiMeta(id, brief);
+  if (base) {
+    const copy = { ...base };
+    if (node?.dataset.kpiName) copy.name = node.dataset.kpiName;
+    if (node?.dataset.kpiBody) copy.definition = node.dataset.kpiBody;
+    return copy;
+  }
+  const info = t().info?.[id];
+  return {
+    id,
+    name: node?.dataset.kpiName || info?.title || id,
+    definition: node?.dataset.kpiBody || info?.body || 'This figure is on the live pack. Open Ask Me or the page guide for how it is used.',
+    source: 'Live pack',
+    method: 'As published',
+    calculatedAt: '-',
+    calculatedLabel: 'This cycle',
+    owner: 'Steward',
+    frequency: '-'
+  };
 }
 
 function openMarkPopover(anchor, id, brief, onAskDefinition) {
   closePop();
-  const meta = getKpiMeta(id, brief);
+  const meta = resolveMeta(id, brief, anchor);
   if (!meta) return;
+  const ask = typeof onAskDefinition === 'function';
 
   const pop = el(`<div class="kpi-pop" role="dialog" data-kpi="${id}" aria-label="${meta.name} definition">
     <div class="kpi-pop-k">KPI signature</div>
@@ -57,13 +100,13 @@ function openMarkPopover(anchor, id, brief, onAskDefinition) {
       <div><dt>Definition</dt><dd>${meta.definition}</dd></div>
       <div><dt>Source</dt><dd>${meta.source}</dd></div>
       <div><dt>Method</dt><dd>${meta.method}</dd></div>
-      <div><dt>Calculated</dt><dd>${meta.calculatedLabel}<br><span class="mono">${meta.calculatedAt}</span></dd></div>
+      <div><dt>Calculated</dt><dd>${meta.calculatedLabel}${meta.calculatedAt && meta.calculatedAt !== '-' ? `<br><span class="mono">${meta.calculatedAt}</span>` : ''}</dd></div>
       <div><dt>Owner</dt><dd>${meta.owner}</dd></div>
       <div><dt>Frequency</dt><dd>${meta.frequency}</dd></div>
     </dl>
-    <div class="kpi-pop-actions">
+    ${ask ? `<div class="kpi-pop-actions">
       <button type="button" class="btn-ask" data-ask-def>Ask owner · definition</button>
-    </div>
+    </div>` : ''}
   </div>`);
 
   document.body.appendChild(pop);
@@ -85,10 +128,13 @@ function openMarkPopover(anchor, id, brief, onAskDefinition) {
   });
 
   pop.addEventListener('mouseleave', closePop);
-  pop.querySelector('[data-ask-def]').onclick = () => {
-    onAskDefinition?.(meta, id);
-    closePop();
-  };
+  const askBtn = pop.querySelector('[data-ask-def]');
+  if (askBtn) {
+    askBtn.onclick = () => {
+      onAskDefinition?.(meta, id);
+      closePop();
+    };
+  }
 }
 
 document.addEventListener('keydown', (e) => {

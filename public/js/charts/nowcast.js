@@ -68,7 +68,7 @@ export function renderNowcast(host, tableHost, data) {
 
   tableHost.innerHTML = tableScroll(`<table class="wh-table is-static" style="margin-top:8px">
     <thead><tr><th>Week</th><th>Estimate</th><th>Lower</th><th>Upper</th></tr></thead><tbody>
-    ${N.map(p => `<tr><td class="num">${p.w}</td><td class="num">${num(p.est)}</td><td class="num">${num(p.lo)}</td><td class="num">${num(p.hi)}</td></tr>`).join('')}
-    <tr><td>Official print (synthetic demo)</td><td class="num" colspan="3">${num(official)} SAR bn, six weeks after quarter end · populated, not a MISA figure</td></tr>
+    ${N.map(p => `<tr><td class="num">${p.w}</td><td class="num" data-kpi-def="nowcast">${num(p.est)}</td><td class="num" data-kpi-def="nowcast">${num(p.lo)}</td><td class="num" data-kpi-def="nowcast">${num(p.hi)}</td></tr>`).join('')}
+    <tr><td>Official print (synthetic demo)</td><td class="num" colspan="3" data-kpi-def="official">${num(official)} SAR bn, six weeks after quarter end · populated, not a MISA figure</td></tr>
     </tbody></table>`);
 }

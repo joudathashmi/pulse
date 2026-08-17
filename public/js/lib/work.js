@@ -71,7 +71,7 @@ export function heldPackRows(data = {}) {
         title: resolution,
         on: title,
         owner,
-        deadline: '—',
+        deadline: '-',
         status: 'open',
         kind: 'quality',
         go: 'qual'

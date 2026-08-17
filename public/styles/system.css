@@ -94,6 +94,7 @@ details.tv,
   border-color: var(--g800);
   outline: none;
 }
+[data-kpi-def] { cursor: help }
 
 .kpi-pop {
   position: fixed;

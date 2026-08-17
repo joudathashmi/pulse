@@ -26,9 +26,9 @@ the ministry platform.
 ## Then
 
 6. Deep drill for GFCF below level 2 (FDI is wired further today).
-7. Real certificate objects — issuer, timestamp, hash — instead of a status string.
+7. Real certificate objects (issuer, timestamp, hash) instead of a status string.
 8. Signed pack promotion as its own act (ready → orb), never automatic.
-9. 326-metric live warehouse — out of scope for this slice.
+9. 326-metric live warehouse: out of scope for this slice.
 
 ## Do not
 

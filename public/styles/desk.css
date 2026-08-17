@@ -201,10 +201,91 @@ html[dir="rtl"] .desk-row.is-unread { box-shadow: inset -3px 0 0 var(--accent) }
 }
 .desk-row-m { font-size: 11px; color: var(--muted) }
 .desk-ok { margin: 8px 0 0; font-size: 13px; color: var(--muted) }
-.desk-person { cursor: default; display: flex; align-items: center; gap: 10px; flex-wrap: wrap }
-.desk-person:hover { border-color: var(--line-soft) }
-.desk-person b { flex: 1 }
-.desk-person.is-off { opacity: 0.45 }
+.desk-panel.is-people { width: min(560px, 100vw); }
+.desk-lede {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.desk-add.is-stack {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 8px 0 14px;
+}
+.desk-add.is-stack label {
+  display: grid;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.desk-add.is-stack input,
+.desk-add.is-stack select {
+  width: 100%;
+  flex: none;
+}
+.desk-add.is-stack .btn-primary {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+.desk-role-h {
+  margin: 10px 0 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.desk-person {
+  cursor: default;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(88px, 0.8fr) minmax(88px, 0.8fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  background: var(--surf-raised);
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+}
+.desk-person-id { min-width: 0; }
+.desk-person-id b { display: block; font-size: 13px; }
+.desk-person.is-off { opacity: 0.5; }
+.desk-person-lab {
+  display: grid;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  min-width: 0;
+}
+.desk-person-lab select {
+  width: 100%;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--page);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+.desk-role-list {
+  margin: 0 0 12px;
+  padding: 0 0 0 16px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  line-height: 1.45;
+}
+.desk-role-list b { color: var(--ink); }
 .desk-mini {
   appearance: none;
   border: 1px solid var(--line);
@@ -268,6 +349,16 @@ html[data-shell="phone"] .desk-panel {
 }
 html[data-shell="phone"] .desk-add {
   flex-wrap: wrap;
+}
+html[data-shell="phone"] .desk-add.is-stack {
+  grid-template-columns: 1fr;
+}
+html[data-shell="phone"] .desk-person {
+  grid-template-columns: 1fr 1fr;
+}
+html[data-shell="phone"] .desk-person-id,
+html[data-shell="phone"] .desk-mini {
+  grid-column: 1 / -1;
 }
 html[data-shell="phone"] .desk-add .btn-primary {
   width: 100%;

@@ -105,7 +105,7 @@ p, .lede, .wh-est, .wh-web-list, .wh-note p,
   letter-spacing: -0.01em;
 }
 
-.wh-mon-row span:not(.wh-mon-val), .wh-orb-vs, .wh-pulse-nums b, .wh-dash-h span {
+.wh-mon-row span:not(.wh-mon-val):not(.wh-sq), .wh-orb-vs, .wh-pulse-nums b, .wh-dash-h span {
   font-size: var(--fs-label);
   font-weight: var(--fw-med);
   font-variant-numeric: tabular-nums;

@@ -13,13 +13,13 @@ Source: [https://github.com/joudathashmi/pulse](https://github.com/joudathashmi/
 
 ## What it is
 
-- **Home** — certified FDI / GFCF orb, monitors, work counts, pack explorer.
-- **FDI** — immediate-country map from the public Invest Saudi feed.
-- **Intake** — live pull of World Bank, investsaudi.sa/fdi, and misa.gov.sa. Failed
+- **Home**: certified FDI / GFCF orb, monitors, work counts, pack explorer.
+- **FDI**: immediate-country map from the public Invest Saudi feed.
+- **Intake**: live pull of World Bank, investsaudi.sa/fdi, and misa.gov.sa. Failed
   values become shared control cases.
-- **Quality** — six IMF DQAF gates counted from those live cases.
-- **Alerts / desk / bell** — quarantine, assign, fix with evidence, then a named tick.
-- **Nowcast** — in-quarter path. On this hosted prototype the path is **synthetic
+- **Quality**: six IMF DQAF gates counted from those live cases.
+- **Alerts / desk / bell**: quarantine, assign, fix with evidence, then a named tick.
+- **Nowcast**: in-quarter path. On this hosted prototype the path is **synthetic
   and populated**. It is not a MISA calculation.
 
 Sign in with a first name from the prototype directory and password `Pulse2026`

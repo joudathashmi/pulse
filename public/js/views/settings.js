@@ -141,7 +141,7 @@ function paintOwners(brief) {
                 ? `<select class="set-select" data-own="${r.id}">${options}</select>`
                 : `<span class="set-own-val">${r.owner}</span>`}
             </label>
-            <div class="set-own-mail mono">${r.contact || '—'}</div>
+            <div class="set-own-mail mono">${r.contact || '-'}</div>
             <button type="button" class="wh-act" data-ask="${r.id}">${s.askOwner || 'Ask owner'}</button>
           </article>`;
         }).join('')}

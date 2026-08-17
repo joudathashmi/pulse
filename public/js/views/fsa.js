@@ -1,6 +1,7 @@
 import { $, el, intoViewIfNeeded, pinWindow } from '../lib/dom.js';
 import { getLang, t } from '../i18n.js';
 import { askFiling, fileKind, fileUrl, listFilings, loadSample, removeFiling, uploadFiling } from '../lib/fsa.js';
+import { bindNumberDefs } from '../lib/kpiMark.js';
 
 function isPhone() {
   return document.documentElement.getAttribute('data-shell') === 'phone';
@@ -108,6 +109,22 @@ function filingTitle(row, f) {
   return file || f.untitled || 'Untitled filing';
 }
 
+function scrollInside(el) {
+  if (!el || typeof el.closest !== 'function') return;
+  let box = el.parentElement;
+  while (box && box !== document.body) {
+    const st = window.getComputedStyle(box);
+    const oy = st.overflowY;
+    if ((oy === 'auto' || oy === 'scroll') && box.scrollHeight > box.clientHeight + 8) {
+      const boxTop = box.getBoundingClientRect().top;
+      const elTop = el.getBoundingClientRect().top;
+      box.scrollTop += elTop - boxTop - 16;
+      return;
+    }
+    box = box.parentElement;
+  }
+}
+
 function readyClock(iso) {
   if (!iso) return '';
   const d = new Date(iso);
@@ -117,17 +134,45 @@ function readyClock(iso) {
     month: 'short',
     year: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    hour12: false
   });
 }
 
 function listStatus(row, f) {
   const mapped = Number(row.extract?.mapped) || 0;
+  const usable = row.extract?.usable !== false && mapped;
   if (row.synthetic) return { cls: 'ok', word: f.synthShort || 'Sample' };
-  if (mapped) return { cls: row.status === 'risk' ? 'watch' : 'ok', word: f.readyWord || 'Ready' };
+  if (usable) return { cls: row.status === 'risk' ? 'watch' : 'ok', word: f.readyWord || 'Ready' };
   if (row.hasFile) return { cls: 'watch', word: f.needsExcel || 'Needs Excel' };
   if (row.status === 'failed') return { cls: 'failed', word: f.status?.failed || 'Failed' };
   return { cls: 'watch', word: f.needsExcel || 'Needs Excel' };
+}
+
+function emptyExtract(row) {
+  if (row.extract?.usable === false) return true;
+  return !(Number(row.extract?.mapped) || 0);
+}
+
+function emptyNote(row, fx) {
+  const kind = row.extract?.kind;
+  const warn = row.extract?.warnings?.[0] || '';
+  if (kind === 'scan') {
+    return {
+      title: fx.scanTitle || 'This PDF is a picture scan',
+      copy: warn || fx.scanCopy || ''
+    };
+  }
+  if (kind === 'garbled') {
+    return {
+      title: fx.garbledTitle || 'This PDF has no usable statement text',
+      copy: warn || fx.garbledCopy || fx.emptyCopy || ''
+    };
+  }
+  return {
+    title: fx.emptyTitle || 'No relevant statement fields found',
+    copy: warn || fx.emptyCopy || fx.scanCopy || ''
+  };
 }
 
 function stmtTitle(stmt, f) {
@@ -203,7 +248,7 @@ function lineRow(ln, fx, selected, hot) {
       <span class="fsa-line-lab">${esc(label)}</span>
       <span class="fsa-spark" aria-hidden="true"><i class="is-now" style="width:${wNow}%"></i><i class="is-prior" style="width:${wPrior}%"></i></span>
     </td>
-    <td class="num">${money(ln.current)}</td>
+    <td class="num" data-kpi-def="${esc(ln.key)}" data-kpi-name="${esc(label)}">${money(ln.current)}</td>
     <td class="num">${money(ln.prior)}</td>
     <td class="num fsa-chg ${ch == null ? '' : ch < 0 ? 'risk' : 'ok'}">${ch == null ? '' : pct(ch)}</td>
   </tr>`;
@@ -307,7 +352,7 @@ function inspectHtml(row, fx) {
     <div class="fsa-card-k">${esc(fx.inspect || 'Inspector')}</div>
     <h3>${esc(getLang() === 'ar' ? ln.labelAr : ln.label)}</h3>
     <p class="fsa-inspect-bi">${esc(ln.label)} · ${esc(ln.labelAr || '')}</p>
-    <p class="fsa-inspect-num">${esc(money(ln.current))}${ln.prior == null ? '' : ` / ${esc(money(ln.prior))}`}</p>
+    <p class="fsa-inspect-num" data-kpi-def="${esc(ln.key)}" data-kpi-name="${esc(getLang() === 'ar' ? ln.labelAr : ln.label)}">${esc(money(ln.current))}${ln.prior == null ? '' : ` / ${esc(money(ln.prior))}`}</p>
     <p>${esc(fx.compare || 'Current vs prior')}${ch == null ? '' : ` · ${esc(pct(ch))}`}</p>
     <div class="fsa-inspect-bars" aria-hidden="true">
       <span><i style="width:${wNow}%"></i></span>
@@ -327,7 +372,7 @@ function kpiHtml(row, fx) {
       const r = (row.assessment?.ratios || []).find(x => x.id === item.ratio);
       if (!r || r.value == null) return '';
       const on = row._sel?.type === 'ratio' && row._sel.id === item.ratio;
-      return `<button type="button" class="fsa-kpi ${on ? 'is-on' : ''}" data-kpi-ratio="${esc(item.ratio)}" data-jump-stmt="${esc(item.stmt)}">
+      return `<button type="button" class="fsa-kpi ${on ? 'is-on' : ''}" data-kpi-ratio="${esc(item.ratio)}" data-jump-stmt="${esc(item.stmt)}" data-kpi-def="${esc(item.ratio)}">
         <b>${esc(getLang() === 'ar' ? r.nameAr : r.name)}</b>
         <strong>${esc(ratioTxt(r.value, 'x'))}</strong>
       </button>`;
@@ -336,7 +381,7 @@ function kpiHtml(row, fx) {
     if (!ln || ln.current == null) return '';
     const on = row._sel?.type === 'line' && row._sel.key === item.key;
     const label = getLang() === 'ar' ? ln.labelAr : ln.label;
-    return `<button type="button" class="fsa-kpi ${on ? 'is-on' : ''}" data-kpi-line="${esc(item.key)}" data-jump-stmt="${esc(item.stmt)}">
+    return `<button type="button" class="fsa-kpi ${on ? 'is-on' : ''}" data-kpi-line="${esc(item.key)}" data-jump-stmt="${esc(item.stmt)}" data-kpi-def="${esc(item.key)}" data-kpi-name="${esc(label)}">
       <b>${esc(label)}</b>
       <strong>${esc(money(ln.current))}</strong>
     </button>`;
@@ -626,12 +671,11 @@ export function renderFsa(root) {
       const on = row.id === state.selected;
       const id = row.identity || {};
       const st = listStatus(row, fx);
-      const when = readyClock(row.updatedAt || row.createdAt);
-      const mapped = Number(row.extract?.mapped) || 0;
+      const when = readyClock(row.createdAt || row.updatedAt);
       const canRemove = !row.synthetic;
       const meta = [
         id.periodLabel,
-        mapped ? `${mapped} ${fx.lines || 'lines'}` : (st.word || ''),
+        when,
         row.synthetic ? (fx.synthShort || 'Sample') : ''
       ].filter(Boolean).join(' · ');
       return `<article class="fsa-file ${on ? 'is-on' : ''} ${st.cls === 'failed' ? 'is-fail' : ''}" data-row="${esc(row.id)}">
@@ -734,6 +778,11 @@ export function renderFsa(root) {
     const period = id.periodLabel || '';
     const prior = id.comparative || '';
 
+    const mapped = Number(row.extract?.mapped) || 0;
+    const liveRatios = ratios.filter(r => r.value != null);
+    const scanCopy = emptyExtract(row);
+    const note = emptyNote(row, fx);
+
     const selLine = state.sel?.type === 'line' ? lineByKey(row, state.sel.key) : null;
     const selKeys = state.sel?.type === 'ratio' ? (RATIO_KEYS[state.sel.id] || []) : state.sel?.type === 'line' ? [state.sel.key] : [];
     const paperNotes = active?.id === 'notes'
@@ -761,7 +810,7 @@ export function renderFsa(root) {
       const rKind = /margin|هامش|return|عائد/.test(`${r.name} ${r.nameAr}`) ? 'pct' : 'x';
       const on = state.sel?.type === 'ratio' && state.sel.id === r.id ? ' is-on' : '';
       const priorTxt = r.prior == null ? '' : ratioTxt(r.prior, rKind);
-      return `<button type="button" class="fsa-ratio${on}" data-ratio="${esc(r.id)}">
+      return `<button type="button" class="fsa-ratio${on}" data-ratio="${esc(r.id)}" data-kpi-def="${esc(r.id)}">
                   <b>${esc(getLang() === 'ar' ? r.nameAr : r.name)}</b>
                   <strong>${ratioTxt(r.value, rKind)}</strong>
                   <span>${priorTxt}</span>
@@ -808,27 +857,32 @@ export function renderFsa(root) {
             <div class="fsa-id-meta">
               ${row.synthetic ? `<span class="fsa-pill is-synth">${esc(fx.synthBadge || 'Synthetic · populated')}</span>` : ''}
               ${row.extract?.pack === 'mci-ifile' ? `<span class="fsa-pill is-on">${esc(fx.packMci || 'MCI iFile')}</span>` : ''}
-              <span>${row.extract?.mapped || 0} ${esc(fx.lines || 'lines')}</span>
+              <span>${scanCopy ? esc(fx.noFields || 'No fields') : `${row.extract?.mapped || 0} ${esc(fx.lines || 'lines')}`}</span>
               ${row.synthetic ? '' : `<button type="button" class="wh-act" data-del>${esc(fx.remove || 'Remove')}</button>`}
             </div>
           </div>
-          ${(row.extract?.warnings || []).map(w => `<p class="fsa-note">${esc(w)}</p>`).join('')}
-          ${kpiHtml(row, fx)}
-          <div class="fsa-verify" data-gates>
+          ${(scanCopy ? [] : (row.extract?.warnings || [])).map(w => `<p class="fsa-note">${esc(w)}</p>`).join('')}
+          ${scanCopy ? '' : kpiHtml(row, fx)}
+          ${scanCopy ? '' : `<div class="fsa-verify" data-gates>
             <div class="fsa-card-k">${esc(fx.stepGate || 'Verify')}</div>
             <ul class="fsa-gates">${gateHtml}</ul>
-          </div>
+          </div>`}
         </header>
-        <div class="fsa-toolbar">
+        <div class="fsa-toolbar" ${scanCopy ? 'hidden' : ''}>
           <div class="fsa-stmt-nav" role="tablist">${stmtTabs}</div>
           <div class="fsa-pane-nav" role="tablist" aria-label="${esc(fx.view || 'View')}">
             <button type="button" class="fsa-stmt ${state.pane !== 'source' ? 'is-on' : ''}" data-pane="extract">${esc(fx.extractView || 'Extract')}</button>
             <button type="button" class="fsa-stmt ${state.pane === 'source' ? 'is-on' : ''}" data-pane="source">${esc(fx.sourceView || 'Source file')}</button>
           </div>
         </div>
-        <div class="fsa-body ${state.pane === 'source' ? 'is-source' : 'is-extract'}">
+        <div class="fsa-body ${scanCopy ? 'is-scan' : ''} ${state.pane === 'source' ? 'is-source' : 'is-extract'}">
           <div class="fsa-extract">
-            <div class="fsa-paper">
+            ${scanCopy ? `<div class="fsa-scan-note">
+              <div class="fsa-card-k">${esc(fx.signedCopy || 'Signed copy')}</div>
+              <h3>${esc(note.title)}</h3>
+              <p>${esc(note.copy)}</p>
+              <button type="button" class="btn-primary" data-upload-more>${esc(fx.uploadExcel || 'Upload the Excel')}</button>
+            </div>` : `<div class="fsa-paper">
               <div class="fsa-paper-h">
                 <b>${esc(filingTitle(row, fx))}</b>
                 <strong>${esc(activeTitle)}</strong>
@@ -837,10 +891,10 @@ export function renderFsa(root) {
               ${paperNotes}
               ${inspectHtml(row, fx)}
             </div>
-            <div class="fsa-tick-wrap">
+            ${liveRatios.length ? `<div class="fsa-tick-wrap">
               <div class="fsa-card-k">${esc(fx.ratios || 'Ratios')}</div>
               <div class="fsa-tick">${ratioHtml}</div>
-            </div>
+            </div>` : ''}`}
           </div>
           <aside class="fsa-viewer" aria-label="${esc(fx.sourceView || 'Source file')}">
             <header class="fsa-viewer-h">
@@ -901,6 +955,7 @@ export function renderFsa(root) {
         paintWork();
       };
     }
+    work.querySelector('[data-upload-more]')?.addEventListener('click', () => fileInput?.click());
     work.querySelector('[data-pg-prev]')?.addEventListener('click', () => {
       state.page = Math.max(1, state.page - 1);
       paintWork();
@@ -920,7 +975,7 @@ export function renderFsa(root) {
         if (p) state.page = p;
         paintWork();
         work.querySelector(`[data-line="${key}"]`)?.focus({ preventScroll: true });
-        work.querySelector('.fsa-src tr.is-on, iframe.fsa-view-frame, .fsa-view-img')?.scrollIntoView({ block: 'nearest' });
+        scrollInside(work.querySelector('.fsa-src tr.is-on, .fsa-sheet tr.is-on, iframe.fsa-view-frame, .fsa-view-img'));
       };
       tr.addEventListener('click', pick);
       tr.addEventListener('keydown', (e) => {
@@ -989,7 +1044,7 @@ export function renderFsa(root) {
       if (p) state.page = p;
       if (window.matchMedia('(max-width: 959px)').matches) state.pane = 'source';
       paintWork();
-      work.querySelector('.fsa-viewer')?.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+      scrollInside(work.querySelector('.fsa-viewer'));
     });
     for (const tr of work.querySelectorAll('[data-src-row]')) {
       tr.addEventListener('click', () => {
@@ -1049,11 +1104,13 @@ export function renderFsa(root) {
       }).join('') + pending;
       stream.scrollTop = stream.scrollHeight;
       for (const b of stream.querySelectorAll('[data-cite-key]')) {
-        b.onclick = () => {
+        b.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
           if (b.dataset.citeStmt) state.stmt = b.dataset.citeStmt;
           if (b.dataset.citePage) state.page = Number(b.dataset.citePage) || state.page;
           if (b.dataset.citeKey) state.sel = { type: 'line', key: b.dataset.citeKey, stmt: b.dataset.citeStmt || state.stmt };
-          state.focus = 'extract';
+          state.focus = 'chat';
           paintWork();
         };
       }
@@ -1109,13 +1166,13 @@ export function renderFsa(root) {
     paintChat();
     applyFolds(work);
     paintPath();
-    if (state.focus === 'extract') {
-      intoViewIfNeeded(work.querySelector('tr.is-on'));
-    } else {
+    window.scrollTo({ left: pinX, top: pinY, behavior: 'auto' });
+    requestAnimationFrame(() => {
       window.scrollTo({ left: pinX, top: pinY, behavior: 'auto' });
-      requestAnimationFrame(() => window.scrollTo({ left: pinX, top: pinY, behavior: 'auto' }));
-    }
+      scrollInside(work.querySelector('tr.is-on'));
+    });
     if (keepAsk) work.querySelector('[data-q]')?.focus({ preventScroll: true });
+    bindNumberDefs(work);
     } catch (err) {
       setErr(err.message || String(err));
       work.innerHTML = `<article class="fsa-page"><section class="fsa-card fsa-analysis fsa-empty">
@@ -1151,7 +1208,7 @@ export function renderFsa(root) {
     state.waiting = false;
     state.sel = null;
     state.focus = 'extract';
-    if (!(Number(filing.extract?.mapped) || 0)) state.pane = 'source';
+    if (emptyExtract(filing)) state.pane = 'source';
     setErr(filing.hasFile ? '' : (warning || ''));
     paintList();
     paintWork();

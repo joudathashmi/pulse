@@ -1,72 +1,111 @@
 import { $, el } from './dom.js';
 import { isSignedIn } from './session.js';
+import { t } from '../i18n.js';
+
+const GUIDE_ICON = `<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.4"/><path fill="currentColor" d="M7.15 6.05c0-.55.48-1 1.12-1 .62 0 1.08.42 1.08.98 0 .4-.18.64-.7 1.12l-.38.36c-.42.4-.62.78-.62 1.38v.18h1.28v-.16c0-.32.12-.54.52-.92l.4-.38c.7-.64 1.02-1.12 1.02-1.82 0-1.18-.98-2.04-2.4-2.04-1.48 0-2.42.9-2.42 2.14h1.3zm.28 5.62h1.42V10.2H7.43v1.47z"/></svg>`;
 
 const STEPS = [
   {
+    kind: 'deck',
+    kicker: 'Welcome',
+    title: 'What this system is',
+    body: 'Investment Pulse OS is the certified operating picture for FDI and GFCF. The gold ring is the signed pack. Tabs around it are how you trace a number, pull a feed, hold a value, or read a filing. Nothing here overwrites the Pulse until a named person signs.',
+    shots: [
+      { id: 'home', view: 'pulse', cap: 'Live board', blurb: 'One gold ring. Two headlines. Twenty signals.' },
+      { id: 'fdi', view: 'fdi', cap: 'World map', blurb: 'Who invests into the Kingdom, year by year.' },
+      { id: 'work', view: 'alerts', cap: 'Work', blurb: 'Open signals, quarantine, and the next action.' },
+      { id: 'fsa', view: 'fsa', cap: 'Statements', blurb: 'Upload an IFRS filing, extract, gate, and ask.' }
+    ]
+  },
+  {
+    kind: 'deck',
+    kicker: 'What you can do',
+    title: 'Six moves on this desk',
+    body: 'Tap a tile to jump to that board. Or press Next and the guide walks every tab, feature by feature. Hover any number later for its definition.',
+    shots: [
+      { id: 'trace', view: 'drill', cap: 'Trace a number', blurb: 'Headline, then source record.' },
+      { id: 'intake', view: 'intake', cap: 'Intake', blurb: 'Published feeds. Six gates. A person signs.' },
+      { id: 'quality', view: 'qual', cap: 'Quality', blurb: 'DQAF gates before Pulse can move.' },
+      { id: 'ask', view: 'pulse', sel: '.chat-fab', cap: 'Ask Me', blurb: 'Help from the certified pack only.' }
+    ]
+  },
+  {
     view: 'pulse',
     sel: '.brand',
-    title: 'Investment Pulse Operating System',
-    body: 'The certified operating picture for FDI and GFCF. The logo and Pulse take you home. This product is the live pack - not a spreadsheet and not a draft.'
+    title: 'Home',
+    body: 'The logo and Pulse take you back to the live board. This product is the signed pack, not a spreadsheet and not a draft.'
   },
   {
     view: 'pulse',
     sel: '[data-tour="tabs"]',
     title: 'Move by tab',
-    body: 'On a phone the boards sit in the floating pill: Home, FDI, Alerts, and More. On a wide desk they stay in the top bar. Settings is in Display and on your desk.'
+    body: 'On a phone the boards sit in the floating pill: Home, FDI, Alerts, and More. On a wide desk they stay in the top bar. Guide stays in the header on every page.'
   },
   {
     view: 'pulse',
     sel: '[data-tour="desk"]',
     title: 'Your desk',
-    body: 'Your work: messages, assignments, KPIs you own, and Settings. Admin also sees People. Sign out is on this desk and in Display. Ministry tabs stay in the bar.'
+    body: 'Messages, assignments, KPIs you own, and Settings. Admin also sees People. Sign out is on this desk and in Display.'
   },
   {
     view: 'pulse',
     sel: '[data-tour="approvals"]',
     title: 'Approvals',
-    body: 'The bell is what is waiting on you: a held KPI or a figure that needs sign-off. Open it, check the source, then approve or return. The requesting desk gets the message.'
+    body: 'The bell is what is waiting on you: a held KPI or a figure that needs sign-off. Open it, check the source, then approve or return.'
   },
   {
     view: 'pulse',
     sel: '[data-display-open]',
-    title: 'Settings',
-    body: 'Help, the glossary, KPI owners and email alerts live in Display, with Theme and Sign out. The same Settings tab is on your desk. Not a board tab.'
+    title: 'Display',
+    body: 'Theme, language, layout, glossary, KPI owners and email alerts. Guide also lives here if you need it again.'
   },
   {
     view: 'pulse',
     sel: '[data-tour="orb"]',
     title: 'The Pulse',
-    body: 'The gold ring is the certified headline. Switch FDI and GFCF. Tap the ring to trace the number.'
+    body: 'The gold ring is the certified headline in SAR billion. Switch FDI and GFCF. Hover the number for its definition. Tap the ring to trace it.'
   },
   {
     view: 'pulse',
     sel: '[data-tour="highlight"]',
     title: 'Today on the pack',
-    body: 'One insight at a time. Tap the card to open it. The dots step through alerts and pack notes. FDI and GFCF monitors sit under it.'
+    body: 'One insight at a time. Tap the card to open it. The dots step through alerts and pack notes.'
+  },
+  {
+    view: 'pulse',
+    sel: '[data-tour="monitor"]',
+    title: 'Monitors',
+    body: 'FDI and GFCF side by side. Status is a word plus a mark, never colour alone. Hover the figure. Tap to open the board or the drill.'
+  },
+  {
+    view: 'pulse',
+    sel: '[data-tour="work"]',
+    title: 'Work on the pack',
+    body: 'Open, overdue, quarantine, and actions. Held values do not enter the certified Pulse. Tap a count to open Alerts.'
   },
   {
     view: 'pulse',
     sel: '[data-tour="explore"]',
-    title: 'Explore the pack',
-    body: 'The certified series only - 2 headlines and 20 leading signals. Filter, switch Trend / Bars / Pulse, tap a row to drill to the source record. The ◆ mark is the definition and owner. How the number arrives and the connector list live on Intake.'
+    title: 'Explore',
+    body: 'The certified series only: 2 headlines and 20 leading signals. Filter, switch Trend / Bars / Pulse, tap a row to drill. Hover any value for the definition.'
   },
   {
-    view: 'intake',
-    sel: '.wh-pipe',
-    title: 'How the number arrives',
-    body: 'S1 to S6 is the intake path: acquire, certify, compute, nowcast, decide, act. A machine pulls. A person signs. The certified Pulse is not overwritten here.'
+    view: 'pulse',
+    sel: '[data-tour="share"]',
+    title: 'Share and export',
+    body: 'Copy, Teams and email sit on the live position. CSV, the report and PDF sit on Explore, next to the series they export.'
   },
   {
-    view: 'fsa',
-    sel: '.fsa-mast',
-    title: 'Financial statements',
-    body: 'A separate desk. Upload an IFRS PDF or Excel. The extractor maps English and Arabic line items. Gate, assess, then ask the selected filing. It never writes the certified Pulse.'
+    view: 'fdi',
+    sel: '[data-tour="fdi-kpis"]',
+    title: 'FDI figures',
+    body: 'Year, stock, net flow and inflow for the selected cut. Hover a number for the definition. 2026 forecast columns on this host are synthetic and populated, not MISA calculations.'
   },
   {
     view: 'fdi',
     sel: '[data-tour="map"]',
     title: 'World map',
-    body: 'Immediate-country inflows into the Kingdom. Gold arrows are counterparts with a published row. Use + and − to zoom, drag to pan, Play from 2021 to walk the years. Click a country to pin its arrow.'
+    body: 'Immediate-country inflows into the Kingdom. Gold arrows are counterparts with a published row. Use + and - to zoom, drag to pan, Play from 2021 to walk the years.'
   },
   {
     view: 'fdi',
@@ -75,16 +114,88 @@ const STEPS = [
     body: 'The readable rank. The map names only the largest origins so labels do not stack. Tap a chip to pin that country on the map.'
   },
   {
-    view: 'pulse',
-    sel: '.chat-fab',
-    title: 'Ask Me',
-    body: 'Help and support on every tab. It reads the certified pack only - no external model. Ask what a page does, open FDI, or ask a named owner to qualify a number.'
+    view: 'drill',
+    sel: '#v-drill .drill-bar',
+    title: 'Trace a number',
+    body: 'You arrived from Pulse. The path at the top is the trail home. Four taps: headline, indicator, sector or region, then the source record.'
+  },
+  {
+    view: 'drill',
+    sel: '#v-drill [data-levels]',
+    title: 'Four levels',
+    body: 'Each step keeps the control chain: source, method, status. Hover the hero figure for the same definition you saw on the board.'
+  },
+  {
+    view: 'now',
+    sel: '#v-now h1',
+    title: 'In-quarter estimate',
+    body: 'Estimate versus the official print after quarter-end. On this host the path is a populated synthetic figure, not a MISA calculation. It never replaces the certified Pulse.'
+  },
+  {
+    view: 'now',
+    sel: '#v-now [data-chart]',
+    title: 'Path and backtest',
+    body: 'Dashed is the estimate. Solid is the official print. The band is the range. Open the table under each chart. Hover a printed number for the definition.'
+  },
+  {
+    view: 'alerts',
+    sel: '#v-alerts h1',
+    title: 'Alerts and owners',
+    body: 'Open signals, quarantine, and the next action this cycle. Ask a named owner to qualify a figure. Held items stay off the gold ring.'
+  },
+  {
+    view: 'qual',
+    sel: '#v-qual h1',
+    title: 'Quality gates',
+    body: 'IMF DQAF. Six gates. A machine flags. A named person signs. The orb does not move until a later pack sign-off.'
+  },
+  {
+    view: 'qual',
+    sel: '#v-qual [data-gates]',
+    title: 'Gates this cycle',
+    body: 'Each gate shows live cases and how many are held. Hover the counts. Open the exception queue to assign, fix, and tick.'
+  },
+  {
+    view: 'intake',
+    sel: '.wh-pipe',
+    title: 'How the number arrives',
+    body: 'S1 to S6: acquire, certify, compute, nowcast, decide, act. Connectors pull published feeds. A person signs. Refresh does not overwrite the certified Pulse here.'
+  },
+  {
+    view: 'fsa',
+    sel: '.fsa-mast',
+    title: 'Financial statements',
+    body: 'A separate desk. It never writes the certified Pulse. Upload an IFRS PDF or Excel. The extractor maps English and Arabic line items.'
+  },
+  {
+    view: 'fsa',
+    sel: '.fsa-upload',
+    title: 'Upload, extract, ask',
+    body: 'Drop a filing, gate the extract, then ask the selected file. Hover a ratio or a mapped line for what it means. Picture scans need a sibling Excel for the numbers.'
+  },
+  {
+    view: 'inv',
+    sel: '#v-inv h1',
+    title: 'All indicators',
+    body: 'The ministry catalogue. Pulse shows only the certified pack: 2 headlines and 20 signals. This list is the rest, including series still waiting on an owner or a share.'
+  },
+  {
+    view: 'inv',
+    sel: '#v-inv .grid',
+    title: 'Inventory counts',
+    body: 'Metrics, available, no owner, and sharing. Hover a count. Search and filter the table, then open a row for lineage. Nothing here enters Pulse until a steward certifies it.'
+  },
+  {
+    view: 'about',
+    sel: '#v-about h1',
+    title: 'What is sourced',
+    body: 'Real rows are loaded from source files. Modelled rows exist so the live path can be exercised on this prototype. Keep those two lists distinct.'
   },
   {
     view: 'pulse',
-    sel: '[data-tour="share"]',
-    title: 'Share and export',
-    body: 'Copy, Teams and email sit on the live position. CSV, the report and PDF sit on Explore, next to the series they export. Raw pack is its own section. Live pulls sit on Intake.'
+    sel: '.chat-fab',
+    title: 'Ask Me',
+    body: 'Help on every tab. It reads the certified pack only. Ask what a page does, open FDI, or ask a named owner to qualify a number. Guide is also the ? on each page title.'
   }
 ];
 
@@ -92,10 +203,37 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function mountTour({ go, getView, closeDesk }) {
-  const start = $('[data-tour-start]');
-  if (!start) return { start: () => {}, stop: () => {} };
+function firstFeatureIndex(view) {
+  if (view === 'pulse') {
+    const orb = STEPS.findIndex(s => s.sel === '[data-tour="orb"]');
+    if (orb >= 0) return orb;
+  }
+  const i = STEPS.findIndex(s => s.kind !== 'deck' && s.view === view);
+  return i < 0 ? STEPS.findIndex(s => s.kind !== 'deck') : i;
+}
 
+function shotHtml(shot) {
+  return `<button type="button" class="tour-shot" data-jump-view="${shot.view}" data-jump-sel="${shot.sel || ''}">
+    <span class="tour-mini is-${shot.id}" aria-hidden="true"></span>
+    <b>${shot.cap}</b>
+    <span>${shot.blurb}</span>
+  </button>`;
+}
+
+export function pageGuideHtml(view) {
+  const label = t().pageGuide || 'Guide for this page';
+  return `<button type="button" class="page-guide" data-page-guide="${view}" title="${label}" aria-label="${label}">${GUIDE_ICON}</button>`;
+}
+
+export function stampPageGuide(root, view) {
+  if (!root || !view || root.querySelector('[data-page-guide]')) return;
+  const host = root.querySelector('h1, .fsa-mast h1, .wh-day b, .drill-bar-k');
+  if (!host) return;
+  host.classList.add('has-page-guide');
+  host.insertAdjacentHTML('beforeend', pageGuideHtml(view));
+}
+
+export function mountTour({ go, getView, closeDesk }) {
   let i = 0;
   let origin = 'pulse';
   let root = null;
@@ -136,33 +274,65 @@ export function mountTour({ go, getView, closeDesk }) {
     card.style.left = `${left}px`;
   }
 
+  function resolveTarget(step) {
+    if (step.sel === '[data-tour="tabs"]') {
+      const dock = document.querySelector('.float-dock');
+      const pill = document.querySelector('.float-pill');
+      if (dock && pill && getComputedStyle(dock).display !== 'none') return pill;
+      return document.querySelector('.tabs');
+    }
+    return step.sel ? document.querySelector(step.sel) : null;
+  }
+
   async function paint() {
     const step = STEPS[i];
-    if (step.view && getView?.() !== step.view) {
+    if (!step || !root) return;
+    const deck = step.kind === 'deck';
+    root.classList.toggle('is-deck', deck);
+    if (!deck && step.view && getView?.() !== step.view) {
       go?.(step.view, { scroll: false });
       await wait(40);
     }
-    const target = step.sel === '[data-tour="tabs"]'
-      ? (() => {
-        const dock = document.querySelector('.float-dock');
-        const pill = document.querySelector('.float-pill');
-        if (dock && pill && getComputedStyle(dock).display !== 'none') return pill;
-        return document.querySelector('.tabs');
-      })()
-      : document.querySelector(step.sel);
+    const target = deck ? null : resolveTarget(step);
     if (target) {
       target.scrollIntoView({ block: 'center', behavior: 'instant' });
       await wait(30);
     }
-    if (!root) return;
     const hole = $('[data-tour-hole]', root);
     const card = $('[data-tour-card]', root);
-    $('[data-tour-k]', root).textContent = `${i + 1} / ${STEPS.length}`;
+    const shots = $('[data-tour-shots]', root);
+    $('[data-tour-k]', root).textContent = `${i + 1} / ${STEPS.length}${step.kicker ? ` · ${step.kicker}` : ''}`;
     $('[data-tour-title]', root).textContent = step.title;
     $('[data-tour-body]', root).textContent = step.body;
     $('[data-tour-back]', root).disabled = i === 0;
     $('[data-tour-next]', root).textContent = i === STEPS.length - 1 ? 'Done' : 'Next';
+    if (shots) {
+      shots.hidden = !deck;
+      shots.innerHTML = deck ? (step.shots || []).map(shotHtml).join('') : '';
+      for (const b of shots.querySelectorAll('[data-jump-view]')) {
+        b.onclick = () => {
+          const sel = b.dataset.jumpSel;
+          let next = -1;
+          if (sel) next = STEPS.findIndex(s => s.sel === sel);
+          if (next < 0) next = firstFeatureIndex(b.dataset.jumpView);
+          if (next < 0) return;
+          i = next;
+          paint();
+        };
+      }
+    }
     document.querySelectorAll('.is-tour').forEach(n => n.classList.remove('is-tour'));
+    card.classList.toggle('is-deck', deck);
+    if (deck) {
+      hole.hidden = true;
+      const { frame, inset } = frameBox();
+      const cw = Math.min(560, frame - 24);
+      card.style.width = `${cw}px`;
+      card.style.left = `${inset + (frame - cw) / 2}px`;
+      card.style.top = '50%';
+      card.style.transform = 'translateY(-50%)';
+      return;
+    }
     if (target) {
       target.classList.add('is-tour');
       const box = holeBox(target);
@@ -172,12 +342,12 @@ export function mountTour({ go, getView, closeDesk }) {
       hole.style.width = `${box.width}px`;
       hole.style.height = `${box.height}px`;
       placeCard(card, box);
-    } else {
-      hole.hidden = true;
-      card.style.top = '20%';
-      card.style.left = '50%';
-      card.style.transform = 'translateX(-50%)';
+      return;
     }
+    hole.hidden = true;
+    card.style.top = '20%';
+    card.style.left = '50%';
+    card.style.transform = 'translateX(-50%)';
   }
 
   function stop() {
@@ -189,12 +359,12 @@ export function mountTour({ go, getView, closeDesk }) {
     go?.(origin, { scroll: false });
   }
 
-  async function begin() {
+  async function begin(opts = {}) {
     if (!isSignedIn()) return;
     if (root) stop();
     closeDesk?.();
     origin = getView?.() || 'pulse';
-    i = 0;
+    i = opts.view ? Math.max(0, firstFeatureIndex(opts.view)) : 0;
     root = el(`<div class="tour" role="dialog" aria-label="Guided tour">
       <div class="tour-veil" data-tour-veil></div>
       <div class="tour-hole" data-tour-hole hidden></div>
@@ -202,6 +372,7 @@ export function mountTour({ go, getView, closeDesk }) {
         <div class="tour-card-k" data-tour-k></div>
         <h2 data-tour-title></h2>
         <p data-tour-body></p>
+        <div class="tour-shots" data-tour-shots hidden></div>
         <div class="tour-card-acts">
           <button type="button" class="tour-skip" data-tour-skip>Skip</button>
           <span class="tour-card-nav">
@@ -232,7 +403,19 @@ export function mountTour({ go, getView, closeDesk }) {
     if (e.key === 'ArrowLeft') $('[data-tour-back]', root)?.click();
   }
 
-  start.addEventListener('click', begin);
+  document.addEventListener('click', (e) => {
+    const page = e.target.closest('[data-page-guide]');
+    if (page) {
+      e.preventDefault();
+      e.stopPropagation();
+      begin({ view: page.dataset.pageGuide });
+      return;
+    }
+    if (e.target.closest('[data-tour-start]')) {
+      e.preventDefault();
+      begin();
+    }
+  });
   window.addEventListener('resize', () => { if (root) paint(); });
   return { start: begin, stop };
 }

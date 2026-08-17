@@ -13,14 +13,30 @@ const READ_KEY = 'misa-pulse-inbox-read-v1';
 export const ROLE_ORDER = ['admin', 'council', 'methodology', 'owner', 'steward', 'analyst', 'dtit', 'leadership'];
 
 export const ROLES = [
-  { id: 'admin', name: 'Admin', nameAr: 'مدير' },
-  { id: 'council', name: 'Council', nameAr: 'المجلس' },
-  { id: 'methodology', name: 'Method', nameAr: 'المنهج' },
-  { id: 'owner', name: 'KPI', nameAr: 'مؤشر' },
-  { id: 'steward', name: 'Steward', nameAr: 'أمين' },
-  { id: 'analyst', name: 'Analyst', nameAr: 'محلل' },
-  { id: 'dtit', name: 'DTIT', nameAr: 'رقمي' },
-  { id: 'leadership', name: 'Lead', nameAr: 'قيادة' }
+  { id: 'admin', name: 'Admin', nameAr: 'مدير',
+    help: 'Creates desks, assigns roles, and can enable or disable access.',
+    helpAr: 'ينشئ المكاتب ويعيّن الأدوار ويمكنه تفعيل الوصول أو إيقافه.' },
+  { id: 'council', name: 'Council', nameAr: 'المجلس',
+    help: 'Data Council seat. Pack-level questions and monthly arbitration.',
+    helpAr: 'مقعد مجلس البيانات. أسئلة الحزمة والتحكيم الشهري.' },
+  { id: 'methodology', name: 'Method', nameAr: 'المنهج',
+    help: 'Method change board and GASTAT liaison.',
+    helpAr: 'مجلس تغيير المنهج وارتباط الإحصاء.' },
+  { id: 'owner', name: 'KPI', nameAr: 'مؤشر',
+    help: 'Owns a certified print. Qualifies the number when asked.',
+    helpAr: 'يملك رقماً معتمداً. يؤهّل القيمة عند الطلب.' },
+  { id: 'steward', name: 'Steward', nameAr: 'أمين',
+    help: 'Holds quality exceptions and source mapping.',
+    helpAr: 'يمسك استثناءات الجودة وربط المصدر.' },
+  { id: 'analyst', name: 'Analyst', nameAr: 'محلل',
+    help: 'Reads the pack. Does not certify a print.',
+    helpAr: 'يقرأ الحزمة. لا يعتمد رقماً.' },
+  { id: 'dtit', name: 'DTIT', nameAr: 'رقمي',
+    help: 'Digital Transformation. Runs the prototype desk.',
+    helpAr: 'التحول الرقمي. يدير مكتب النموذج.' },
+  { id: 'leadership', name: 'Lead', nameAr: 'قيادة',
+    help: 'Committee view of certified prints.',
+    helpAr: 'عرض اللجنة للأرقام المعتمدة.' }
 ];
 
 export const CLEARANCE = [
@@ -279,6 +295,7 @@ export function canEditDirectory(user = getUser()) {
 }
 
 export function addUser({ name, roleId, dept, email, pass, clearance = 'restricted' }) {
+  if (!canEditDirectory()) return null;
   const clean = (name || '').trim();
   if (!clean) return null;
   const role = roleById(roleId);
@@ -287,6 +304,7 @@ export function addUser({ name, roleId, dept, email, pass, clearance = 'restrict
   const id = `u-${Date.now().toString(36)}`;
   const parts = clean.split(/\s+/);
   const initials = ((parts[0]?.[0] || 'U') + (parts[1]?.[0] || parts[0]?.[1] || 'S')).toUpperCase();
+  const mail = (email || `${parts[0].toLowerCase()}@misa.gov.sa`).trim();
   const row = {
     id,
     name: clean,
@@ -295,7 +313,7 @@ export function addUser({ name, roleId, dept, email, pass, clearance = 'restrict
     roleId: role.id,
     dept: (dept || role.name).trim(),
     deptAr: (dept || role.nameAr).trim(),
-    email: (email || `${parts[0].toLowerCase()}@misa.gov.sa`).trim(),
+    email: mail,
     match: (dept || role.name).toLowerCase(),
     clearance: CLEARANCE.some(c => c.id === clearance) ? clearance : 'restricted',
     pass: String(pass || clean).trim() || 'Pulse2026',
@@ -305,6 +323,37 @@ export function addUser({ name, roleId, dept, email, pass, clearance = 'restrict
   overlay.added = [...added, row];
   saveOverlay(overlay);
   return hydrate(row);
+}
+
+export function patchUser(id, patch = {}) {
+  if (!canEditDirectory()) return listUsers();
+  const current = listUsers().find(u => u.id === id);
+  if (!current) return listUsers();
+  const nextRole = patch.roleId || current.roleId;
+  const admins = listUsers().filter(u => u.roleId === 'admin' && u.status !== 'disabled');
+  if (current.roleId === 'admin' && nextRole !== 'admin' && admins.length <= 1) return listUsers();
+  const allowed = {};
+  if (patch.roleId && ROLES.some(r => r.id === patch.roleId)) allowed.roleId = patch.roleId;
+  if (patch.dept != null) {
+    allowed.dept = String(patch.dept).trim() || current.dept;
+    allowed.deptAr = allowed.dept;
+    allowed.match = allowed.dept.toLowerCase();
+  }
+  if (patch.email != null) allowed.email = String(patch.email).trim() || current.email;
+  if (patch.clearance && CLEARANCE.some(c => c.id === patch.clearance)) allowed.clearance = patch.clearance;
+  if (patch.pass) allowed.pass = String(patch.pass).trim();
+  if (!Object.keys(allowed).length) return listUsers();
+  const overlay = loadOverlay();
+  const extras = overlay.added || [];
+  const i = extras.findIndex(u => u.id === id);
+  if (i >= 0) {
+    extras[i] = { ...extras[i], ...allowed };
+    overlay.added = extras;
+  } else {
+    overlay.patch = { ...(overlay.patch || {}), [id]: { ...(overlay.patch?.[id] || {}), ...allowed } };
+  }
+  saveOverlay(overlay);
+  return listUsers();
 }
 
 export function setUserStatus(id, status) {

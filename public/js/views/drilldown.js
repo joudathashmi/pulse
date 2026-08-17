@@ -4,7 +4,7 @@ import { LEVELS, SECTORS, RECORDS, isParentCertified } from '../fixtures/drilldo
 import { KSA_REGIONS } from '../fixtures/flows.js';
 import { certChip } from '../lib/status.js';
 import { t } from '../i18n.js';
-import { kpiMarkHtml, bindKpiMarks } from '../lib/kpiMark.js';
+import { kpiMarkHtml, bindKpiHelp } from '../lib/kpiMark.js';
 import { openAskOwnerDialog } from './alerts.js';
 import { ownerForMetric } from '../lib/queries.js';
 import { exportCsv, exportPdfPrint } from '../lib/export.js';
@@ -29,11 +29,11 @@ function chain(o) {
   </div>`;
 }
 
-function cutButton({ name, value, status, share, tone, onClick }) {
+function cutButton({ name, value, status, share, tone, onClick, metric }) {
   const b = el(`<button type="button" class="cut${tone ? ` is-${tone}` : ''}">
     <span class="cut-k">${status}</span>
     <span class="cut-n">${name}</span>
-    <span class="cut-v">${value}</span>
+    <span class="cut-v" data-kpi-def="${metric || 'fdi'}">${value}</span>
     ${share ? `<span class="cut-s">${share}</span>` : ''}
   </button>`);
   b.onclick = onClick;
@@ -84,7 +84,7 @@ function crumbs(path, head, pack) {
 }
 
 function sheetVal(v) {
-  if (v == null || v === '') return '—';
+  if (v == null || v === '') return '-';
   if (typeof v === 'number') return num(v);
   return String(v);
 }
@@ -161,6 +161,20 @@ export function renderDrill(root, path, data, navigate) {
   const panel = $('[data-panel]', root);
   bindDrillActs(root, { path, head, value });
   const src = packFile(pack);
+  const seal = () => bindKpiHelp(root, {
+    brief: pack,
+    onAskDefinition: (meta, id) => {
+      const info = ownerForMetric(id, pack);
+      openAskOwnerDialog({
+        metric: id,
+        value: String(value ?? ''),
+        owner: info.owner || meta.owner,
+        ownerContact: info.contact,
+        title: meta.name,
+        question: `Please confirm the official definition of “${meta.name}”.\n\n${meta.definition}\n\nSource: ${meta.source}\nCalculated: ${meta.calculatedLabel}`
+      });
+    }
+  });
 
   if (!head) {
     panel.innerHTML = `<p class="lede">No pack row for “${path[0]}”.</p>`;
@@ -171,7 +185,7 @@ export function renderDrill(root, path, data, navigate) {
     panel.innerHTML = `
       <div class="k">01 · Indicator</div>
       <h2 class="wh-ind" style="margin-top:6px">${sig.name}${kpiMarkHtml(sig.id)}</h2>
-      <div class="hero">${sig.value ?? '—'}<span>${sig.asOf || ''}</span></div>
+      <div class="hero" data-kpi-def="${sig.id}">${sig.value ?? '-'}<span>${sig.asOf || ''}</span></div>
       <p class="lede">${sig.note || 'Leading signal from the Indicators pack.'}</p>
       ${chain({ source: sig.source, method: sig.freq, state: sig.value == null ? 'No data' : 'On the sheet' })}
       <div class="record">
@@ -181,13 +195,14 @@ export function renderDrill(root, path, data, navigate) {
           <div><div class="lab">Sheet</div><div class="val">${sig.sheet}</div></div>
           <div><div class="lab">Row</div><div class="val">${sig.row}</div></div>
           <div><div class="lab">Value</div><div class="val">${sig.value ?? 'No data'}</div></div>
-          <div><div class="lab">As of</div><div class="val">${sig.asOf || '—'}</div></div>
+          <div><div class="lab">As of</div><div class="val">${sig.asOf || '-'}</div></div>
           <div><div class="lab">Source</div><div class="val">${sig.source}</div></div>
           <div><div class="lab">Owner</div><div class="val">${sig.owner}</div></div>
           <div><div class="lab">Frequency</div><div class="val">${sig.freq}</div></div>
           <div><div class="lab">State</div><div class="val">${sig.value == null ? 'Empty in pack' : 'Loaded from sheet'}</div></div>
         </div>
       </div>`;
+    seal();
     return;
   }
 
@@ -205,7 +220,7 @@ export function renderDrill(root, path, data, navigate) {
       panel.innerHTML = `
         <div class="k">03 · Field</div>
         <h2 style="margin-top:6px">${field.label} · ${row.period}</h2>
-        <div class="hero">${sheetVal(field.value)}<span>SAR bn</span></div>
+        <div class="hero" data-kpi-def="${path[0]}">${sheetVal(field.value)}<span>SAR bn</span></div>
         <p class="lede">${state}. ${row.note || ''}</p>
         <div class="record">
           <div class="k">04 · Source record</div>
@@ -227,6 +242,7 @@ export function renderDrill(root, path, data, navigate) {
             lineage: `${src.sheet} · ${row.period} · ${field.label}`
           })}
         </div>`;
+      seal();
       return;
     }
     panel.innerHTML = `
@@ -243,9 +259,11 @@ export function renderDrill(root, path, data, navigate) {
         value: sheetVal(field.value),
         status: fieldState(row, field),
         share: field.role,
+        metric: path[0],
         onClick: () => navigate([path[0], 'pack', row.id, 'field', field.id])
       }));
     }
+    seal();
     return;
   }
 
@@ -258,7 +276,7 @@ export function renderDrill(root, path, data, navigate) {
         <h2 class="wh-ind">${head.name}${kpiMarkHtml(path[0])}</h2>
         ${certChip(certified)}
       </div>
-      <div class="hero">${num(value, path[0] === 'gfcf' ? 0 : 1)}<span>${s.sarBn}</span></div>
+      <div class="hero" data-kpi-def="${path[0]}">${num(value, path[0] === 'gfcf' ? 0 : 1)}<span>${s.sarBn}</span></div>
       ${certified ? '' : `<p class="lede">${s.certIncompleteHint}</p>`}
       ${chain({ ...head, quality: 'Six gates', lineage: `${src.file} → ${src.sheet}`, certificate: certified ? 'Certified' : 'Incomplete' })}
       <div class="k" style="margin-top:20px">${s.packFrom || 'From the Indicators pack'}</div>
@@ -291,34 +309,24 @@ export function renderDrill(root, path, data, navigate) {
           : blank
             ? (s.packGastatHold || 'GASTAT actual not issued')
             : (s.packEaForecast || 'Economic Affairs forecast · SAR bn'),
+        metric: path[0],
         onClick: () => navigate([path[0], 'pack', row.id])
       }));
     }
     const list = $('[data-list]', panel);
     const dec = path[0] === 'gfcf' ? 0 : 1;
-    for (const [name, val, , , childCert] of head.components) {
+    for (const [name, val, , childCert] of head.components) {
       list.appendChild(cutButton({
         name,
         value: `${num(val, dec)}<span class="cut-u">${s.sarBn}</span>`,
         status: childCert ? (s.certComplete || 'Certified') : (s.certIncompleteShort || 'Incomplete'),
         share: `${Math.round((Number(val) / total) * 100)}% ${s.ofHeadline || 'of headline'}`,
         tone: childCert ? 'ok' : 'watch',
+        metric: path[0],
         onClick: () => navigate([path[0], 'comp', name])
       }));
     }
-    bindKpiMarks(panel, {
-      onAskDefinition: (meta, id) => {
-        const info = ownerForMetric(id);
-        openAskOwnerDialog({
-          metric: id,
-          value: String(value),
-          owner: info.owner || meta.owner,
-          ownerContact: info.contact,
-          title: meta.name,
-          question: `Please confirm the official definition of “${meta.name}”.\n\n${meta.definition}\n\nSource: ${meta.source}\nCalculated: ${meta.calculatedLabel}`
-        });
-      }
-    });
+    seal();
     return;
   }
 
@@ -331,7 +339,7 @@ export function renderDrill(root, path, data, navigate) {
         <h2>${path[2]}</h2>
         ${certChip(!!comp?.[4])}
       </div>
-      <div class="hero">${num(comp?.[1] ?? 0, path[0] === 'gfcf' ? 0 : 1)}<span>${s.sarBn}</span></div>
+      <div class="hero" data-kpi-def="${path[0]}">${num(comp?.[1] ?? 0, path[0] === 'gfcf' ? 0 : 1)}<span>${s.sarBn}</span></div>
       <p class="lede">${comp?.[3] || ''}</p>
       ${chain({ ...head, quality: 'Six gates passed', lineage: 'Component → certified store', certificate: comp?.[4] ? 'Certified' : 'Incomplete' })}
       <div class="dim">
@@ -357,6 +365,7 @@ export function renderDrill(root, path, data, navigate) {
             value: num(val),
             status: `${isic} · ${yoy}`,
             share: `${Math.round((Number(val) / total) * 100)}% of this cut`,
+            metric: path[0],
             onClick: () => navigate([path[0], 'comp', path[2], 'sector', name])
           }));
         }
@@ -369,13 +378,15 @@ export function renderDrill(root, path, data, navigate) {
             name: r.name,
             value: num(r[key], key === 'gfcf' ? 0 : 1),
             status: `Regional ${key.toUpperCase()}`,
+            metric: path[0],
             onClick: () => navigate([path[0], 'comp', path[2], 'region', r.id])
           }));
         }
       }
     };
-    for (const b of panel.querySelectorAll('[data-dim]')) b.onclick = () => draw(b.dataset.dim);
+    for (const b of panel.querySelectorAll('[data-dim]')) b.onclick = () => { draw(b.dataset.dim); seal(); };
     draw('sector');
+    seal();
     return;
   }
 
@@ -418,7 +429,7 @@ export function renderDrill(root, path, data, navigate) {
           <div class="k">04 · Source record</div>
           <h2 style="margin-top:6px">${r.id}</h2>
           <div class="grid2">
-            <div><div class="lab">Value</div><div class="val">${num(r.value)} ${s.sarBn}</div></div>
+            <div><div class="lab">Value</div><div class="val" data-kpi-def="${path[0]}">${num(r.value)} ${s.sarBn}</div></div>
             <div><div class="lab">Type</div><div class="val">${r.type}</div></div>
             <div><div class="lab">Region</div><div class="val">${r.region}</div></div>
             <div><div class="lab">Date</div><div class="val">${r.date}</div></div>
@@ -443,11 +454,13 @@ export function renderDrill(root, path, data, navigate) {
         value: num(r.value),
         status: `${r.type} · ${r.region}`,
         share: `${r.date} · ${r.evidence}`,
+        metric: path[0],
         onClick: () => navigate([path[0], 'comp', path[2], path[3], path[4], r.id])
       });
       list.appendChild(row);
       if (path[5] === r.id) showRecord(r, row);
     }
+    seal();
   }
 }
 

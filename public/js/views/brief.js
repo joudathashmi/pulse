@@ -79,7 +79,7 @@ export function renderBriefLanding(panel, navigate) {
           <dl class="score-meta">
             <div><dt>${s.inflow}</dt><dd>${num(f.inflowQ1)}</dd></div>
             <div><dt>${s.outflow}</dt><dd>${num(f.outflowQ1)}</dd></div>
-            <div><dt>${s.eaForecast} Q1</dt><dd>${num(f.q1ForecastLow)}–${num(f.q1ForecastHigh)}</dd></div>
+            <div><dt>${s.eaForecast} Q1</dt><dd>${num(f.q1ForecastLow)}-${num(f.q1ForecastHigh)}</dd></div>
             <div><dt>${s.h1Forecast}</dt><dd>${num(f.h1Forecast)}</dd></div>
           </dl>
           <div class="score-cum">

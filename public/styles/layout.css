@@ -195,7 +195,6 @@ html[data-theme="aurora"] .brand-logo-on-light { display: block }
   justify-content: space-between;
 }
 .top-display-menu .seg-track { margin-inline-start: auto }
-.top-display-menu .top-tour,
 .top-display-menu .top-set,
 .top-display-menu .top-out { width: 100% }
 .top-display-k {
@@ -240,11 +239,14 @@ body.signed-out .top-set,
 body.signed-out .top-display-k { display: none }
 .top-tour {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border: 0;
   background: var(--g800);
   color: #fff;
   height: 34px;
-  padding: 0 14px;
+  padding: 0 12px;
   border-radius: 10px;
   font: inherit;
   font-size: 13px;
@@ -254,6 +256,7 @@ body.signed-out .top-display-k { display: none }
   cursor: pointer;
   flex-shrink: 0;
 }
+.top-tour svg { display: block; flex-shrink: 0 }
 .top-tour:hover { filter: brightness(1.08) }
 .top-live {
   position: relative;

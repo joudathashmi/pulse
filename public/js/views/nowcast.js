@@ -4,7 +4,7 @@ import { t } from '../i18n.js';
 import { renderNowcast } from '../charts/nowcast.js';
 import { renderBacktest } from '../charts/bars.js';
 import { exportToolbarHtml, exportNodePng, exportCsv, exportPdfPrint } from '../lib/export.js';
-import { kpiMarkHtml, bindKpiMarks } from '../lib/kpiMark.js';
+import { kpiMarkHtml, bindKpiHelp } from '../lib/kpiMark.js';
 import { openAskOwnerDialog } from './alerts.js';
 import { ownerForMetric } from '../lib/queries.js';
 
@@ -64,7 +64,7 @@ export function renderNowcastView(root, data) {
   );
   wireExport(root.querySelector('[data-export-for="backtest"]'), btHost, btRows, 'FDI backtest');
 
-  bindKpiMarks(root, {
+  bindKpiHelp(root, {
     brief,
     onAskDefinition: (meta, id) => {
       const info = ownerForMetric(id, brief);

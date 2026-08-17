@@ -503,7 +503,7 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
   if (aboutFdi && aboutWhy) {
     actions.push({ label: 'Open FDI components', run: () => ctx.openDrill?.(['fdi']) });
     return {
-      text: `FDI net ${n(fdi?.netQ1)} SAR bn is the certified headline (BPM6). Inflow ${n(fdi?.inflowQ1)} minus outflow ${n(fdi?.outflowQ1)}. The Q1 forecast band on this host is synthetic (${n(fdi?.eaForecastQ1Low)}–${n(fdi?.eaForecastQ1High)}). Open the drill path for equity / reinvested earnings / debt, then sector and source records.`,
+      text: `FDI net ${n(fdi?.netQ1)} SAR bn is the certified headline (BPM6). Inflow ${n(fdi?.inflowQ1)} minus outflow ${n(fdi?.outflowQ1)}. The Q1 forecast band on this host is synthetic (${n(fdi?.eaForecastQ1Low)}-${n(fdi?.eaForecastQ1High)}). Open the drill path for equity / reinvested earnings / debt, then sector and source records.`,
       actions
     };
   }

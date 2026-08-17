@@ -5,7 +5,7 @@ import { nowStamp } from '../config.js';
 import { t, getLang } from '../i18n.js';
 import { openAskOwnerDialog } from './alerts.js';
 import { ownerForMetric } from '../lib/queries.js';
-import { kpiMarkHtml, bindKpiMarks } from '../lib/kpiMark.js';
+import { kpiMarkHtml, bindKpiHelp } from '../lib/kpiMark.js';
 import { mountPulseOrb } from '../lib/orb.js';
 import { exportRawJson, exportBriefCsv, exportReportTxt, exportPdfPrint } from '../lib/export.js';
 import { shareEmail, shareTeams, copyText, pulseShareBody } from '../lib/share.js';
@@ -224,16 +224,20 @@ function gaugeHtml(pace, badge) {
       <div class="wh-k" style="margin:0" data-info="pace">${s.paceOfYear || 'Pace of year'}</div>
       <span class="wh-badge ${pace < 1 ? 'watch' : 'ok'}">${badge}</span>
     </div>
-    <div class="wh-gauge-val">${pace.toFixed(1)}<span>×</span></div>
+    <div class="wh-gauge-val" data-kpi-def="pace">${pace.toFixed(1)}<span>×</span></div>
     <div class="wh-gauge-track">${ticks}</div>
     <div class="wh-gauge-labs"><span>Slow · −1.0×</span><span>1.0×</span><span>Fast · 3.0×</span></div>
   </div>`;
 }
 
 function monMark(status) {
-  if (status === 'ok') return '✓';
-  if (status === 'risk') return '▲';
-  return '!';
+  if (status === 'ok') {
+    return '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M6.15 11.35 3.4 8.6l1.2-1.2 1.55 1.55 4.2-4.3 1.2 1.2z"/></svg>';
+  }
+  if (status === 'risk') {
+    return '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M8 2.4 14.4 13.6H1.6L8 2.4zm-.7 4.2h1.4v3.2H7.3V6.6zm0 4.2h1.4V12H7.3v-1.2z"/></svg>';
+  }
+  return '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M7.3 3.2h1.4v6.2H7.3V3.2zm0 7.4h1.4V12H7.3v-1.4z"/></svg>';
 }
 
 function monWord(status) {
@@ -349,14 +353,14 @@ export function renderPulse(root, data, onOpen) {
           <canvas class="wh-orb" data-orb width="280" height="280"></canvas>
           <div class="wh-orb-tip" role="tooltip">${s.orbTip || 'Certified headline in SAR bn. The gold ring is the Pulse. Tap to trace the number.'}</div>
           <div class="wh-orb-read">
-            <div class="wh-orb-v" data-orb-v>${fdi ? num(fdi.pulseValue) : '-'}</div>
+            <div class="wh-orb-v" data-orb-v data-kpi-def="fdi">${fdi ? num(fdi.pulseValue) : '-'}</div>
             <div class="wh-orb-switch" role="tablist" aria-label="Headline">
               <button type="button" class="on" role="tab" aria-selected="true" data-orb-metric="fdi">FDI</button>
               <i aria-hidden="true"></i>
               <button type="button" role="tab" aria-selected="false" data-orb-metric="gfcf">GFCF</button>
             </div>
             <div class="wh-orb-unit">SAR bn</div>
-            <div class="wh-orb-vs" data-orb-vs>${fdiPct}% of 2026 target</div>
+            <div class="wh-orb-vs" data-orb-vs data-kpi-def="target-pct">${fdiPct}% of 2026 target</div>
           </div>
         </div>
         <p class="wh-orb-hint" id="orb-tip">${s.orbHint || 'Certified headline · tap to trace'}</p>
@@ -379,27 +383,27 @@ export function renderPulse(root, data, onOpen) {
           </button>
           <div class="wh-hl-dots" data-hl-dots role="tablist" aria-label="Highlights"></div>
         </div>
-        <div class="wh-mons">
-          <button type="button" class="wh-mon" data-open="fdi" data-tour="monitor">
+        <div class="wh-mons" data-tour="monitor">
+          <button type="button" class="wh-mon" data-open="fdi" data-info="fdiMon">
             <div class="wh-mon-h">FDI monitor ${CHEV}</div>
             <div class="wh-mon-row">
               <span class="wh-sq ${fdi?.status || 'watch'}" aria-hidden="true">${monMark(fdi?.status)}</span>
               <div>
                 <b class="${fdi?.status || 'watch'}">${monWord(fdi?.status)}</b>
-                <span class="wh-mon-val">${fdi ? num(fdi.pulseValue) : '-'} <em>SAR bn</em></span>
-                <span>${fdiPct}% of target ${fdi ? num(fdi.yearTarget) : '-'}</span>
+                <span class="wh-mon-val" data-kpi-def="fdi">${fdi ? num(fdi.pulseValue) : '-'} <em>SAR bn</em></span>
+                <span data-kpi-def="target-pct">${fdiPct}% of target ${fdi ? num(fdi.yearTarget) : '-'}</span>
                 <span class="wh-mon-cut">${fdiCutLine(data?.fdiCut)}</span>
               </div>
             </div>
           </button>
-          <button type="button" class="wh-mon" data-open="gfcf">
+          <button type="button" class="wh-mon" data-open="gfcf" data-info="gfcfMon">
             <div class="wh-mon-h">GFCF monitor ${CHEV}</div>
             <div class="wh-mon-row">
               <span class="wh-sq ${gfcf?.status || 'watch'}" aria-hidden="true">${monMark(gfcf?.status)}</span>
               <div>
                 <b class="${gfcf?.status || 'watch'}">${monWord(gfcf?.status)}</b>
-                <span class="wh-mon-val">${gfcf ? num(gfcf.pulseValue, 0) : '-'} <em>SAR bn</em></span>
-                <span>${gfcfPct}% of target ${gfcf ? num(gfcf.yearTarget, 0) : '-'}</span>
+                <span class="wh-mon-val" data-kpi-def="gfcf">${gfcf ? num(gfcf.pulseValue, 0) : '-'} <em>SAR bn</em></span>
+                <span data-kpi-def="target-pct">${gfcfPct}% of target ${gfcf ? num(gfcf.yearTarget, 0) : '-'}</span>
                 <span class="wh-mon-cut">${gfcf?.note || ''}</span>
               </div>
             </div>
@@ -421,13 +425,13 @@ export function renderPulse(root, data, onOpen) {
 
       ${gaugeHtml(pace, badge)}
 
-      <div class="wh-work no-print">
+      <div class="wh-work no-print" data-tour="work">
         <div class="wh-k" data-info="work">${s.workTitle || 'Work on the pack'}</div>
         <div class="wh-work-row">
-          <button type="button" data-work="signals" data-info="open"><span>${s.workOpen || 'Open'}</span><b>${work.counts.open}</b></button>
-          <button type="button" data-work="signals" data-info="overdue"><span>${s.overdue || 'Overdue'}</span><b class="risk">${work.counts.overdue}</b></button>
-          <button type="button" data-work="quarantine" data-info="quarantine"><span>${s.workQuarantine || 'Quarantine'}</span><b>${work.counts.quarantine}</b></button>
-          <button type="button" data-work="actions" data-info="actions"><span>${s.workActions || 'Actions'}</span><b>${work.counts.actions}</b></button>
+          <button type="button" data-work="signals" data-info="open"><span>${s.workOpen || 'Open'}</span><b data-kpi-def="open">${work.counts.open}</b></button>
+          <button type="button" data-work="signals" data-info="overdue"><span>${s.overdue || 'Overdue'}</span><b class="risk" data-kpi-def="overdue">${work.counts.overdue}</b></button>
+          <button type="button" data-work="quarantine" data-info="quarantine"><span>${s.workQuarantine || 'Quarantine'}</span><b data-kpi-def="quarantine">${work.counts.quarantine}</b></button>
+          <button type="button" data-work="actions" data-info="actions"><span>${s.workActions || 'Actions'}</span><b data-kpi-def="actions">${work.counts.actions}</b></button>
         </div>
       </div>
 
@@ -478,10 +482,10 @@ export function renderPulse(root, data, onOpen) {
         <div data-chart-host>${chartHtml(hist)}</div>
       </article>
 
-      <article class="wh-card" data-go-now tabindex="0" role="button">
+      <article class="wh-card" data-go-now tabindex="0" role="button" data-info="nowcast">
         <div class="wh-k">In-quarter estimate · ${s.synthBadge || 'Synthetic · populated'}</div>
         <p class="wh-est">${s.synthNote || 'Populated synthetic figures. Not a MISA calculation.'}</p>
-        <p class="wh-est">Estimate ${now?.path?.[13] ? num(now.path[13].est) : '-'} · official print ${now?.official != null ? num(now.official) : '-'} ${s.sarBn}</p>
+        <p class="wh-est">Estimate <b data-kpi-def="nowcast">${now?.path?.[13] ? num(now.path[13].est) : '-'}</b> · official print <b data-kpi-def="official">${now?.official != null ? num(now.official) : '-'}</b> ${s.sarBn}</p>
         ${nowcastLine(now?.path || [])}
         <span class="wh-link">Open nowcast →</span>
       </article>
@@ -524,6 +528,7 @@ export function renderPulse(root, data, onOpen) {
     }
     if (val) {
       val.textContent = isG ? (gfcf ? num(gfcf.pulseValue, 0) : '-') : (fdi ? num(fdi.pulseValue) : '-');
+      val.dataset.kpiDef = orbMetric;
       val.classList.remove('is-flip');
       void val.offsetWidth;
       val.classList.add('is-flip');
@@ -697,7 +702,7 @@ export function renderPulse(root, data, onOpen) {
       const st = row.status === 'ok' ? 'On track' : row.status === 'watch' ? 'Watch' : row.status === 'risk' ? 'At risk' : (row.status || '-');
       const tr = el(`<tr tabindex="0">
         <td><span class="wh-ind">${row.name}${kpiMarkHtml(row.id)}</span></td>
-        <td class="num">${row.value ?? '-'}</td>
+        <td class="num" data-kpi-def="${row.id}">${row.value ?? '-'}</td>
         <td class="${row.status || ''}">${st}</td>
         <td>${row.source || '-'}</td>
         <td>${row.period || '-'}</td>
@@ -722,6 +727,10 @@ export function renderPulse(root, data, onOpen) {
       activateOnEnter(tr, explore);
       tbody.appendChild(tr);
     }
+    bindKpiHelp(root, {
+      brief: pack,
+      onAskDefinition: (meta, id) => askDefinition(meta, id, pack)
+    });
   };
   for (const b of filters) {
     b.onclick = () => {
@@ -732,11 +741,6 @@ export function renderPulse(root, data, onOpen) {
   }
   paintTable();
   bindCharts(root);
-
-  bindKpiMarks(root, {
-    brief: pack,
-    onAskDefinition: (meta, id) => askDefinition(meta, id, pack)
-  });
   bindInfo(root);
 
   const stampEl = $('[data-live-stamp]', root);

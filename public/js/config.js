@@ -9,7 +9,7 @@ export const C = {
 /**
  * Two-series chart palette. Validated with the dataviz palette checker:
  * lightness / chroma / normal-vision / contrast all PASS; CVD separation sits in the
- * 6–8 floor band, which is legal ONLY with secondary encoding - hence the dashed vs
+ * 6-8 floor band, which is legal ONLY with secondary encoding - hence the dashed vs
  * solid line styles and the direct end-labels in charts/nowcast.js. Do not swap these
  * for two greens without re-running the validator.
  */

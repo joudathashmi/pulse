@@ -36,9 +36,9 @@ Quality counts are “N held this cycle” from live cases, not a static poster.
 On **Pull live sources** (`public/js/views/intake.js`). Comparison prints are
 synthetic (`21.4` / `340` SAR bn), never the real pack headlines.
 
-1. Run `verifyQueue()` — units/vintage (USD vs SAR, annual vs quarter), source
+1. Run `verifyQueue()`: units/vintage (USD vs SAR, annual vs quarter), source
    hierarchy, Invest Saudi vintage, web copy as evidence, scrape issues.
-2. Upsert those rows plus held pack rows from `heldPackRows()` (unissued Q2–Q4,
+2. Upsert those rows plus held pack rows from `heldPackRows()` (unissued Q2-Q4,
    empty signals, quality exceptions).
 3. Paint the steward queue from the ledger.
 

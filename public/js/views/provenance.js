@@ -2,6 +2,7 @@
  * Provenance - clear real vs modelled notes.
  */
 import { REAL, MODELLED } from '../fixtures/provenance.js';
+import { bindNumberDefs } from '../lib/kpiMark.js';
 
 function rows(items, kind) {
   return items.map(([t, d], i) => `
@@ -27,7 +28,7 @@ export function renderProvenance(root) {
             <div class="sys-kicker" id="prov-real">Real</div>
             <h2 class="prov-h2">Loaded from source</h2>
           </div>
-          <span class="prov-count">${REAL.length}</span>
+          <span class="prov-count" data-kpi-def="pack" data-kpi-name="Loaded from source" data-kpi-body="Count of rows on this page that come from a source file, not a modelled stand-in.">${REAL.length}</span>
         </header>
         <div class="prov-list">${rows(REAL, 'REAL')}</div>
       </section>
@@ -38,9 +39,10 @@ export function renderProvenance(root) {
             <div class="sys-kicker" id="prov-mod">Modelled</div>
             <h2 class="prov-h2">Indicative for the prototype</h2>
           </div>
-          <span class="prov-count">${MODELLED.length}</span>
+          <span class="prov-count" data-kpi-def="pack" data-kpi-name="Modelled for the prototype" data-kpi-body="Count of rows modelled so the live path can be exercised. They are not source-file prints.">${MODELLED.length}</span>
         </header>
         <div class="prov-list">${rows(MODELLED, 'MODEL')}</div>
       </section>
     </div></div>`;
+  bindNumberDefs(root);
 }

@@ -473,13 +473,15 @@ html[data-shell="desk"] .wrap { max-width: 1180px }
   background: var(--surf-raised);
   color: inherit;
   font: inherit;
-  text-align: left;
+  text-align: start;
   border-radius: 16px;
   padding: 14px 16px 16px;
   cursor: pointer;
   height: 100%;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   min-width: 0;
 }
 .wh-mon:hover { border-color: color-mix(in srgb, var(--g800) 55%, var(--line-soft)) }
@@ -506,8 +508,10 @@ html[data-shell="desk"] .wrap { max-width: 1180px }
 .wh-mon-row {
   display: flex;
   align-items: flex-start;
+  justify-content: flex-start;
   gap: 12px;
   min-width: 0;
+  width: 100%;
 }
 .wh-mon-row > div { min-width: 0 }
 .wh-mon-row b { display: block; font-size: 13px; font-weight: 700; margin-bottom: 2px }
@@ -529,7 +533,7 @@ html[data-shell="desk"] .wrap { max-width: 1180px }
   letter-spacing: 0;
   margin-inline-start: 4px;
 }
-.wh-mon-row span { display: block; font-size: 12px; color: var(--muted); line-height: 1.4 }
+.wh-mon-row span:not(.wh-sq) { display: block; font-size: 12px; color: var(--muted); line-height: 1.4 }
 .wh-mon-cut {
   display: block;
   margin-top: 6px;
@@ -540,16 +544,36 @@ html[data-shell="desk"] .wrap { max-width: 1180px }
 .wh-mon-row b.ok { color: var(--ok) }
 .wh-mon-row b.watch { color: var(--watch) }
 .wh-mon-row b.risk { color: var(--risk) }
+.wh-mon-row > .wh-sq,
 .wh-sq {
+  box-sizing: border-box;
+  position: relative;
   width: 34px;
   height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  max-width: 34px;
+  max-height: 34px;
   border-radius: 10px;
-  display: grid;
-  place-items: center;
-  font-size: 13px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 0;
+  text-align: center;
+  font-size: 0;
   font-weight: 800;
-  flex-shrink: 0;
-  margin-top: 2px;
+  flex: 0 0 34px;
+  align-self: flex-start;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.wh-sq svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  margin: 0;
 }
 .wh-sq.ok { background: var(--g800); color: #fff }
 .wh-sq.watch { background: color-mix(in srgb, var(--watch) 22%, var(--surf)); color: var(--watch) }
@@ -1294,12 +1318,15 @@ html[data-shell="phone"] .top-ico,
 html[data-shell="phone"] .top-display-btn,
 html[data-shell="phone"] .top-live,
 html[data-shell="phone"] .top-bell,
+html[data-shell="phone"] .top-tour,
 html[data-shell="phone"] .user-btn {
   height: 32px;
   min-width: 32px;
   padding: 0 8px;
 }
 html[data-shell="phone"] .user-btn { padding: 0 4px }
+html[data-shell="phone"] .top-tour { width: 32px; padding: 0; justify-content: center }
+html[data-shell="phone"] .top-tour span { display: none }
 html[data-shell="phone"] .drill-bar { top: 98px }
 html[data-shell="phone"] .tabs {
   top: 56px;
