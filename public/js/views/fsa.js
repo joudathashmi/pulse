@@ -1214,7 +1214,7 @@ export function renderFsa(root) {
       if (state.job) state.job.busy = false;
       setBusy(false);
     }
-  };
+  });
 
   async function ingest(input) {
     const files = (typeof FileList !== 'undefined' && input instanceof FileList)
