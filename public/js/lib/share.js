@@ -31,7 +31,7 @@ export function pulseShareBody(data = {}) {
   const fdi = data.brief?.headlines?.fdi;
   const gfcf = data.brief?.headlines?.gfcf;
   return [
-    'Investment Pulse Operating System · certified',
+    'Investment Pulse · certified',
     `FDI ${fdi?.pulseValue ?? '-'} SAR bn (${fdi?.status || '-'}) · target ${fdi?.yearTarget ?? '-'}`,
     `GFCF ${gfcf?.pulseValue ?? '-'} SAR bn (${gfcf?.status || '-'}) · target ${gfcf?.yearTarget ?? '-'}`,
     `As of ${data.brief?.source?.asOfLabel || ''} · ${location.href}`

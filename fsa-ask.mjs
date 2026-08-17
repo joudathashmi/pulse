@@ -33,6 +33,51 @@ function yoy(row) {
   return (row.current - row.prior) / Math.abs(row.prior);
 }
 
+function correctionNote(row, ar) {
+  if (!row?.correction) return '';
+  const reasons = {
+    mapping: ar ? 'خطأ في الربط' : 'mapping miss',
+    ocr: ar ? 'خطأ في القراءة' : 'OCR',
+    restatement: ar ? 'إعادة عرض' : 'restatement',
+    other: ar ? 'سبب آخر' : 'other'
+  };
+  const why = reasons[row.correction.reason] || reasons.other;
+  const orig = row.extracted?.current;
+  const origTxt = orig == null ? '' : fmt(orig, ar ? 'ar' : 'en');
+  if (ar) {
+    return ` رقم مصحّح من أمين البيانات (${why})${origTxt ? ` · المستخرج كان ${origTxt}` : ''}.`;
+  }
+  return ` Steward-corrected (${why})${origTxt ? `. Extract had ${origTxt}` : ''}.`;
+}
+
+function withCorrections(filing, payload, ar) {
+  if (!payload) return payload;
+  const extra = [];
+  for (const c of payload.cites || []) {
+    const note = correctionNote(line(filing, c.key), ar);
+    if (note && !extra.includes(note)) extra.push(note);
+  }
+  if (!extra.length) return payload;
+  return { ...payload, text: `${String(payload.text || '').trimEnd()}${extra.join('')}` };
+}
+
+function describeLine(row, id, unit, ar) {
+  const ch = yoy(row);
+  return ar
+    ? `${row.labelAr} · ${id.periodLabel || ''} · ${fmt(row.current, 'ar')} ${unit}${row.prior != null ? ` · ${id.comparative || 'المقارنة'} ${fmt(row.prior, 'ar')}` : ''}${ch != null ? ` · التغير ${fmt(ch, 'ar', { pct: true })}` : ''}. ${row.ifrs} · صفحة ${row.page || '-'}. المصدر: «${row.sourceLabel}».`
+    : `${row.label} · ${id.periodLabel || ''} · ${fmt(row.current, 'en')} ${unit}${row.prior != null ? ` · ${id.comparative || 'prior'} ${fmt(row.prior, 'en')}` : ''}${ch != null ? ` · change ${fmt(ch, 'en', { pct: true })}` : ''}. ${row.ifrs} · page ${row.page || '-'}. Source label: "${row.sourceLabel}".`;
+}
+
+function lineByLabel(filing, q) {
+  const hay = String(q || '').toLowerCase();
+  return (filing.lines || []).find(l => {
+    return [l.label, l.labelAr, l.sourceLabel].filter(Boolean).some(lab => {
+      const s = String(lab).toLowerCase();
+      return s.length >= 3 && hay.includes(s);
+    });
+  }) || null;
+}
+
 const KEY_Q = [
   ['revenue', /revenue|turnover|sales|إيراد|مبيعات/i],
   ['net_profit', /net profit|profit for the year|net income|صافي الربح|ربح السنة/i],
@@ -45,6 +90,17 @@ const KEY_Q = [
   ['inventory', /inventor|مخزون/i],
   ['cfo', /operating cash|أنشطة تشغيل/i]
 ];
+
+const RATIO_LINES = {
+  current: ['current_assets', 'current_liab'],
+  quick: ['current_assets', 'inventory', 'current_liab'],
+  de: ['total_liab', 'equity'],
+  roe: ['net_profit', 'equity'],
+  roa: ['net_profit', 'total_assets'],
+  gross: ['gross_profit', 'revenue'],
+  opm: ['operating_profit', 'revenue'],
+  npm: ['net_profit', 'revenue']
+};
 
 const RATIO_Q = [
   ['current', /current ratio|نسبة التداول/i],
@@ -59,6 +115,10 @@ const RATIO_Q = [
 
 export function answerFiling(filing, raw, lang = 'en') {
   const ar = lang === 'ar';
+  return withCorrections(filing, answerFilingInner(filing, raw, ar), ar);
+}
+
+function answerFilingInner(filing, raw, ar) {
   const q = String(raw || '').trim();
   if (!filing) {
     return {
@@ -91,7 +151,8 @@ export function answerFiling(filing, raw, lang = 'en') {
     });
   };
 
-  if (/who|كيان|شركة|entity|what company/i.test(q) && /fil|stat|قائمة|هذه/i.test(q) || /^(who is this|ما هذه الشركة)/i.test(q)) {
+  const aboutEntity = /who|كيان|شركة|entity|what company/i.test(q) && /fil|stat|قائمة|هذه/i.test(q);
+  if (aboutEntity || /^(who is this|ما هذه الشركة)/i.test(q)) {
     return {
       text: ar
         ? `${id.entityAr || id.entity} · ${id.periodLabel || ''} · ${id.framework || 'IFRS'} · ${unit}. ${filing.synthetic ? 'تركيبي · مُعبَّأ. لا يكتب النبض.' : 'مستخرج من الملف.'}`
@@ -133,7 +194,8 @@ export function answerFiling(filing, raw, lang = 'en') {
           cites
         };
       }
-      const pct = /margin|هامش/.test(row.name) || /margin|هامش/.test(row.nameAr);
+      const pct = /margin|هامش|return|عائد|roe|roa/i.test(`${row.name} ${row.nameAr} ${idR}`);
+      for (const key of RATIO_LINES[idR] || []) citeLine(line(filing, key));
       return {
         text: ar
           ? `${row.nameAr} = ${fmt(row.value, 'ar', { pct, digits: pct ? 1 : 2 })}${row.prior != null ? ` · السنة المقارنة ${fmt(row.prior, 'ar', { pct, digits: pct ? 1 : 2 })}` : ''}. ${row.convention}.`
@@ -171,14 +233,20 @@ export function answerFiling(filing, raw, lang = 'en') {
         };
       }
       citeLine(row);
-      const ch = yoy(row);
       return {
-        text: ar
-          ? `${row.labelAr} · ${id.periodLabel || ''} · ${fmt(row.current, 'ar')} ${unit}${row.prior != null ? ` · ${id.comparative || 'المقارنة'} ${fmt(row.prior, 'ar')}` : ''}${ch != null ? ` · التغير ${fmt(ch, 'ar', { pct: true })}` : ''}. ${row.ifrs} · صفحة ${row.page || '-'}. المصدر: «${row.sourceLabel}».`
-          : `${row.label} · ${id.periodLabel || ''} · ${fmt(row.current, 'en')} ${unit}${row.prior != null ? ` · ${id.comparative || 'prior'} ${fmt(row.prior, 'en')}` : ''}${ch != null ? ` · change ${fmt(ch, 'en', { pct: true })}` : ''}. ${row.ifrs} · page ${row.page || '-'}. Source label: “${row.sourceLabel}”.`,
+        text: describeLine(row, id, unit, ar),
         cites
       };
     }
+  }
+
+  const named = lineByLabel(filing, q);
+  if (named) {
+    citeLine(named);
+    return {
+      text: describeLine(named, id, unit, ar),
+      cites
+    };
   }
 
   if (/ratio|نسب|margin|هامش|return|عائد/i.test(q)) {

@@ -8,7 +8,7 @@ export function renderQuality(root) {
   const s = t();
   root.innerHTML = `
     <div class="stage"><div class="panel" style="padding-top:20px">
-      <h1>IMF DQAF · quality gates</h1>
+      <h1>${t().tabs.qual}</h1>
       <p class="lede">${s.ctrlQualLede || 'Live pulls are checked against six gates. Failed values are quarantined, assigned, fixed, and ticked. The certified Pulse is not overwritten here. A machine flags. A person signs. The orb does not move until a later pack sign-off.'}</p>
       <div class="k" style="margin-top:18px">Gates this cycle</div>
       <div data-gates style="margin-top:10px"></div>

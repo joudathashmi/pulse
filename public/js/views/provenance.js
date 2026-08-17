@@ -3,6 +3,7 @@
  */
 import { REAL, MODELLED } from '../fixtures/provenance.js';
 import { bindNumberDefs } from '../lib/kpiMark.js';
+import { t } from '../i18n.js';
 
 function rows(items, kind) {
   return items.map(([t, d], i) => `
@@ -19,7 +20,7 @@ function rows(items, kind) {
 export function renderProvenance(root) {
   root.innerHTML = `
     <div class="stage"><div class="panel" style="padding-top:20px">
-      <h1>Provenance</h1>
+      <h1>${t().tabs.about}</h1>
       <p class="lede">What comes from source files versus what this prototype models so the live path can be exercised.</p>
 
       <section class="prov-board" aria-labelledby="prov-real">

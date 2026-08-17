@@ -64,7 +64,7 @@ export async function exportNodePng(node, filename = 'chart.png', scale = 2) {
   });
 }
 
-export function exportPdfPrint(title = 'Investment Pulse Operating System') {
+export function exportPdfPrint(title = 'Investment Pulse') {
   document.title = title;
   window.print();
 }
@@ -87,7 +87,7 @@ export function buildPackReport(data = {}) {
     '- LEADING SIGNALS -',
     ...signals.map(s => `${s.id}: ${s.name} = ${s.value} (${s.delta || ''}) · ${s.status} · ${s.source} · ${s.period || ''}`),
     '',
-    'Every headline is traceable: definition, source and calculation stamp are on the KPI signature mark in the live view.',
+    'Every headline is traceable: definition, source and calculation stamp are on the definition mark in the live view.',
     'End of report.'
   ];
   return lines.join('\n');

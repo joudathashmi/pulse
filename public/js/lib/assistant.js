@@ -1,5 +1,6 @@
 import { ownerForMetric, loadQueries, pendingCount } from './queries.js';
 import { getKpiMeta } from '../fixtures/kpiMeta.js';
+import { t } from '../i18n.js';
 
 /**
  * Pack-aware assistant - answers from brief.json / series (no external model).
@@ -71,7 +72,11 @@ const COUNTRY_ALIAS = {
 const SKIP_ORIGIN = new Set([
   'the', 'for', 'to', 'from', 'was', 'what', 'fdi', 'gfcf', 'saudi', 'ksa',
   'kingdom', 'arabia', 'inflow', 'outflow', 'net', 'stock', 'year', 'into',
-  'and', 'how', 'did', 'does', 'about', 'show', 'open', 'please', 'tell'
+  'and', 'how', 'did', 'does', 'about', 'show', 'open', 'please', 'tell',
+  'can', 'you', 'me', 'it', 'is', 'or', 'we', 'are', 'all', 'any', 'not',
+  'but', 'our', 'your', 'this', 'that', 'with', 'they', 'them', 'will',
+  'just', 'like', 'more', 'some', 'only', 'than', 'then', 'been', 'have',
+  'has', 'who', 'why', 'need', 'use', 'calculate', 'calculated'
 ]);
 
 function parseYear(q) {
@@ -135,13 +140,27 @@ function latestYearFor(rows, id) {
   return years.length ? Math.max(...years) : null;
 }
 
+const SIGNAL_STOP = new Set([
+  ...SKIP_ORIGIN,
+  'this', 'that', 'with', 'page', 'need', 'use', 'are', 'you', 'can', 'our',
+  'your', 'why', 'who', 'was', 'has', 'have', 'been', 'than', 'then',
+  'complete', 'filing', 'latest', 'value', 'mean', 'means'
+]);
+
 function matchSignal(q, signals = []) {
-  const words = q.toLowerCase().split(/[^a-z0-9\u0600-\u06ff]+/).filter(w => w.length > 2);
+  const words = q.toLowerCase().split(/[^a-z0-9\u0600-\u06ff]+/)
+    .filter(w => w.length > 2 && !SIGNAL_STOP.has(w));
+  if (!words.length) return null;
   let best = null, score = 0;
   for (const s of signals) {
-    const hay = `${s.name} ${s.nameAr || ''} ${s.id} ${s.source || ''}`.toLowerCase();
+    const hay = ` ${s.name} ${s.nameAr || ''} ${s.id} ${s.source || ''} `
+      .toLowerCase()
+      .replace(/[^a-z0-9\u0600-\u06ff]+/g, ' ');
     let sc = 0;
-    for (const w of words) if (hay.includes(w)) sc += 1;
+    for (const w of words) {
+      if (String(s.id || '').toLowerCase() === w) sc += 3;
+      else if (hay.includes(` ${w} `)) sc += 1;
+    }
     if (sc > score) { score = sc; best = s; }
   }
   return score >= 1 ? best : null;
@@ -149,31 +168,31 @@ function matchSignal(q, signals = []) {
 
 export const PAGE_HELP = {
   pulse: {
-    name: 'Investment Pulse Operating System',
+    name: 'Live board',
     hint: 'The gold ring is the certified Pulse. Switch FDI and GFCF. Tap the ring to trace.'
   },
   fdi: {
-    name: 'FDI',
+    name: 'FDI by country',
     hint: 'Gold arrows are immediate-country inflows. Tap a flag chip to pin a country. Play from 2021 walks the years.'
   },
   drill: {
-    name: 'Drill path',
+    name: 'Trace a number',
     hint: 'Four taps: headline, indicator, sector or region, then the source record.'
   },
   now: {
-    name: 'Nowcast',
+    name: 'In-quarter estimate',
     hint: 'In-quarter estimate versus the official print. On this host the path is a populated synthetic estimate, not a MISA calculation. It never replaces the certified figure.'
   },
   alerts: {
-    name: 'Work on the pack',
+    name: 'Alerts and owners',
     hint: 'Open, Quarantine and Actions are the work lists. Held values do not enter the certified Pulse.'
   },
   qual: {
-    name: 'Quality',
+    name: 'Quality gates',
     hint: 'Six DQAF gates. A machine flags; a named person signs.'
   },
   intake: {
-    name: 'Intake',
+    name: 'How data arrives',
     hint: 'Live connectors pull published feeds. A person certifies. The certified Pulse is not overwritten.'
   },
   fsa: {
@@ -181,11 +200,11 @@ export const PAGE_HELP = {
     hint: 'A separate desk. Upload an IFRS PDF or Excel, extract line items in English or Arabic, gate them, then ask the selected filing. It does not write the Pulse. Use the chat on that page, not this pack assistant.'
   },
   inv: {
-    name: 'Inventory',
+    name: 'All indicators',
     hint: '326 ministry metrics. The Pulse board shows only the certified pack - 2 headlines and 20 signals.'
   },
   about: {
-    name: 'Provenance',
+    name: 'What is sourced',
     hint: 'What is loaded from source files versus what this prototype models so the live path can be exercised.'
   },
   settings: {
@@ -195,14 +214,16 @@ export const PAGE_HELP = {
 };
 
 export function pageHelp(view) {
-  return PAGE_HELP[view] || PAGE_HELP.pulse;
+  const base = PAGE_HELP[view] || PAGE_HELP.pulse;
+  const name = t().tabs?.[view] || base.name;
+  return { ...base, name };
 }
 
 /** Proactive offer when the user looks stuck. Pack only. */
 export function nudgeHelp(view) {
   const page = pageHelp(view);
   const extra = {
-    pulse: { label: 'Open work on the pack', prompt: 'Show alerts' },
+    pulse: { label: 'Open Alerts and owners', prompt: 'Show alerts' },
     fdi: { label: 'Who leads inflow?', prompt: 'Who leads inflow?' },
     drill: { label: 'How do I use this page?', prompt: 'How do I use this page?' },
     alerts: { label: 'Ask owner about GFCF', prompt: 'Ask owner about GFCF' },
@@ -210,7 +231,7 @@ export function nudgeHelp(view) {
     inv: { label: 'Where do we stand?', prompt: 'Where do we stand?' },
     qual: { label: 'Show alerts', prompt: 'Show alerts' },
     intake: { label: 'Show alerts', prompt: 'Show alerts' },
-    fsa: { label: 'Open Financial Statements', prompt: 'Open Financial Statements' },
+    fsa: { label: 'How do I use this page?', prompt: 'How do I use this page?' },
     about: { label: 'Open FDI', prompt: 'Open FDI' },
     settings: { label: 'Start the guide', prompt: 'Start the guide' }
   };
@@ -245,18 +266,19 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
   const aboutGfcf = /\b(gfcf|capital formation|تكوين رأس|رأس المال)\b/i.test(q);
   const aboutWhy = /\b(why|why did|what moved|سبب|لماذا|ليش)\b/i.test(q);
   const aboutSignal = /\b(signal|leading|pmi|cds|confidence|import|export|deal|مؤشر|إشارة)\b/i.test(q);
-  const aboutAlert = /\b(alert|risk|watch|overdue|تنبيه)\b/i.test(q);
+  const aboutAlert = /\b(alerts?|at[- ]risk|overdue|تنبيه|تنبيهات)\b/i.test(q);
   const aboutQualify = /\b(ask owner|qualify|qualification|clarify|caveat|اسأل المالك|توضيح)\b/i.test(q);
-  const aboutDef = /\b(defin|what is|what does .+ mean|how is .+ calculated|تعريف|معنى)\b/i.test(q);
-  const aboutNowcast = /\b(nowcast|estimate|forecast|تقدير|توقع)\b/i.test(q);
+  const aboutDef = /\b(defin\w*|what is|what does .+ mean|how (?:is|to) .{0,40}(?:calculat|defin|measur)\w*|تعريف|معنى)/i.test(q);
+  const aboutNowcast = /\b(nowcast|in-quarter estimate|تقدير|توقع)\b/i.test(q);
   const aboutTour = /\b(tour|start the guide|start guide|walk me|show me around|جولة|المرشد)\b/i.test(q);
-  const aboutHelp = /\b(help|support|assist|how do i|how to|what can you|this page|explain this|مرحبا|مساعدة|دعم)\b/i.test(q);
+  const aboutHelp = /\b(i need help|need help|help me|how do i use|how to use this|this page|explain this page|what can you do|مرحبا|مساعدة|دعم)\b/i.test(q)
+    || /^(help|support|assist)\b/i.test(q);
   const aboutWhere = /\b(where do we stand|how are we|position|أين نقف|الوضع)\b/i.test(q);
   const aboutMyQueries = /\b(my questions|my queries|pending questions|أسئلتي)\b/i.test(q);
   const aboutDesk = /\b(my desk|messages|assignments|what do i own|ownership|my kpis|مكتبي|رسائلي|تكليف|ملكية)\b/i.test(q);
   const aboutAdmin = /\b(admin|user console|directory|data council|sign out|log ?out|وحدة المستخدم|مجلس البيانات|خروج)\b/i.test(q);
   const aboutSettings = /\b(settings|glossary|email alerts?|kpi owners?|help menu|help guide|إعدادات|مسرد)\b/i.test(q);
-  const aboutFsa = /\b(financial statement|ifrs|القوائم المالية|قائمة مالية)\b/i.test(q);
+  const aboutFsa = /\b(financial statements?|ifrs|القوائم المالية|قائمة مالية|what is revenue|profit for the year|current ratio|filing complete)\b/i.test(q);
 
   if (aboutFsa) {
     actions.push({ label: 'Open Financial Statements', run: () => ctx.go?.('fsa') });
@@ -289,10 +311,10 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
   if (aboutHelp) {
     const page = pageHelp(ctx.getView?.());
     return {
-      text: `Help and support · ${page.name}\n${page.hint}\n\nI can explain this page, open FDI / Nowcast / Alerts, define a number, or ask a named owner to qualify it. Say what you need.`,
+      text: `Help and support · ${page.name}\n${page.hint}\n\nI can explain this page, open FDI by country, In-quarter estimate, or Alerts and owners, define a number, or ask a named owner to qualify it. Say what you need.`,
       actions: [
-        { label: 'Open FDI', run: () => ctx.go?.('fdi') },
-        { label: 'Open Alerts', run: () => ctx.go?.('alerts') },
+        { label: 'Open FDI by country', run: () => ctx.go?.('fdi') },
+        { label: 'Open Alerts and owners', run: () => ctx.go?.('alerts') },
         { label: 'Ask owner · GFCF', run: () => {
           const info = ownerForMetric('gfcf', brief);
           ctx.openAskOwner?.({
@@ -307,9 +329,24 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
     };
   }
 
+  if (aboutNowcast) {
+    actions.push({ label: 'Open In-quarter estimate', run: () => ctx.go?.('now') });
+    const meta = getKpiMeta('nowcast', brief);
+    if (aboutDef && meta) {
+      return {
+        text: `${meta.name}\n\nDefinition: ${meta.definition}\n\nSource: ${meta.source}\nMethod: ${meta.method}\nOwner: ${meta.owner}\n\nOpen In-quarter estimate for the in-quarter path. It never replaces the official print.`,
+        actions
+      };
+    }
+    return {
+      text: 'In-quarter estimates sit on the In-quarter estimate tab. On this hosted prototype they are populated synthetic figures, not MISA calculations. Provisional, with a confidence band, and never a replacement for the official print.',
+      actions
+    };
+  }
+
   if (aboutDef) {
-    const id = aboutGfcf ? 'gfcf' : aboutFdi ? 'fdi' : (matchSignal(q, signals)?.id || 'fdi');
-    const meta = getKpiMeta(id, brief) || getKpiMeta(aboutGfcf ? 'gfcf' : 'fdi', brief);
+    const id = aboutGfcf ? 'gfcf' : aboutFdi ? 'fdi' : matchSignal(q, signals)?.id;
+    const meta = id ? getKpiMeta(id, brief) : null;
     if (meta) {
       actions.push({
         label: 'Ask owner · definition',
@@ -319,11 +356,11 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
           owner: meta.owner,
           ownerContact: ownerForMetric(meta.id, brief).contact,
           title: meta.name,
-          question: `Please confirm the official definition of “${meta.name}”.\n\n${meta.definition}`
+          question: `Please confirm the official definition of "${meta.name}".\n\n${meta.definition}`
         })
       });
       return {
-        text: `${meta.name}\n\nDefinition: ${meta.definition}\n\nSource: ${meta.source}\nMethod: ${meta.method}\nCalculated: ${meta.calculatedLabel}\nOwner: ${meta.owner}\n\nHover the ◆ signature on any KPI tile for the same stamp.`,
+        text: `${meta.name}\n\nDefinition: ${meta.definition}\n\nSource: ${meta.source}\nMethod: ${meta.method}\nCalculated: ${meta.calculatedLabel}\nOwner: ${meta.owner}\n\nHover the signature mark on any KPI tile for the same stamp.`,
         actions
       };
     }
@@ -486,14 +523,15 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
   }
 
   if (/\b(who leads|leads .+ inflow|largest origin)\b/i.test(q) || (/\bleads\b/.test(lower) && /\binflow\b/.test(lower))) {
+    const leadYear = year && cutFrom && year >= cutFrom && year <= cutTo ? year : cutTo;
     const rows = (data.fdiCut?.countries || [])
-      .filter(c => c.year === 2024 && (c.inflow || 0) > 0)
+      .filter(c => c.year === leadYear && (c.inflow || 0) > 0)
       .sort((a, b) => (b.inflow || 0) - (a.inflow || 0));
     const top = rows[0];
     actions.push({ label: 'Open FDI', run: () => ctx.go?.('fdi') });
     if (top) {
       return {
-        text: `${top.name} leads 2024 immediate-country inflow at ${n(top.inflow)} SAR bn. The next names are on the FDI map and the flag list under it.`,
+        text: `${top.name} leads ${leadYear} immediate-country inflow at ${n(top.inflow)} SAR bn. The next names are on the FDI map and the flag list under it.`,
         actions
       };
     }
@@ -551,14 +589,6 @@ export function answerQuestion(raw, data = {}, ctx = {}) {
     const names = risky.map(s => s.name).slice(0, 4).join('; ') || 'none flagged in pack signals';
     return {
       text: `At-risk leading signals: ${names}. Open Alerts to ask the named owner for qualification.`,
-      actions
-    };
-  }
-
-  if (aboutNowcast) {
-    actions.push({ label: 'Open Nowcast', run: () => ctx.go?.('now') });
-    return {
-      text: 'In-quarter estimates sit on the Nowcast tab. On this hosted prototype they are populated synthetic figures, not MISA calculations. Provisional, with a confidence band, and never a replacement for the official print (FCT-05).',
       actions
     };
   }

@@ -1042,7 +1042,7 @@ export function buildSampleIfrsPdf() {
       [50, 336, 10, 'Retained earnings'], [360, 336, 10, '52,600'], [440, 336, 10, '37,200'],
       [50, 318, 10, 'Total equity'], [360, 318, 10, '72,600'], [440, 318, 10, '57,200'],
       [50, 292, 10, 'Total equity and liabilities'], [360, 292, 10, '133,600'], [440, 292, 10, '117,900'],
-      [50, 250, 8, 'Synthetic populated filing for the Pulse OS prototype. Not a MISA or investee record.']
+      [50, 250, 8, 'Synthetic populated filing for the Investment Pulse prototype. Not a MISA or investee record.']
     ],
     [
       [50, 760, 14, 'Horizon KSA Distribution'],

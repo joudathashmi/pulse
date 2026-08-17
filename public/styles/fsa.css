@@ -1607,6 +1607,58 @@ html[data-theme="night"] .fsa-paper .fsa-inspect {
   gap: 6px;
   margin-top: 8px;
 }
+.fsa-inspect-fix {
+  color: var(--watch) !important;
+  font-weight: 600;
+}
+.fsa-line-form {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+.fsa-line-form label {
+  display: grid;
+  gap: 4px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.fsa-line-form input,
+.fsa-line-form select {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--surf-raised);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  outline: 1px solid var(--line-soft);
+}
+.fsa-line-form input:focus,
+.fsa-line-form select:focus {
+  outline-color: var(--g600);
+}
+.fsa-line-stay {
+  margin: 0 !important;
+  font-size: 11px !important;
+}
+.fsa-fix-mark {
+  display: inline-block;
+  margin-inline-start: 6px;
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--watch);
+  font-weight: 700;
+}
+.fsa-sheet tr.is-fix td {
+  border-inline-start: 3px solid var(--watch);
+}
 
 .fsa-empty {
   padding: 28px 20px 24px;

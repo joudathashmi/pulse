@@ -5,7 +5,7 @@
 import { mkdir, readFile, writeFile, unlink } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildSampleIfrsPdf, extractBuffer, extractSample } from './fsa-extract.mjs';
+import { assess, buildSampleIfrsPdf, extractBuffer, extractSample } from './fsa-extract.mjs';
 
 const FILE = fileURLToPath(new URL('./data/fsa-ledger.json', import.meta.url));
 const UP = fileURLToPath(new URL('./data/fsa-uploads/', import.meta.url));
@@ -114,6 +114,82 @@ export async function getFilingFile(id) {
     return { buffer: buildSampleIfrsPdf(), mime: 'application/pdf', name: name.endsWith('.pdf') ? name : 'Horizon-KSA-FY2025-IFRS.pdf' };
   }
   return null;
+}
+
+const REASONS = new Set(['mapping', 'ocr', 'restatement', 'other']);
+
+function parseAmt(raw, fallback, { allowEmpty = false } = {}) {
+  if (raw === undefined) return fallback;
+  if (raw === '' || raw === null) {
+    if (allowEmpty) return null;
+    throw new Error('Enter a number');
+  }
+  const s = String(raw).trim().replace(/,/g, '').replace(/\s/g, '');
+  if (!s) {
+    if (allowEmpty) return null;
+    throw new Error('Enter a number');
+  }
+  const wrapped = /^\(.*\)$/.test(s);
+  const n = Number(wrapped ? s.slice(1, -1) : s);
+  if (Number.isNaN(n)) throw new Error('Enter a number');
+  return wrapped ? -Math.abs(n) : n;
+}
+
+function syncStatementLines(filing) {
+  const stmts = filing.statements || {};
+  for (const sid of Object.keys(stmts)) {
+    if (stmts[sid] && Array.isArray(stmts[sid].lines)) {
+      stmts[sid].lines = (filing.lines || []).filter(l => l.statement === sid);
+    }
+  }
+}
+
+export async function correctFilingLine(id, key, body = {}) {
+  const doc = await load();
+  const filing = doc.filings.find(f => f.id === id);
+  if (!filing) return null;
+  const ln = (filing.lines || []).find(l => l.key === key);
+  if (!ln) throw new Error('Line not found');
+
+  const reason = REASONS.has(body.reason) ? body.reason : '';
+  if (!reason) throw new Error('Choose a reason');
+
+  const nextCurrent = parseAmt(body.current, ln.current);
+  if (nextCurrent == null || Number.isNaN(Number(nextCurrent))) {
+    throw new Error('Enter a current figure');
+  }
+  const nextPrior = parseAmt(body.prior, ln.prior, { allowEmpty: true });
+
+  if (!ln.extracted) {
+    ln.extracted = { current: ln.current, prior: ln.prior ?? null };
+  }
+  ln.current = nextCurrent;
+  ln.prior = nextPrior;
+  ln.correction = {
+    reason,
+    note: String(body.note || '').trim().slice(0, 400),
+    at: new Date().toISOString()
+  };
+
+  syncStatementLines(filing);
+
+  const pages = [];
+  if (filing.extract?.preview) pages.push({ text: filing.extract.preview });
+  if (filing.assessment?.completeness?.notes) pages.push({ text: 'Note' });
+  filing.assessment = assess(filing.lines, filing.identity || {}, pages, filing.sourceSheets || []);
+  const nCorr = (filing.lines || []).filter(l => l.correction).length;
+  const sign = (filing.assessment.gates || []).find(g => g.id === 'signoff');
+  if (sign) {
+    sign.status = 'watch';
+    sign.detail = `${nCorr} steward correction${nCorr === 1 ? '' : 's'} on this filing. A person still signs. This does not write the certified Pulse.`;
+    sign.detailAr = `${nCorr} تصحيحاً من أمين البيانات على هذه القائمة. الشخص يوقّع. لا يُكتب النبض المعتمد.`;
+  }
+  filing.assessment.held = (filing.assessment.gates || []).filter(g => g.status !== 'ok').length;
+  filing.assessment.status = filing.assessment.held ? 'in_review' : 'assessed';
+  if (filing.extract?.usable !== false) filing.status = filing.assessment.status;
+  filing.updatedAt = new Date().toISOString();
+  await save(doc);
+  return publicFiling(filing);
 }
 
 export async function removeFiling(id) {

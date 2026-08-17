@@ -1,4 +1,4 @@
-import { addSample, addUpload, getFiling, getFilingFile, listFilings, removeFiling } from './fsa-store.mjs';
+import { addSample, addUpload, correctFilingLine, getFiling, getFilingFile, listFilings, removeFiling } from './fsa-store.mjs';
 import { answerFiling } from './fsa-ask.mjs';
 
 function send(res, code, body) {
@@ -96,6 +96,18 @@ export async function handleFsaApi(req, res) {
       const filing = await getFiling(decodeURIComponent(ask[1]));
       if (!filing) { send(res, 404, { error: 'Filing not found' }); return true; }
       send(res, 200, answerFiling(filing, body.q, body.lang === 'ar' ? 'ar' : 'en'));
+      return true;
+    }
+    const lineFix = path.match(/^\/api\/fsa\/filings\/([^/]+)\/lines\/([^/]+)$/);
+    if (req.method === 'POST' && lineFix) {
+      const body = await readBody(req, 20_000);
+      const filing = await correctFilingLine(
+        decodeURIComponent(lineFix[1]),
+        decodeURIComponent(lineFix[2]),
+        body
+      );
+      if (!filing) { send(res, 404, { error: 'Filing not found' }); return true; }
+      send(res, 200, { filing });
       return true;
     }
     send(res, 404, { error: 'Unknown FSA route' });

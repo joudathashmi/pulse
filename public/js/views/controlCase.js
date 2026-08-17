@@ -50,7 +50,7 @@ export function openControlCase(id, { onChanged } = {}) {
           <div><dt>${s.alertState || 'State'}</dt><dd>${esc(displayStatus(row, s))}</dd></div>
         </dl>
         <p class="wh-est"><b>${s.ctrlGates || 'Failed gates'}</b> · ${esc((row.failedGates || []).join(' · ') || '-')}</p>
-        <p class="wh-est">${s.ctrlReadyHint || 'Ready means fit to consider for the next signed pack. The gold orb does not move until a later pack sign-off.'}</p>
+        <p class="wh-est">${s.ctrlReadyHint || 'Ready means fit to consider for the next signed pack. The certified Pulse does not move until a later pack sign-off.'}</p>
 
         <label class="ask-label">${s.ctrlAssignee || 'Assignee'}
           <select data-assignee>

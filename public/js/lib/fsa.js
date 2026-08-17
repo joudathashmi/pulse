@@ -129,6 +129,15 @@ export async function askFiling(id, q, lang) {
   });
 }
 
+export async function saveLine(id, key, payload) {
+  const { filing } = await json(`/api/fsa/filings/${encodeURIComponent(id)}/lines/${encodeURIComponent(key)}`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  return filing;
+}
+
 function guessMime(name) {
   const n = String(name).toLowerCase();
   if (n.endsWith('.pdf')) return 'application/pdf';

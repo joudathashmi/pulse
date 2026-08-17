@@ -15,7 +15,7 @@ export function mountLogin(host) {
             <img class="auth-logo auth-logo-on-dark" src="./brand/misa-logo-white.svg" alt="Ministry of Investment">
             <img class="auth-logo auth-logo-on-light" src="./brand/misa-logo-dark.svg" alt="Ministry of Investment">
           </div>
-          <p class="auth-prod">${s.product || s.brand || 'Investment Pulse Operating System'}</p>
+          <p class="auth-prod">${s.product || s.brand || 'Investment Pulse'}</p>
           <h1 class="auth-title">${s.signInTitle || 'Sign in'}</h1>
           <p class="auth-lede">${s.signInLegal || 'Authorised ministry use only.'}</p>
           <form class="auth-form" data-form>

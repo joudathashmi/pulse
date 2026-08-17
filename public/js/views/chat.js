@@ -72,10 +72,10 @@ export function mountChat(host, { getData, openDrill, go, openAskOwner, openDesk
       fdi: ['Who leads inflow?', 'Ask owner about FDI', 'Show alerts'],
       drill: ['How do I use this page?', 'Open FDI', 'Show alerts'],
       now: ['What is the nowcast?', 'Where do we stand?', 'Show alerts'],
-      alerts: ['Show alerts', 'Ask owner about GFCF', 'My questions to owners'],
+      alerts: ['Ask owner about GFCF', 'My questions to owners', 'Where do we stand?'],
       qual: ['How do I use this page?', 'Show alerts', 'Open FDI'],
       intake: ['How do I use this page?', 'Open FDI', 'Show alerts'],
-      fsa: ['How do I use this page?', 'Open Financial Statements', 'Show alerts'],
+      fsa: ['How do I use this page?', 'Where do we stand?', 'Show alerts'],
       inv: ['How do I use this page?', 'Where do we stand?', 'Open FDI'],
       about: ['How do I use this page?', 'Open FDI', 'Show alerts'],
       settings: ['Start the guide', 'Open the data glossary', 'Configure email alerts']

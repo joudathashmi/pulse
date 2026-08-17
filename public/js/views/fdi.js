@@ -1,5 +1,6 @@
 import { $ } from '../lib/dom.js';
 import { num } from '../lib/format.js';
+import { t } from '../i18n.js';
 import { exportCsv } from '../lib/export.js';
 import { hideTip } from '../lib/tooltip.js';
 import { bindInfo } from '../lib/infoMark.js';
@@ -152,7 +153,7 @@ export async function renderFdi(root, data, { openDrill } = {}) {
   const years = pack?.years || [];
   if (!years.length) {
     root.innerHTML = `<div class="stage"><div class="panel" style="padding-top:20px">
-      <h1>FDI</h1><p class="lede">The 2016-2024 workbook did not load.</p></div></div>`;
+      <h1>${t().tabs.fdi}</h1><p class="lede">The 2016-2024 workbook did not load.</p></div></div>`;
     return;
   }
 
@@ -167,7 +168,7 @@ export async function renderFdi(root, data, { openDrill } = {}) {
 
   root.innerHTML = `
     <div class="stage"><div class="panel fdi-panel" style="padding-top:20px">
-      <h1>FDI</h1>
+      <h1>${t().tabs.fdi}</h1>
       <p class="lede">2016-2024 is the public Inflows / Invest Saudi country cut. 2026 forecast columns on this host are synthetic and populated, not MISA calculations. Issued actuals stay as issued. Blanks stay blank.</p>
 
       <div class="fdi-kpis" data-kpis data-tour="fdi-kpis"></div>

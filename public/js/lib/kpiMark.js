@@ -15,7 +15,7 @@ function closePop() {
  * Signature mark on a KPI - hover/focus reveals definition, source, calculated-at.
  */
 export function kpiMarkHtml(id) {
-  return `<button type="button" class="kpi-mark" data-kpi="${id}" aria-label="KPI signature · definition and source" title="Definition · source · calculated">
+  return `<button type="button" class="kpi-mark" data-kpi="${id}" aria-label="Definition and source" title="Definition · source · calculated">
     <span class="kpi-mark-seal" aria-hidden="true">◆</span>
   </button>`;
 }
@@ -94,7 +94,7 @@ function openMarkPopover(anchor, id, brief, onAskDefinition) {
   const ask = typeof onAskDefinition === 'function';
 
   const pop = el(`<div class="kpi-pop" role="dialog" data-kpi="${id}" aria-label="${meta.name} definition">
-    <div class="kpi-pop-k">KPI signature</div>
+    <div class="kpi-pop-k">Definition</div>
     <div class="kpi-pop-title">${meta.name}</div>
     <dl class="kpi-pop-dl">
       <div><dt>Definition</dt><dd>${meta.definition}</dd></div>

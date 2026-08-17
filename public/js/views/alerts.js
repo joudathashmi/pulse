@@ -37,16 +37,15 @@ export function renderAlerts(root, data = {}, ctx = {}) {
     <div class="stage"><div class="panel sig-page" style="padding-top:20px">
       <header class="sig-head">
         <div>
-          <div class="wh-k">${s.tabs.alerts}</div>
-          <h1 data-info="work">${s.workTitle || 'Work on the pack'}</h1>
+          <h1 data-info="work">${s.workTitle || 'Alerts and owners'}</h1>
           <p class="lede">${s.workSub || 'Open signals, quarantined values, and the next action. Held items do not enter the certified Pulse.'}</p>
         </div>
         <div class="seg" data-tabs>
           <span class="seg-track">
-            <button type="button" class="seg-opt" data-tab="signals">${s.alertSignals || 'Open'} (<b data-kpi-def="open">${work.counts.open}</b>)</button>
+            <button type="button" class="seg-opt" data-tab="signals">${s.workOpen || 'Open'} (<b data-kpi-def="open">${work.counts.open}</b>)</button>
             <button type="button" class="seg-opt" data-tab="quarantine">${s.workQuarantine || 'Quarantine'} (<b data-kpi-def="quarantine">${work.counts.quarantine}</b>)</button>
             <button type="button" class="seg-opt" data-tab="actions">${s.workActions || 'Actions'} (<b data-kpi-def="actions">${work.counts.actions}</b>)</button>
-            <button type="button" class="seg-opt" data-tab="queries">${s.myQueries || 'Questions'}${pending ? ` (${pending})` : ''}</button>
+            <button type="button" class="seg-opt" data-tab="queries">${s.workQuestions || 'Questions'}${pending ? ` (${pending})` : ''}</button>
           </span>
         </div>
       </header>
@@ -74,7 +73,7 @@ export function renderAlerts(root, data = {}, ctx = {}) {
           <div><dt>${s.alertOwner}</dt><dd>${a.owner}</dd></div>
           <div><dt>${s.deadline}</dt><dd>${a.deadline}</dd></div>
         </dl>
-        <p class="sig-next"><span>${s.proposed}</span>${ar ? a.actionAr : a.action}</p>
+        <p class="sig-next"><span>${s.proposed}</span> ${ar ? a.actionAr : a.action}</p>
         <div class="alert-actions">
           <button type="button" class="btn-primary" data-ask="${a.id}">${s.askOwner || 'Ask owner for qualification'}</button>
         </div>
@@ -124,7 +123,7 @@ export function renderAlerts(root, data = {}, ctx = {}) {
             question: text,
             title: ar ? a.titleAr : a.title
           });
-          box.innerHTML = `<div class="ask-ok">${s.querySent || 'Sent to owner. Track it under “My questions to owners”.'}</div>`;
+          box.innerHTML = `<div class="ask-ok">${s.querySent || 'Sent to owner. Track it under Questions.'}</div>`;
           setTimeout(showQueries, 700);
         };
       };

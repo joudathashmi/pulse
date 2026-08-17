@@ -1,5 +1,6 @@
 import { $, intoViewIfNeeded } from '../lib/dom.js';
 import { bindNumberDefs } from '../lib/kpiMark.js';
+import { t } from '../i18n.js';
 
 const uniq = a => [...new Set(a)].filter(Boolean).sort();
 
@@ -15,7 +16,7 @@ export function renderInventory(root, inventory) {
   ];
   root.innerHTML = `
     <div class="stage"><div class="panel" style="padding-top:20px">
-      <h1>Indicator inventory</h1>
+      <h1>${t().tabs.inv}</h1>
       <p class="lede">${inventory.length} ministry metrics from the indicator workbook. The Pulse board shows the certified pack only - 2 headlines and 20 leading signals. This catalogue is the rest: series that are available, held for an owner, or waiting on a share.</p>
       <div class="grid four" style="margin:16px 0">
         ${cards.map(c => `<div class="card"><div class="k">${c[0]}</div>

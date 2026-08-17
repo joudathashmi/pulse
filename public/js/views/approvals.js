@@ -61,7 +61,7 @@ export function mountApprovals(host, { getData, openDrill, go } = {}) {
             <div><dt>${s.workGate || 'Gate'}</dt><dd>${item.gate}</dd></div>
           </dl>
           ${item.fix ? `<p class="set-lede">${s.ctrlStatusFix || 'In fix'} · ${item.fix.byName || item.fix.by || ''} · ${item.fix.mapping || item.fix.note || ''}</p>` : ''}
-          <p class="wh-est">${s.ctrlReadyHint || 'Ready means fit to consider for the next signed pack. The gold orb does not move until a later pack sign-off.'}</p>
+          <p class="wh-est">${s.ctrlReadyHint || 'Ready means fit to consider for the next signed pack. The certified Pulse does not move until a later pack sign-off.'}</p>
           <ol class="set-guide">
             <li>${s.aprStep1 || 'Read the held figure and why it is waiting.'}</li>
             <li>${s.aprStep2 || 'Open the source path and check the record.'}</li>

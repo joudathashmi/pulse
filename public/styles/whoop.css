@@ -1307,6 +1307,7 @@ html[data-shell="phone"] .brand-prod,
 html[data-shell="phone"] .seg-k,
 html[data-shell="phone"] .top-live span { display: none }
 html[data-shell="phone"] .brand-logo { height: 22px; max-width: 108px }
+html[data-shell="phone"] .brand-name { font-size: 13px }
 html[data-shell="phone"] .brand-rule { display: none }
 html[data-shell="phone"] .seg { padding: 3px }
 html[data-shell="phone"] .seg-opt {

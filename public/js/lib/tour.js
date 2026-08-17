@@ -9,7 +9,7 @@ const STEPS = [
     kind: 'deck',
     kicker: 'Welcome',
     title: 'What this system is',
-    body: 'Investment Pulse OS is the certified operating picture for FDI and GFCF. The gold ring is the signed pack. Tabs around it are how you trace a number, pull a feed, hold a value, or read a filing. Nothing here overwrites the Pulse until a named person signs.',
+    body: 'Investment Pulse is the certified operating picture for FDI and GFCF. The gold ring is the signed pack. Tabs around it are how you trace a number, pull a feed, hold a value, or read a filing. Nothing here overwrites the Pulse until a named person signs.',
     shots: [
       { id: 'home', view: 'pulse', cap: 'Live board', blurb: 'One gold ring. Two headlines. Twenty signals.' },
       { id: 'fdi', view: 'fdi', cap: 'FDI by country', blurb: 'Who invests into the Kingdom, year by year.' },
@@ -80,14 +80,14 @@ const STEPS = [
   {
     view: 'pulse',
     sel: '[data-tour="work"]',
-    title: 'Work on the pack',
+    title: 'Alerts and owners',
     body: 'Open, overdue, quarantine, and actions. Held values do not enter the certified Pulse. Tap a count to open Alerts.'
   },
   {
     view: 'pulse',
     sel: '[data-tour="explore"]',
     title: 'Explore',
-    body: 'The certified series only: 2 headlines and 20 leading signals. Filter, switch Trend / Bars / Pulse, tap a row to drill. Hover any value for the definition.'
+    body: 'The certified series only: 2 headlines and 20 leading signals. Filter, switch Trend / Bars / Pulse, tap a row to trace. Hover any value for the definition.'
   },
   {
     view: 'pulse',
@@ -98,7 +98,7 @@ const STEPS = [
   {
     view: 'fdi',
     sel: '[data-tour="fdi-kpis"]',
-    title: 'FDI figures',
+    title: 'FDI by country',
     body: 'Year, stock, net flow and inflow for the selected cut. Hover a number for the definition. 2026 forecast columns on this host are synthetic and populated, not MISA calculations.'
   },
   {
@@ -158,7 +158,7 @@ const STEPS = [
   {
     view: 'intake',
     sel: '.wh-pipe',
-    title: 'How the number arrives',
+    title: 'How data arrives',
     body: 'S1 to S6: acquire, certify, compute, nowcast, decide, act. Connectors pull published feeds. A person signs. Refresh does not overwrite the certified Pulse here.'
   },
   {
@@ -235,7 +235,11 @@ function shotHtml(shot) {
 }
 
 export function pageGuideHtml(view) {
-  const label = t().pageGuide || 'Guide for this page';
+  const s = t();
+  const page = s.tabs?.[view] || '';
+  const label = page
+    ? `${s.pageGuide || 'Guide for this page'} · ${page}`
+    : (s.pageGuide || 'Guide for this page');
   return `<button type="button" class="page-guide" data-page-guide="${view}" title="${label}" aria-label="${label}">${GUIDE_ICON}</button>`;
 }
 

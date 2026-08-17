@@ -75,6 +75,8 @@ html[data-theme="aurora"] .brand-logo-on-light { display: block }
   letter-spacing: -0.03em;
   line-height: 1;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .top-tools {
   margin-inline-start: auto;

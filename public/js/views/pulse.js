@@ -48,7 +48,7 @@ function packHighlights({ fdi, gfcf, signals, alerts, now, ar, fdiPct, gfcfPct }
     items.push({
       kind: 'pack',
       title: `FDI ${num(fdi.pulseValue)} SAR bn`,
-      body: `Net FDI is ${fdiPct}% of the 2026 target (${num(fdi.yearTarget)}). Certified Q1 print. Open the drill to the source record.`,
+      body: `Net FDI is ${fdiPct}% of the 2026 target (${num(fdi.yearTarget)}). Certified Q1 print. Tap to trace the number to the source record.`,
       path: ['fdi']
     });
   }
@@ -339,7 +339,7 @@ export function renderPulse(root, data, onOpen) {
     <div class="wh wh-sys">
       <div class="wh-day">
         <div>
-          <b>Pulse · Live</b>
+          <b>${s.tabs.pulse}</b>
           <div class="wh-day-stamps">
             <span><em>${s.dataAsOf || 'Data as of'}</em> ${asOf}</span>
             <span><em>${s.refreshed || 'Refreshed'}</em> <span data-live-stamp>${nowStamp()}</span></span>
@@ -349,7 +349,7 @@ export function renderPulse(root, data, onOpen) {
 
       <div class="wh-stage">
       <div class="wh-hero">
-        <div class="wh-orb-wrap" data-metric="fdi" data-orb-open data-tour="orb" tabindex="0" aria-label="Open FDI drill" aria-describedby="orb-tip" title="${s.orbTip || 'Certified headline in SAR bn. Tap to trace.'}">
+        <div class="wh-orb-wrap" data-metric="fdi" data-orb-open data-tour="orb" tabindex="0" aria-label="Trace FDI" aria-describedby="orb-tip" title="${s.orbTip || 'Certified headline in SAR bn. Tap to trace.'}">
           <canvas class="wh-orb" data-orb width="280" height="280"></canvas>
           <div class="wh-orb-tip" role="tooltip">${s.orbTip || 'Certified headline in SAR bn. The gold ring is the Pulse. Tap to trace the number.'}</div>
           <div class="wh-orb-read">
@@ -419,14 +419,14 @@ export function renderPulse(root, data, onOpen) {
 
       <div class="wh-note" data-note>
         <span aria-hidden="true">⏳</span>
-        <p>Investment Pulse Operating System is live on published feeds. Q2 actuals are not yet issued by GASTAT. The in-quarter path on this host is a synthetic populated estimate, not a MISA calculation.</p>
+        <p>Investment Pulse is live on published feeds. Q2 actuals are not yet issued by GASTAT. The in-quarter path on this host is a synthetic populated estimate, not a MISA calculation.</p>
         <button type="button" class="wh-note-x" data-note-x aria-label="Dismiss">×</button>
       </div>
 
       ${gaugeHtml(pace, badge)}
 
       <div class="wh-work no-print" data-tour="work">
-        <div class="wh-k" data-info="work">${s.workTitle || 'Work on the pack'}</div>
+        <div class="wh-k" data-info="work">${s.workTitle || 'Alerts and owners'}</div>
         <div class="wh-work-row">
           <button type="button" data-work="signals" data-info="open"><span>${s.workOpen || 'Open'}</span><b data-kpi-def="open">${work.counts.open}</b></button>
           <button type="button" data-work="signals" data-info="overdue"><span>${s.overdue || 'Overdue'}</span><b class="risk" data-kpi-def="overdue">${work.counts.overdue}</b></button>
@@ -438,7 +438,7 @@ export function renderPulse(root, data, onOpen) {
       <div class="wh-dash-h" data-tour="share">
         <div>
           <h2 data-info="explore">Explore</h2>
-          <span>Certified series · ${rows.length} · tap a row to drill to the source record</span>
+          <span>Certified series · ${rows.length} · tap a row to trace the number</span>
         </div>
         <div class="wh-sec-acts no-print">
           <button type="button" class="wh-act" data-csv>CSV</button>
@@ -487,7 +487,7 @@ export function renderPulse(root, data, onOpen) {
         <p class="wh-est">${s.synthNote || 'Populated synthetic figures. Not a MISA calculation.'}</p>
         <p class="wh-est">Estimate <b data-kpi-def="nowcast">${now?.path?.[13] ? num(now.path[13].est) : '-'}</b> · official print <b data-kpi-def="official">${now?.official != null ? num(now.official) : '-'}</b> ${s.sarBn}</p>
         ${nowcastLine(now?.path || [])}
-        <span class="wh-link">Open nowcast →</span>
+        <span class="wh-link">Open In-quarter estimate</span>
       </article>
 
       <article class="wh-card wh-raw" data-raw-panel>
@@ -524,7 +524,7 @@ export function renderPulse(root, data, onOpen) {
     const vs = $('[data-orb-vs]', root);
     if (wrap) {
       wrap.dataset.metric = orbMetric;
-      wrap.setAttribute('aria-label', isG ? 'Open GFCF drill' : 'Open FDI drill');
+      wrap.setAttribute('aria-label', isG ? 'Trace GFCF' : 'Trace FDI');
     }
     if (val) {
       val.textContent = isG ? (gfcf ? num(gfcf.pulseValue, 0) : '-') : (fdi ? num(fdi.pulseValue) : '-');
@@ -672,11 +672,11 @@ export function renderPulse(root, data, onOpen) {
   root.querySelector('[data-raw]')?.addEventListener('click', showRaw);
   root.querySelector('[data-json]')?.addEventListener('click', () => exportRawJson(data));
   root.querySelector('[data-email]')?.addEventListener('click', () => shareEmail({
-    subject: 'Investment Pulse Operating System · certified position',
+    subject: 'Investment Pulse · certified position',
     body: pulseShareBody(data)
   }));
   root.querySelector('[data-teams]')?.addEventListener('click', () => shareTeams({
-    title: 'Investment Pulse Operating System',
+    title: 'Investment Pulse',
     text: pulseShareBody(data),
     url: location.href
   }));
@@ -686,7 +686,7 @@ export function renderPulse(root, data, onOpen) {
   });
   root.querySelector('[data-csv]')?.addEventListener('click', () => exportBriefCsv(data));
   root.querySelector('[data-report]')?.addEventListener('click', () => exportReportTxt(data));
-  root.querySelector('[data-pdf]')?.addEventListener('click', () => exportPdfPrint('Investment Pulse Operating System'));
+  root.querySelector('[data-pdf]')?.addEventListener('click', () => exportPdfPrint('Investment Pulse'));
 
   const tbody = $('[data-table]', root);
   const filters = root.querySelectorAll('[data-filter]');
@@ -707,7 +707,7 @@ export function renderPulse(root, data, onOpen) {
         <td>${row.source || '-'}</td>
         <td>${row.period || '-'}</td>
         <td class="wh-row-acts">
-          <button type="button" class="wh-linkish" data-explore>Explore</button>
+          <button type="button" class="wh-linkish" data-explore>Trace</button>
           <button type="button" class="wh-linkish" data-row-assign>Assign</button>
         </td>
       </tr>`);

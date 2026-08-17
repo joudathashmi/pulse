@@ -12,7 +12,7 @@ const PIPELINE = [
   ['S1', 'Acquire', 'Connectors pull published feeds', 'pull'],
   ['S2', 'Certify', 'Six DQAF gates · lineage', '09:38'],
   ['S3', 'Compute', 'BPM6 · SNA 2008', '09:36'],
-  ['S4', 'Nowcast', 'In-quarter estimate held open', '09:35'],
+  ['S4', 'Estimate', 'In-quarter estimate held open', '09:35'],
   ['S5', 'Decide', 'Certified Pulse published', '09:41'],
   ['S6', 'Act', 'Alerts · assign · pack', 'Live']
 ];
@@ -161,7 +161,7 @@ export async function renderIntake(root, data, { refreshBoard } = {}) {
   const feeds = feedRows(data?.brief);
   root.innerHTML = `
     <div class="stage"><div class="panel" style="padding-top:20px">
-      <h1>Intake</h1>
+      <h1>${t().tabs.intake}</h1>
       <p class="lede">${t().ctrlLede || 'Live pulls are checked against six gates. Failed values are quarantined, assigned, fixed, and ticked. The certified Pulse is not overwritten here.'}</p>
       <p class="wh-est">Public sources are pulled live on this page: World Bank API, investsaudi.sa/fdi, and misa.gov.sa. Those feeds stay labelled as a direct pull. Any pack print shown here for comparison is a synthetic stand-in (${SYNTHETIC_PACK.fdi} / ${SYNTHETIC_PACK.gfcf} SAR bn), not a MISA figure.</p>
 

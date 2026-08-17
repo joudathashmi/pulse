@@ -93,7 +93,7 @@ export const GLOSSARY = [
   },
   {
     id: 'drill',
-    term: 'Four-tap drill',
+    term: 'Trace a number',
     termAr: 'المسار الرباعي',
     body: 'Headline, indicator, sector or region, then the source record. That is how a number is traced.',
     bodyAr: 'العنوان، المؤشر، القطاع أو المنطقة، ثم سجل المصدر. هكذا يُتتبع الرقم.'

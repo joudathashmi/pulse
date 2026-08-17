@@ -85,8 +85,8 @@ function paintHelp(root, { startTour, go }) {
     <article class="wh-card">
       <div class="wh-k">${s.setHelpGuide || 'Help guide'}</div>
       <ol class="set-guide">
-        <li>${s.setGuide1 || 'Sign in with your first name. The board is the certified pack: one gold orb, two headlines, 20 signals.'}</li>
-        <li>${s.setGuide2 || 'Tap the orb or a row to trace a number: headline, indicator, sector or region, source record.'}</li>
+        <li>${s.setGuide1 || 'Sign in with your first name. The board is the certified pack: one Pulse, two headlines, 20 signals.'}</li>
+        <li>${s.setGuide2 || 'Tap the Pulse or a row to trace a number: headline, indicator, sector or region, source record.'}</li>
         <li>${s.setGuide3 || 'Your desk holds messages, assignments, KPIs you own, and Settings. Sign out is on the desk and in Display.'}</li>
         <li>${s.setGuide4 || 'Ask Me answers from the pack only. Help, the glossary, owners and email alerts live in Display and on this desk.'}</li>
       </ol>
@@ -119,7 +119,7 @@ function paintOwners(brief) {
   const patch = loadOwnerPatch();
   return `
     <article class="wh-card">
-      <div class="wh-k">${s.setOwners || 'KPI and owners'}</div>
+      <div class="wh-k">${s.setOwners || 'KPI owners'}</div>
       <p class="set-lede">${admin
     ? (s.setOwnersAdmin || 'Admin can assign a desk or a unit. The certified print does not change.')
     : (s.setOwnersView || 'Who owns each headline and signal. Ask the owner when a value needs qualification.')}</p>

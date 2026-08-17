@@ -114,7 +114,7 @@ export function renderDrill(root, path, data, navigate) {
   root.innerHTML = `
     <div class="drill">
       <div class="drill-bar" data-crumb>
-        <div class="drill-bar-k">From Pulse · you are here</div>
+        <div class="drill-bar-k">${t().tabs.drill}</div>
         <div class="drill-bar-path" data-crumb-path></div>
       </div>
       <div class="levels" data-levels></div>
@@ -477,7 +477,7 @@ function tableToRows(root) {
 function bindDrillActs(root, { path, head, value }) {
   const label = head?.name || path[0];
   const body = [
-    `Investment Pulse Operating System · drill`,
+    `Investment Pulse · trace`,
     `${label} · ${value ?? '-'} SAR bn`,
     `Path: ${path.join(' → ')}`,
     location.href
@@ -495,15 +495,15 @@ function bindDrillActs(root, { path, head, value }) {
       owner: info.owner,
       ownerContact: info.contact,
       title: label,
-      question: `Please own this drill path (${path.join(' → ')}) and assign the next action for the Committee pack.`
+      question: `Please own this path (${path.join(' / ')}) and assign the next action for the Committee pack.`
     });
   });
   root.querySelector('[data-d-email]')?.addEventListener('click', () => shareEmail({
-    subject: `Investment Pulse Operating System · ${label}`,
+    subject: `Investment Pulse · ${label}`,
     body
   }));
   root.querySelector('[data-d-teams]')?.addEventListener('click', () => shareTeams({
-    title: `Investment Pulse Operating System · ${label}`,
+    title: `Investment Pulse · ${label}`,
     text: body,
     url: location.href
   }));

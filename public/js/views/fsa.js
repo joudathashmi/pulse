@@ -1,6 +1,6 @@
 import { $, el, intoViewIfNeeded, pinWindow } from '../lib/dom.js';
 import { getLang, t } from '../i18n.js';
-import { askFiling, fileKind, fileUrl, listFilings, loadSample, removeFiling, uploadFiling } from '../lib/fsa.js';
+import { askFiling, fileKind, fileUrl, listFilings, loadSample, removeFiling, saveLine, uploadFiling } from '../lib/fsa.js';
 import { bindNumberDefs } from '../lib/kpiMark.js';
 
 function isPhone() {
@@ -243,9 +243,9 @@ function lineRow(ln, fx, selected, hot) {
   const max = Math.max(Math.abs(Number(ln.current) || 0), Math.abs(Number(ln.prior) || 0), 1);
   const wNow = Math.round((Math.abs(Number(ln.current) || 0) / max) * 100);
   const wPrior = Math.round((Math.abs(Number(ln.prior) || 0) / max) * 100);
-  return `<tr class="${rowClass(ln.key)}${selected ? ' is-on' : ''}${hot && !selected ? ' is-hot' : ''}" data-line="${esc(ln.key)}" data-stmt="${esc(ln.statement || '')}" data-page="${esc(ln.page || '')}" tabindex="0">
+  return `<tr class="${rowClass(ln.key)}${selected ? ' is-on' : ''}${hot && !selected ? ' is-hot' : ''}${ln.correction ? ' is-fix' : ''}" data-line="${esc(ln.key)}" data-stmt="${esc(ln.statement || '')}" data-page="${esc(ln.page || '')}" tabindex="0">
     <td>
-      <span class="fsa-line-lab">${esc(label)}</span>
+      <span class="fsa-line-lab">${esc(label)}${ln.correction ? `<em class="fsa-fix-mark">${esc(fx.corrected || 'Corrected')}</em>` : ''}</span>
       <span class="fsa-spark" aria-hidden="true"><i class="is-now" style="width:${wNow}%"></i><i class="is-prior" style="width:${wPrior}%"></i></span>
     </td>
     <td class="num" data-kpi-def="${esc(ln.key)}" data-kpi-name="${esc(label)}">${money(ln.current)}</td>
@@ -304,7 +304,19 @@ function lineByKey(row, key) {
   return (row?.lines || []).find(l => l.key === key) || null;
 }
 
-function inspectHtml(row, fx) {
+function reasonLabel(fx, reason) {
+  if (reason === 'mapping') return fx.reasonMapping || 'Mapping miss';
+  if (reason === 'ocr') return fx.reasonOcr || 'OCR';
+  if (reason === 'restatement') return fx.reasonRestate || 'Restatement';
+  return fx.reasonOther || 'Other';
+}
+
+function amtEdit(n) {
+  if (n == null || Number.isNaN(Number(n))) return '';
+  return String(n);
+}
+
+function inspectHtml(row, fx, editing) {
   const sel = row._sel;
   if (!sel) {
     return `<aside class="fsa-inspect is-idle" data-inspect>
@@ -348,6 +360,38 @@ function inspectHtml(row, fx) {
   const max = Math.max(Math.abs(Number(ln.current) || 0), Math.abs(Number(ln.prior) || 0), 1);
   const wNow = Math.round((Math.abs(Number(ln.current) || 0) / max) * 100);
   const wPrior = Math.round((Math.abs(Number(ln.prior) || 0) / max) * 100);
+  const isEdit = editing === ln.key;
+  const fixNote = ln.correction
+    ? `<p class="fsa-inspect-fix">${esc(fx.stewardFix || 'Steward-corrected')} · ${esc(reasonLabel(fx, ln.correction.reason))}${ln.extracted ? ` · ${esc(fx.extractHad || 'Extract had')} ${esc(money(ln.extracted.current))}${ln.extracted.prior == null ? '' : ` / ${esc(money(ln.extracted.prior))}`}` : ''}${ln.correction.note ? ` · ${esc(ln.correction.note)}` : ''}</p>`
+    : '';
+  const form = isEdit ? `<form class="fsa-line-form" data-line-form>
+      <label>${esc(fx.current || 'Current')}
+        <input name="current" inputmode="decimal" autocomplete="off" value="${esc(amtEdit(ln.current))}" />
+      </label>
+      <label>${esc(fx.prior || 'Prior')}
+        <input name="prior" inputmode="decimal" autocomplete="off" value="${esc(amtEdit(ln.prior))}" />
+      </label>
+      <label>${esc(fx.reason || 'Reason')}
+        <select name="reason">
+          <option value="mapping"${ln.correction?.reason === 'mapping' ? ' selected' : ''}>${esc(fx.reasonMapping || 'Mapping miss')}</option>
+          <option value="ocr"${ln.correction?.reason === 'ocr' ? ' selected' : ''}>${esc(fx.reasonOcr || 'OCR')}</option>
+          <option value="restatement"${ln.correction?.reason === 'restatement' ? ' selected' : ''}>${esc(fx.reasonRestate || 'Restatement')}</option>
+          <option value="other"${ln.correction?.reason === 'other' ? ' selected' : ''}>${esc(fx.reasonOther || 'Other')}</option>
+        </select>
+      </label>
+      <label>${esc(fx.editNote || 'Note')}
+        <input name="note" maxlength="400" autocomplete="off" placeholder="${esc(fx.editNotePh || '')}" value="${esc(ln.correction?.note || '')}" />
+      </label>
+      <p class="fsa-line-stay">${esc(fx.saveStay || 'Save stays on this filing. It does not write the Pulse.')}</p>
+      <div class="fsa-inspect-acts">
+        <button type="submit" class="wh-act on" data-line-save>${esc(fx.saveFiling || 'Save on this filing')}</button>
+        <button type="button" class="wh-act" data-line-cancel>${esc(fx.cancelEdit || 'Cancel')}</button>
+      </div>
+    </form>` : `<div class="fsa-inspect-acts">
+      <button type="button" class="wh-act" data-edit-line="${esc(ln.key)}">${esc(fx.editLine || 'Edit')}</button>
+      <button type="button" class="wh-act on" data-ask-line="${esc(ln.key)}">${esc(fx.askLine || 'Ask this line')}</button>
+      <button type="button" class="wh-act" data-show-src="${esc(ln.key)}" data-page="${esc(ln.page || '')}">${esc(fx.showSource || 'Show in source')}</button>
+    </div>`;
   return `<aside class="fsa-inspect" data-inspect>
     <div class="fsa-card-k">${esc(fx.inspect || 'Inspector')}</div>
     <h3>${esc(getLang() === 'ar' ? ln.labelAr : ln.label)}</h3>
@@ -358,11 +402,9 @@ function inspectHtml(row, fx) {
       <span><i style="width:${wNow}%"></i></span>
       <span class="is-prior"><i style="width:${wPrior}%"></i></span>
     </div>
+    ${fixNote}
     <p class="fsa-inspect-ifrs">${esc(ln.ifrs || '')}${ln.page ? ` · ${esc(fx.page || 'p.')} ${esc(ln.page)}` : ''}</p>
-    <div class="fsa-inspect-acts">
-      <button type="button" class="wh-act on" data-ask-line="${esc(ln.key)}">${esc(fx.askLine || 'Ask this line')}</button>
-      <button type="button" class="wh-act" data-show-src="${esc(ln.key)}" data-page="${esc(ln.page || '')}">${esc(fx.showSource || 'Show in source')}</button>
-    </div>
+    ${form}
   </aside>`;
 }
 
@@ -430,7 +472,7 @@ export function renderFsa(root) {
       <div class="fsa-work" data-work></div>
     </div></div>`;
 
-  const state = { filings: [], selected: null, stmt: 'sfp', chat: [], page: 1, pane: 'split', src: 0, waiting: false, job: null, sel: null, focus: 'add', fold: { process: !isPhone(), extract: true, ask: !isPhone(), lib: true } };
+  const state = { filings: [], selected: null, stmt: 'sfp', chat: [], page: 1, pane: 'split', src: 0, waiting: false, job: null, sel: null, edit: false, focus: 'add', fold: { process: !isPhone(), extract: true, ask: !isPhone(), lib: true } };
 
   releaseFsa();
 
@@ -695,6 +737,7 @@ export function renderFsa(root) {
       state.chat = [];
       state.waiting = false;
       state.sel = null;
+      state.edit = false;
       state.focus = 'extract';
       setErr('');
       paintList();
@@ -728,6 +771,7 @@ export function renderFsa(root) {
         state.selected = state.filings[0]?.id || null;
         state.chat = [];
         state.sel = null;
+        state.edit = false;
       }
       setErr('');
       paintList();
@@ -889,7 +933,7 @@ export function renderFsa(root) {
                 <span>${esc(period)} · ${esc(id.unit || '')} · ${esc(active?.ias || 'IAS 1')}</span>
               </div>
               ${paperNotes}
-              ${inspectHtml(row, fx)}
+              ${inspectHtml(row, fx, state.edit)}
             </div>
             ${liveRatios.length ? `<div class="fsa-tick-wrap">
               <div class="fsa-card-k">${esc(fx.ratios || 'Ratios')}</div>
@@ -967,6 +1011,8 @@ export function renderFsa(root) {
     for (const tr of work.querySelectorAll('[data-line]')) {
       const pick = () => {
         const key = tr.dataset.line;
+        if (state.sel?.type === 'line' && state.sel.key === key && state.edit === key) return;
+        if (state.edit && state.edit !== key) state.edit = false;
         const ln = lineByKey(row, key);
         state.sel = { type: 'line', key, stmt: tr.dataset.stmt || ln?.statement || state.stmt };
         state.focus = 'extract';
@@ -995,6 +1041,7 @@ export function renderFsa(root) {
     }
     for (const b of work.querySelectorAll('[data-ratio]')) {
       b.onclick = () => {
+        state.edit = false;
         state.sel = { type: 'ratio', id: b.dataset.ratio };
         const keys = RATIO_KEYS[b.dataset.ratio] || [];
         const ln = keys.map(k => lineByKey(row, k)).find(Boolean);
@@ -1004,6 +1051,7 @@ export function renderFsa(root) {
     }
     for (const b of work.querySelectorAll('[data-gate]')) {
       b.onclick = () => {
+        state.edit = false;
         state.sel = { type: 'gate', id: b.dataset.gate };
         state.focus = 'gates';
         const stmt = GATE_STMT[b.dataset.gate];
@@ -1020,6 +1068,7 @@ export function renderFsa(root) {
       b.onclick = () => {
         const key = b.dataset.kpiLine;
         if (b.dataset.jumpStmt) state.stmt = b.dataset.jumpStmt;
+        if (state.edit && state.edit !== key) state.edit = false;
         state.sel = { type: 'line', key, stmt: b.dataset.jumpStmt || state.stmt };
         paintWork();
       };
@@ -1035,6 +1084,7 @@ export function renderFsa(root) {
       b.onclick = () => {
         const key = b.dataset.jumpLine;
         if (b.dataset.jumpStmt) state.stmt = b.dataset.jumpStmt;
+        if (state.edit && state.edit !== key) state.edit = false;
         state.sel = { type: 'line', key, stmt: b.dataset.jumpStmt || state.stmt };
         paintWork();
       };
@@ -1045,6 +1095,49 @@ export function renderFsa(root) {
       if (window.matchMedia('(max-width: 959px)').matches) state.pane = 'source';
       paintWork();
       scrollInside(work.querySelector('.fsa-viewer'));
+    });
+    work.querySelector('[data-edit-line]')?.addEventListener('click', () => {
+      const key = work.querySelector('[data-edit-line]').dataset.editLine;
+      state.sel = { type: 'line', key, stmt: lineByKey(row, key)?.statement || state.stmt };
+      state.edit = key;
+      state.focus = 'extract';
+      paintWork();
+      work.querySelector('[data-line-form] [name="current"]')?.focus({ preventScroll: true });
+    });
+    work.querySelector('[data-line-cancel]')?.addEventListener('click', () => {
+      state.edit = false;
+      paintWork();
+    });
+    work.querySelector('[data-line-form]')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      const key = state.sel?.key;
+      if (!key) return;
+      const saveBtn = form.querySelector('[data-line-save]');
+      const fd = new FormData(form);
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = fx.savingLine || 'Saving…';
+      }
+      try {
+        const filing = await saveLine(row.id, key, {
+          current: String(fd.get('current') || ''),
+          prior: String(fd.get('prior') || ''),
+          reason: String(fd.get('reason') || ''),
+          note: String(fd.get('note') || '')
+        });
+        state.filings = state.filings.map(x => x.id === filing.id ? filing : x);
+        state.edit = false;
+        state.sel = { type: 'line', key, stmt: lineByKey(filing, key)?.statement || state.stmt };
+        setErr('');
+        paintWork();
+      } catch (err) {
+        setErr(err.message || String(err));
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = fx.saveFiling || 'Save on this filing';
+        }
+      }
     });
     for (const tr of work.querySelectorAll('[data-src-row]')) {
       tr.addEventListener('click', () => {
@@ -1207,6 +1300,7 @@ export function renderFsa(root) {
     state.chat = [];
     state.waiting = false;
     state.sel = null;
+    state.edit = false;
     state.focus = 'extract';
     if (emptyExtract(filing)) state.pane = 'source';
     setErr(filing.hasFile ? '' : (warning || ''));
