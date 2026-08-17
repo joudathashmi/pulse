@@ -278,10 +278,13 @@ async function extractPdfPages(buffer) {
     verbosity: 0,
     isEvalSupported: false,
     useSystemFonts: true,
-    disableFontFace: true
+    disableFontFace: true,
+    disableWorker: true,
+    useWorkerFetch: false
   }).promise;
   const pages = [];
-  for (let n = 1; n <= doc.numPages; n++) {
+  const max = Math.min(doc.numPages || 0, 80);
+  for (let n = 1; n <= max; n++) {
     const page = await doc.getPage(n);
     const content = await page.getTextContent();
     const lines = linesFromPdfItems(content.items);

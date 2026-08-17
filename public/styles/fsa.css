@@ -1379,7 +1379,7 @@ html[data-theme="night"] .fsa-paper .fsa-inspect {
 .fsa-jobbox {
   position: fixed;
   inset: 0;
-  z-index: 80;
+  z-index: 90;
   display: grid;
   place-items: center;
   padding: 20px;
@@ -1514,8 +1514,6 @@ html[data-theme="night"] .fsa-jobbox { background: rgba(8, 8, 10, 0.62); }
 }
 .fsa-jobbox-hint.is-ok { color: var(--ok); font-weight: 650; }
 .fsa-jobbox-hint.is-fail { color: var(--risk); font-weight: 650; }
-body.is-fsa-job { overflow: hidden; }
-html[data-shell="phone"] body.is-fsa-job { overflow: auto; }
 
 .fsa-upload-btn { display: none }
 

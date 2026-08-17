@@ -12,6 +12,7 @@ function postJsonProgress(url, payload, onUploadPct) {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', url);
     xhr.setRequestHeader('content-type', 'application/json');
+    xhr.timeout = 180000;
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable && e.total) onUploadPct?.(Math.round((e.loaded / e.total) * 100));
     };
@@ -23,6 +24,7 @@ function postJsonProgress(url, payload, onUploadPct) {
       else reject(new Error(body.error || xhr.statusText || 'Request failed'));
     };
     xhr.onerror = () => reject(new Error('Could not reach the extractor'));
+    xhr.ontimeout = () => reject(new Error('The extractor timed out. Try a smaller text PDF or an Excel pack.'));
     xhr.send(JSON.stringify(payload));
   });
 }

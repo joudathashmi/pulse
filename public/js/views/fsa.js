@@ -378,6 +378,7 @@ export function renderFsa(root) {
                 <span>${esc(f.dropHint || '')}</span>
               </button>
               <button type="button" class="fsa-sample" data-sample>${esc(f.sample || 'Load sample')}</button>
+              <div class="fsa-progress" data-job-inline hidden></div>
             </div>
             <div class="fsa-inbox-lib">
               <div class="fsa-lib-head">
@@ -406,6 +407,7 @@ export function renderFsa(root) {
   const sampleBtn = $('[data-sample]', root);
   const addCard = $('[data-add]', root);
   const zoneBtn = $('[data-zone]', root);
+  const inlineJob = $('[data-job-inline]', root);
   const panel = $('.panel.fsa', root);
 
   function applyFolds(scope = root) {
@@ -513,6 +515,10 @@ export function renderFsa(root) {
       box.hidden = true;
       box.classList.remove('is-work', 'is-fail', 'is-ok');
       document.body.classList.remove('is-fsa-job');
+      if (inlineJob) {
+        inlineJob.hidden = true;
+        inlineJob.innerHTML = '';
+      }
       paintList();
       paintPath();
       return;
@@ -529,33 +535,59 @@ export function renderFsa(root) {
     const idx = failed ? -1 : Math.max(0, order.indexOf(job.step));
     const pct = failed ? 0 : Math.max(1, Math.min(100, Math.round(Number(job.pct) || ((idx + 1) / steps.length) * 100)));
     const size = fileSize(job.size);
+    const hint = job.hint || jobHint(job.step, fx);
+    const title = failed
+      ? (fx.progFail || 'Failed')
+      : job.step === 'done'
+        ? (fx.progReady || 'Ready')
+        : (fx.progressTitle || 'Loading filing');
     box.hidden = false;
     document.body.classList.add('is-fsa-job');
     box.classList.toggle('is-work', job.busy && !failed && job.step !== 'done');
     box.classList.toggle('is-fail', failed);
     box.classList.toggle('is-ok', job.step === 'done');
-    box.querySelector('.fsa-jobbox-k').textContent = failed
-      ? (fx.progFail || 'Failed')
-      : job.step === 'done'
-        ? (fx.progReady || 'Ready')
-        : (fx.progressTitle || 'Loading filing');
-    box.querySelector('[data-pct]').textContent = String(pct);
-    box.querySelector('[data-pct-l]').textContent = '%';
-    box.querySelector('[data-dial]').style.setProperty('--pct', String(pct));
-    box.querySelector('[data-name]').textContent = job.name || fx.jobFile || 'File';
-    box.querySelector('[data-size]').textContent = size;
-    box.querySelector('[data-hint]').textContent = job.hint || jobHint(job.step, fx);
-    box.querySelector('[data-hint]').className = `fsa-jobbox-hint${failed ? ' is-fail' : job.step === 'done' ? ' is-ok' : ''}`;
-    box.querySelector('[data-steps]').innerHTML = steps.map((s, i) => {
-      const cls = failed ? '' : i < idx ? 'is-done' : i === idx ? 'is-on' : '';
-      return `<li class="${cls}"><em>${i + 1}</em>${esc(s.label)}</li>`;
-    }).join('');
-    dismiss.hidden = !failed && job.step !== 'done';
-    dismiss.textContent = fx.progDismiss || 'Close';
+    const k = box.querySelector('.fsa-jobbox-k');
+    const pctEl = box.querySelector('[data-pct]');
+    const pctL = box.querySelector('[data-pct-l]');
+    const dial = box.querySelector('[data-dial]');
+    const nameEl = box.querySelector('[data-name]');
+    const sizeEl = box.querySelector('[data-size]');
+    const hintEl = box.querySelector('[data-hint]');
+    const stepsEl = box.querySelector('[data-steps]');
+    if (k) k.textContent = title;
+    if (pctEl) pctEl.textContent = String(pct);
+    if (pctL) pctL.textContent = '%';
+    dial?.style.setProperty('--pct', String(pct));
+    if (nameEl) nameEl.textContent = job.name || fx.jobFile || 'File';
+    if (sizeEl) sizeEl.textContent = size;
+    if (hintEl) {
+      hintEl.textContent = hint;
+      hintEl.className = `fsa-jobbox-hint${failed ? ' is-fail' : job.step === 'done' ? ' is-ok' : ''}`;
+    }
+    if (stepsEl) {
+      stepsEl.innerHTML = steps.map((s, i) => {
+        const cls = failed ? '' : i < idx ? 'is-done' : i === idx ? 'is-on' : '';
+        return `<li class="${cls}"><em>${i + 1}</em>${esc(s.label)}</li>`;
+      }).join('');
+    }
+    if (dismiss) {
+      dismiss.hidden = !failed && job.step !== 'done';
+      dismiss.textContent = fx.progDismiss || 'Close';
+    }
     box.setAttribute('aria-valuenow', String(pct));
-    if (isPhone()) {
-      box.hidden = true;
-      document.body.classList.remove('is-fsa-job');
+    if (inlineJob) {
+      inlineJob.hidden = job.step === 'done' && !job.busy;
+      const step = failed
+        ? (fx.progFail || 'Failed')
+        : job.step === 'extract' ? (fx.progExtract || 'Extracting')
+          : job.step === 'verify' ? (fx.progVerify || 'Verifying')
+            : job.step === 'read' ? (fx.progRead || 'Reading')
+              : job.step === 'done' ? (fx.progReady || 'Ready')
+                : (fx.progUpload || 'Uploading');
+      inlineJob.innerHTML = `<div class="fsa-progress-k">${esc(title)}</div>
+        <div class="fsa-job"><b>${esc(job.name || fx.jobFile || 'File')}</b><span>${pct}%</span></div>
+        <div class="fsa-bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+        <p class="fsa-file-hint${failed ? ' is-fail' : ''}">${esc(step)}${hint ? ` · ${esc(hint)}` : ''}</p>`;
     }
     paintList();
     paintPath();
@@ -1141,6 +1173,7 @@ export function renderFsa(root) {
     setErr(warning || '');
     paintList();
     paintWork();
+    intoViewIfNeeded(work.querySelector('.fsa-stage'));
     await new Promise(r => setTimeout(r, 900));
     if (state.job?.step === 'done' && !state.job?.busy) {
       state.job = null;
@@ -1191,6 +1224,7 @@ export function renderFsa(root) {
     state.job = { busy: true, step: 'upload', pct: 12, name: 'Horizon-KSA-FY2025-IFRS.pdf' };
     setBusy(true);
     paintProgress();
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     try {
       const filing = await loadSample(onJob);
       await finishJob(filing);
@@ -1231,6 +1265,7 @@ export function renderFsa(root) {
     };
     setBusy(true);
     paintProgress();
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     try {
       const filing = await uploadFiling(files, onJob);
       await finishJob(filing, '');
