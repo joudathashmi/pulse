@@ -10,5 +10,10 @@
     "data": "python3 tools/extract_inventory.py",
     "ingest:brief": "python3 tools/ingest_performance_brief.py"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "pdfjs-dist": "^4.10.38"
+  }
 }

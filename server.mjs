@@ -4,6 +4,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { handleIntakeApi } from './intake-api.mjs';
 import { handleControlApi } from './control-store.mjs';
+import { handleFsaApi } from './fsa-api.mjs';
 
 const ROOT = new URL('./public/', import.meta.url).pathname;
 const PORT = process.env.PORT || 5173;
@@ -20,6 +21,10 @@ createServer(async (req, res) => {
     }
     if (p.startsWith('/api/control')) {
       await handleControlApi(req, res);
+      return;
+    }
+    if (p.startsWith('/api/fsa')) {
+      await handleFsaApi(req, res);
       return;
     }
     if (p.endsWith('/')) p += 'index.html';

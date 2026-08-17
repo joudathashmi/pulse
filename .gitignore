@@ -3,3 +3,5 @@ node_modules/
 *.log
 dist/
 data/control-ledger.json
+data/fsa-ledger.json
+data/fsa-uploads/

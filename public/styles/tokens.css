@@ -3,8 +3,8 @@
 html[data-theme="aurora"] {
   --ink: #15241f;
   --ink-soft: #2c3d36;
-  --muted: #5e6f67;
-  --faint: #8b9b93;
+  --muted: #3d4a44;
+  --faint: #3d4a44;
   --line: #d2ddd6;
   --line-soft: #e4ebe6;
 
@@ -18,11 +18,14 @@ html[data-theme="aurora"] {
   --g900: #0a3226;
   --g800: #0d3d2e;
   --g600: #1a7a56;
-  --ok: #1a7a56;
-  --watch: #9a7a1f;
-  --risk: #b83a32;
+  --status-ok: #02714E;
+  --status-watch: #B8860B;
+  --status-alert: #C62828;
+  --ok: var(--status-ok);
+  --watch: var(--status-watch);
+  --risk: var(--status-alert);
 
-  --accent: var(--g600);
+  --accent: var(--g800);
   --glow-a: transparent;
   --glow-b: transparent;
   --grid-line: transparent;
@@ -97,10 +100,14 @@ html[data-theme="night"] {
   --g900: #f4f4f5;
   --g800: #00714D;
   --g600: #2F8A6A;
+  /* Chip fills stay the three status colours. Lighter --ok/--watch/--risk are text on dark only. */
+  --status-ok: #02714E;
+  --status-watch: #B8860B;
+  --status-alert: #C62828;
   --ok: #3D9B78;
-  --watch: #C4A35A;
-  --risk: #C45C58;
-  --accent: #C4A35A;
+  --watch: #E0B34A;
+  --risk: #E07A74;
+  --accent: #2F8A6A;
   --shadow: none;
   color-scheme: dark;
 }
@@ -121,9 +128,12 @@ html[data-theme="contrast"] {
   --g900: #000;
   --g800: #000;
   --g600: #000;
-  --ok: #006400;
-  --watch: #8b5a00;
-  --risk: #8b0000;
+  --status-ok: #02714E;
+  --status-watch: #B8860B;
+  --status-alert: #C62828;
+  --ok: var(--status-ok);
+  --watch: var(--status-watch);
+  --risk: var(--status-alert);
   --accent: #000;
   --shadow: none;
   color-scheme: light;
@@ -145,9 +155,12 @@ html[data-theme="sand"] {
   --g900: #292524;
   --g800: #44403c;
   --g600: #57534e;
-  --ok: #3f6212;
-  --watch: #a16207;
-  --risk: #9f1239;
+  --status-ok: #02714E;
+  --status-watch: #B8860B;
+  --status-alert: #C62828;
+  --ok: var(--status-ok);
+  --watch: var(--status-watch);
+  --risk: var(--status-alert);
   --accent: #44403c;
   --shadow: 0 8px 24px rgba(28, 25, 23, 0.06);
   color-scheme: light;

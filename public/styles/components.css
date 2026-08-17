@@ -76,9 +76,9 @@ details.tv summary { cursor: pointer; font-size: 12px; color: var(--g600); font-
   color: var(--muted); background: color-mix(in srgb, var(--tint) 80%, transparent);
   border-radius: 8px;
 }
-.st.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent) }
-.st.watch { color: var(--watch); background: color-mix(in srgb, var(--watch) 14%, transparent) }
-.st.risk { color: var(--risk); background: color-mix(in srgb, var(--risk) 14%, transparent) }
+.st.ok { color: #fff; background: var(--status-ok) }
+.st.watch { color: #1a1400; background: var(--status-watch) }
+.st.risk { color: #fff; background: var(--status-alert) }
 
 .stage:has(.sig-page) {
   background: transparent;

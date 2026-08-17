@@ -228,6 +228,21 @@ function gaugeHtml(pace, badge) {
   </div>`;
 }
 
+function monMark(status) {
+  if (status === 'ok') return '✓';
+  if (status === 'risk') return '▲';
+  return '!';
+}
+
+function monWord(status) {
+  if (status === 'ok') return 'On track';
+  if (status === 'risk') return 'Alert';
+  if (status === 'watch') return 'Watch';
+  return status || '-';
+}
+
+const CHEV = '<svg class="wh-chev" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M6 3.2 11.2 8 6 12.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
 function fdiCutLine(cut) {
   const rows = (cut?.countries || [])
     .filter(c => c.year === 2024 && (c.inflow || 0) > 0)
@@ -280,6 +295,7 @@ export function renderPulse(root, data, onOpen) {
   const signals = pack.signals || [];
   const hist = data?.series?.hist || [];
   const now = data?.nowcast;
+  const asOf = pack.source?.asOfLabel || '-';
   const openAlerts = ALERTS.filter(a => a.status === 'open' || a.status === 'overdue');
   const fdiPct = progressPct(fdi?.pulseValue, fdi?.yearTarget);
   const gfcfPct = progressPct(gfcf?.pulseValue, gfcf?.yearTarget);
@@ -318,7 +334,10 @@ export function renderPulse(root, data, onOpen) {
       <div class="wh-day">
         <div>
           <b>Pulse · Live</b>
-          <div class="wh-day-sub" data-live-stamp>${nowStamp()}</div>
+          <div class="wh-day-stamps">
+            <span><em>${s.dataAsOf || 'Data as of'}</em> ${asOf}</span>
+            <span><em>${s.refreshed || 'Refreshed'}</em> <span data-live-stamp>${nowStamp()}</span></span>
+          </div>
         </div>
       </div>
 
@@ -342,39 +361,44 @@ export function renderPulse(root, data, onOpen) {
       </div>
 
       <div class="wh-journal">
-        <button type="button" class="wh-hl" data-hl data-tour="highlight">
-          <div class="wh-hl-top">
-            <span class="wh-kind" data-hl-kind></span>
-            <div class="wh-hl-copy">
-              <h2 data-hl-title></h2>
-              <p data-hl-body></p>
+        <div class="wh-hl-block">
+          <button type="button" class="wh-hl" data-hl data-tour="highlight">
+            <div class="wh-hl-top">
+              <span class="wh-kind" data-hl-kind></span>
+              <div class="wh-hl-copy">
+                <h2 data-hl-title></h2>
+                <p data-hl-body></p>
+              </div>
+              <span class="wh-hl-stack" data-hl-next aria-label="Next insight">
+                <b data-hl-n></b>
+                ${CHEV}
+              </span>
             </div>
-            <span class="wh-hl-stack" data-hl-next aria-label="Next insight">
-              <i aria-hidden="true">✓</i>
-              <b data-hl-n></b>
-            </span>
-          </div>
-        </button>
-        <div class="wh-hl-dots" data-hl-dots role="tablist" aria-label="Highlights"></div>
+          </button>
+          <div class="wh-hl-dots" data-hl-dots role="tablist" aria-label="Highlights"></div>
+        </div>
         <div class="wh-mons">
           <button type="button" class="wh-mon" data-open="fdi" data-tour="monitor">
-            <div class="wh-mon-h">FDI monitor <span aria-hidden="true">›</span></div>
+            <div class="wh-mon-h">FDI monitor ${CHEV}</div>
             <div class="wh-mon-row">
-              <span class="wh-sq ok" aria-hidden="true">✓</span>
+              <span class="wh-sq ${fdi?.status || 'watch'}" aria-hidden="true">${monMark(fdi?.status)}</span>
               <div>
-                <b class="ok">${fdi?.status === 'ok' ? 'On track' : (fdi?.status || '-')}</b>
-                <span>${fdi ? num(fdi.pulseValue) : '-'} · ${fdiPct}% of target</span>
+                <b class="${fdi?.status || 'watch'}">${monWord(fdi?.status)}</b>
+                <span class="wh-mon-val">${fdi ? num(fdi.pulseValue) : '-'} <em>SAR bn</em></span>
+                <span>${fdiPct}% of target ${fdi ? num(fdi.yearTarget) : '-'}</span>
                 <span class="wh-mon-cut">${fdiCutLine(data?.fdiCut)}</span>
               </div>
             </div>
           </button>
           <button type="button" class="wh-mon" data-open="gfcf">
-            <div class="wh-mon-h">GFCF monitor <span aria-hidden="true">›</span></div>
+            <div class="wh-mon-h">GFCF monitor ${CHEV}</div>
             <div class="wh-mon-row">
-              <span class="wh-sq watch" aria-hidden="true">${gfcf ? num(gfcf.pulseValue, 0) : '-'}</span>
+              <span class="wh-sq ${gfcf?.status || 'watch'}" aria-hidden="true">${monMark(gfcf?.status)}</span>
               <div>
-                <b class="watch">${gfcf?.status === 'watch' ? 'Watch' : (gfcf?.status || '-')}</b>
-                <span>${gfcfPct}% of ${gfcf ? num(gfcf.yearTarget, 0) : '-'}</span>
+                <b class="${gfcf?.status || 'watch'}">${monWord(gfcf?.status)}</b>
+                <span class="wh-mon-val">${gfcf ? num(gfcf.pulseValue, 0) : '-'} <em>SAR bn</em></span>
+                <span>${gfcfPct}% of target ${gfcf ? num(gfcf.yearTarget, 0) : '-'}</span>
+                <span class="wh-mon-cut">${gfcf?.note || ''}</span>
               </div>
             </div>
           </button>

@@ -35,20 +35,14 @@ const STEPS = [
   {
     view: 'pulse',
     sel: '[data-tour="orb"]',
-    title: 'The headline orb',
-    body: 'One gold orb. The number is the certified headline in SAR billion. Switch FDI and GFCF on the same orb. Tap the orb to open the four-tap drill: headline, indicator, sector or region, source record.'
+    title: 'The Pulse',
+    body: 'The gold ring is the certified headline. Switch FDI and GFCF. Tap the ring to trace the number.'
   },
   {
     view: 'pulse',
     sel: '[data-tour="highlight"]',
-    title: 'Insight stack',
-    body: 'Alerts and insights rotate here. The mark is Insight or Alert, never colour alone. The n/7 control is top-right. Tap the card to read the next item.'
-  },
-  {
-    view: 'pulse',
-    sel: '[data-tour="monitor"]',
-    title: 'FDI monitor',
-    body: 'Status, the Pulse value, and who leads the latest country cut. Tap the card to open the FDI tab - the map, flags and Play from 2021 live there, not on this home board.'
+    title: 'Today on the pack',
+    body: 'One insight at a time. Tap the card to open it. The dots step through alerts and pack notes. FDI and GFCF monitors sit under it.'
   },
   {
     view: 'pulse',
@@ -61,6 +55,12 @@ const STEPS = [
     sel: '.wh-pipe',
     title: 'How the number arrives',
     body: 'S1 to S6 is the intake path: acquire, certify, compute, nowcast, decide, act. A machine pulls. A person signs. The certified Pulse is not overwritten here.'
+  },
+  {
+    view: 'fsa',
+    sel: '.fsa-mast',
+    title: 'Financial statements',
+    body: 'A separate desk. Upload an IFRS PDF or Excel. The extractor maps English and Arabic line items. Gate, assess, then ask the selected filing. It never writes the certified Pulse.'
   },
   {
     view: 'fdi',

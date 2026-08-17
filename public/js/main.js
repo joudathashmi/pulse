@@ -14,6 +14,7 @@ import { mountChat } from './views/chat.js';
 import { THEMES, initTheme, applyTheme, getTheme } from './lib/theme.js';
 import { initShell, applyShell, getShell } from './lib/shell.js';
 import { renderIntake } from './views/intake.js';
+import { renderFsa } from './views/fsa.js';
 import { renderFdi } from './views/fdi.js';
 import { mountTour } from './lib/tour.js';
 import { mountDesk } from './views/desk.js';
@@ -111,6 +112,7 @@ function openView(id) {
   if (id === 'alerts') renderAlerts($('#v-alerts'), state.data, workCtx());
   if (id === 'qual') renderQuality($('#v-qual'));
   if (id === 'intake') renderIntake($('#v-intake'), state.data, { refreshBoard: refreshData });
+  if (id === 'fsa') renderFsa($('#v-fsa'));
   if (id === 'inv') renderInventory($('#v-inv'), state.data.inventory);
   if (id === 'about') renderProvenance($('#v-about'));
   go(id);
@@ -162,6 +164,7 @@ function renderActive() {
   else if (state.view === 'alerts') renderAlerts($('#v-alerts'), state.data, workCtx());
   else if (state.view === 'qual') renderQuality($('#v-qual'));
   else if (state.view === 'intake') renderIntake($('#v-intake'), state.data, { refreshBoard: refreshData });
+  else if (state.view === 'fsa') renderFsa($('#v-fsa'));
   else if (state.view === 'inv') renderInventory($('#v-inv'), state.data.inventory);
   else if (state.view === 'about') renderProvenance($('#v-about'));
   go(state.view);
@@ -360,6 +363,7 @@ async function boot() {
   renderAlerts($('#v-alerts'), state.data, workCtx());
   renderQuality($('#v-qual'));
   renderIntake($('#v-intake'), state.data, { refreshBoard: refreshData });
+  renderFsa($('#v-fsa'));
   renderInventory($('#v-inv'), state.data.inventory);
   renderProvenance($('#v-about'));
   paintChrome();

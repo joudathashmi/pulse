@@ -12,7 +12,7 @@ export const statusChip = (key) => {
   return `<span class="st ${s.cls}" role="status"><span class="ic" aria-hidden="true">${s.icon}</span><span class="st-label">${label}</span></span>`;
 };
 
-export const statusColour = (key, C) => key === 'ok' ? C.g600 : key === 'watch' ? C.amber : C.clay;
+export const statusColour = (key, palette) => key === 'ok' ? palette.statusOk : key === 'watch' ? palette.statusWatch : palette.statusAlert;
 
 /** DEC-12 parent certification chip. */
 export const certChip = (complete) => {
