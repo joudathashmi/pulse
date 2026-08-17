@@ -122,9 +122,12 @@ function readyClock(iso) {
 }
 
 function listStatus(row, f) {
-  if (row.status === 'failed') return { cls: 'failed', word: f.status?.failed || 'Failed' };
+  const mapped = Number(row.extract?.mapped) || 0;
   if (row.synthetic) return { cls: 'ok', word: f.synthShort || 'Sample' };
-  return { cls: 'ok', word: f.readyWord || 'Ready' };
+  if (mapped) return { cls: row.status === 'risk' ? 'watch' : 'ok', word: f.readyWord || 'Ready' };
+  if (row.hasFile) return { cls: 'watch', word: f.needsExcel || 'Needs Excel' };
+  if (row.status === 'failed') return { cls: 'failed', word: f.status?.failed || 'Failed' };
+  return { cls: 'watch', word: f.needsExcel || 'Needs Excel' };
 }
 
 function stmtTitle(stmt, f) {
@@ -357,7 +360,7 @@ export function renderFsa(root) {
           <div class="fsa-card-k">${esc(f.stepFile || 'Upload')}</div>
           <p class="fsa-card-lede">${esc(f.addLede || '')}</p>
         </div>
-        <input type="file" data-file accept=".pdf,.xlsx,.xls,.zip,application/pdf,application/zip,image/*" multiple hidden />
+        <input type="file" data-file multiple hidden />
         <div class="fsa-upload-acts">
           <button type="button" class="btn-primary fsa-upload-btn" data-upload>${esc(f.uploadBtn || 'Upload filing')}</button>
           <button type="button" class="fsa-sample" data-sample>${esc(f.sample || 'Load sample')}</button>
@@ -367,20 +370,22 @@ export function renderFsa(root) {
           <span><em>${esc(f.dropHere || 'Click or drop a file')}</em> ${esc(f.dropHint || '')}</span>
         </button>
         <div class="fsa-progress" data-job-inline hidden></div>
-        <div class="fsa-lib">
-          <div class="fsa-lib-head">
-            <div class="fsa-card-k">${esc(f.library || 'Filings')}</div>
-            <span class="fsa-lib-n" data-lib-n></span>
-          </div>
+        <details class="fsa-lib" data-lib open>
+          <summary>
+            <span class="fsa-lib-head">
+              <span class="fsa-card-k">${esc(f.library || 'Filings')}</span>
+              <span class="fsa-lib-n" data-lib-n></span>
+            </span>
+          </summary>
           <p class="fsa-lib-err" data-lib-err hidden></p>
-          <div data-list></div>
-        </div>
+          <div class="fsa-lib-list" data-list></div>
+        </details>
       </section>
 
       <div class="fsa-work" data-work></div>
     </div></div>`;
 
-  const state = { filings: [], selected: null, stmt: 'sfp', chat: [], page: 1, pane: 'split', src: 0, waiting: false, job: null, sel: null, focus: 'add', fold: { process: !isPhone(), extract: true, ask: !isPhone() } };
+  const state = { filings: [], selected: null, stmt: 'sfp', chat: [], page: 1, pane: 'split', src: 0, waiting: false, job: null, sel: null, focus: 'add', fold: { process: !isPhone(), extract: true, ask: !isPhone(), lib: true } };
 
   releaseFsa();
 
@@ -395,6 +400,13 @@ export function renderFsa(root) {
   const zoneBtn = $('[data-zone]', root);
   const inlineJob = $('[data-job-inline]', root);
   const panel = $('.panel.fsa', root);
+  const libFold = $('[data-lib]', root);
+  if (libFold) {
+    libFold.open = state.fold.lib !== false;
+    libFold.addEventListener('toggle', () => {
+      state.fold.lib = libFold.open;
+    });
+  }
 
   function applyFolds(scope = root) {
     const phone = isPhone();
@@ -596,18 +608,13 @@ export function renderFsa(root) {
           : job.step === 'verify' ? (fx.progVerify || 'Verifying')
             : job.step === 'read' ? (fx.progRead || 'Reading')
               : (fx.progUpload || 'Uploading');
-      const size = fileSize(job.size);
       return `<article class="fsa-file is-busy ${failed ? 'is-fail' : ''}" data-job-row>
         <div class="fsa-file-main">
-          <div class="fsa-file-top">
-            <b>${esc(job.name || fx.jobFile || 'File')}</b>
-            <i class="${failed ? 'failed' : 'watch'}">${esc(failed ? (fx.progFail || 'Failed') : (fx.processing || 'Processing'))}</i>
-          </div>
+          <b>${esc(job.name || fx.jobFile || 'File')}</b>
           <span>${esc(step)} · ${pct}%</span>
-          ${size ? `<em>${esc(size)}</em>` : ''}
-          <div class="fsa-file-bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
-          <p class="fsa-file-hint${failed ? ' is-fail' : ''}">${esc(job.hint || jobHint(job.step, fx))}</p>
+          <em class="fsa-file-st ${failed ? 'is-fail' : 'is-wait'}">${esc(failed ? (fx.progFail || 'Failed') : (fx.processing || 'Processing'))}</em>
         </div>
+        <div class="fsa-file-bar" aria-hidden="true"><span style="width:${pct}%"></span></div>
       </article>`;
     })() : '';
     if (!n && !jobCard) {
@@ -621,30 +628,21 @@ export function renderFsa(root) {
       const st = listStatus(row, fx);
       const when = readyClock(row.updatedAt || row.createdAt);
       const mapped = Number(row.extract?.mapped) || 0;
-      const warn = row.status === 'failed' ? (row.extract?.warnings?.[0] || '') : '';
       const canRemove = !row.synthetic;
       const meta = [
         id.periodLabel,
-        row.extract?.pack === 'mci-ifile' ? (fx.packMci || 'MCI iFile') : (id.framework || 'IFRS'),
-        mapped ? `${mapped} ${fx.lines || 'lines'}` : ''
+        mapped ? `${mapped} ${fx.lines || 'lines'}` : (st.word || ''),
+        row.synthetic ? (fx.synthShort || 'Sample') : ''
       ].filter(Boolean).join(' · ');
       return `<article class="fsa-file ${on ? 'is-on' : ''} ${st.cls === 'failed' ? 'is-fail' : ''}" data-row="${esc(row.id)}">
-        <button type="button" class="fsa-file-main" data-id="${esc(row.id)}">
-          <div class="fsa-file-top">
-            <b>${esc(filingTitle(row, fx))}</b>
-            <i class="${st.cls}">${esc(st.word)}</i>
-          </div>
+        <button type="button" class="fsa-file-main" data-id="${esc(row.id)}" title="${esc(row.file?.name || filingTitle(row, fx))}${when ? ` · ${when}` : ''}">
+          <b>${esc(filingTitle(row, fx))}</b>
           <span>${esc(meta)}</span>
-          <em>${row.synthetic ? esc(fx.synthBadge || 'Synthetic · populated') : esc(row.file?.name || '')}</em>
-          ${when ? `<time datetime="${esc(row.updatedAt || row.createdAt)}">${esc(fx.timeReady || 'Ready')} ${esc(when)}</time>` : ''}
-          ${warn ? `<p class="fsa-file-warn">${esc(warn)}</p>` : ''}
+          <em class="fsa-file-st is-${esc(st.cls)}">${esc(st.word)}</em>
         </button>
-        <div class="fsa-file-acts">
-          ${row.hasFile ? `<a class="wh-act" href="${esc(fileUrl(row.id))}" target="_blank" rel="noopener">${esc(fx.sourceView || 'Source')}</a>` : ''}
-          ${canRemove
-            ? `<button type="button" class="wh-act is-risk" data-drop="${esc(row.id)}">${esc(fx.remove || 'Remove')}</button>`
-            : `<span class="fsa-file-keep">${esc(fx.keepSample || '')}</span>`}
-        </div>
+        ${canRemove
+          ? `<button type="button" class="fsa-file-x" data-drop="${esc(row.id)}" aria-label="${esc(fx.remove || 'Remove')}">×</button>`
+          : ''}
       </article>`;
     }).join('');
     const open = (id) => {
@@ -814,6 +812,7 @@ export function renderFsa(root) {
               ${row.synthetic ? '' : `<button type="button" class="wh-act" data-del>${esc(fx.remove || 'Remove')}</button>`}
             </div>
           </div>
+          ${(row.extract?.warnings || []).map(w => `<p class="fsa-note">${esc(w)}</p>`).join('')}
           ${kpiHtml(row, fx)}
           <div class="fsa-verify" data-gates>
             <div class="fsa-card-k">${esc(fx.stepGate || 'Verify')}</div>
@@ -1136,24 +1135,30 @@ export function renderFsa(root) {
     paintProgress();
   }
 
-  async function finishJob(filing, warning) {
+  async function finishJob(filing, warning, { linger = true } = {}) {
     const fx = copy();
     onJob({ step: 'verify', pct: 96, hint: fx.progVerifyHint });
     await new Promise(r => setTimeout(r, 220));
     onJob({ step: 'done', pct: 100, hint: fx.progReadyHint, busy: false });
-    state.filings = [filing, ...state.filings.filter(x => x.id !== filing.id)];
+    try {
+      state.filings = await listFilings();
+    } catch {
+      state.filings = [filing, ...state.filings.filter(x => x.id !== filing.id)];
+    }
     state.selected = filing.id;
     state.stmt = 'sfp';
     state.chat = [];
     state.waiting = false;
     state.sel = null;
     state.focus = 'extract';
-    setErr(warning || '');
+    if (!(Number(filing.extract?.mapped) || 0)) state.pane = 'source';
+    setErr(filing.hasFile ? '' : (warning || ''));
     paintList();
     paintWork();
     const workspace = work.querySelector('.fsa-analysis');
     if (workspace) workspace.scrollIntoView({ behavior: 'auto', block: 'start' });
-    await new Promise(r => setTimeout(r, 900));
+    if (!linger) return;
+    await new Promise(r => setTimeout(r, 2400));
     if (state.job?.step === 'done' && !state.job?.busy) {
       state.job = null;
       paintProgress();
@@ -1216,6 +1221,34 @@ export function renderFsa(root) {
     }
   });
 
+  function groupFiles(files) {
+    const list = files.filter(Boolean);
+    const pathOf = f => String(f.webkitRelativePath || f.name).replace(/\\/g, '/');
+    const dirOf = f => {
+      const p = pathOf(f);
+      const i = p.lastIndexOf('/');
+      return i >= 0 ? p.slice(0, i + 1) : '';
+    };
+    const zips = list.filter(f => /\.zip$/i.test(f.name));
+    const sheets = list.filter(f => /\.xlsx?$/i.test(f.name));
+    const pdfs = list.filter(f => /\.pdf$/i.test(f.name));
+    const other = list.filter(f => !/\.(zip|xlsx?|pdf)$/i.test(f.name));
+    const usedPdf = new Set();
+    const batches = zips.map(z => [z]);
+    for (const sheet of sheets) {
+      const dir = dirOf(sheet);
+      const nums = String(sheet.name).match(/\d{7,}/g) || [];
+      const pdf = pdfs.find(p => !usedPdf.has(p) && dir && dirOf(p) === dir)
+        || pdfs.find(p => !usedPdf.has(p) && nums.some(n => pathOf(p).includes(n)))
+        || (sheets.length === 1 && pdfs.length === 1 ? pdfs.find(p => !usedPdf.has(p)) : null);
+      if (pdf) usedPdf.add(pdf);
+      batches.push(pdf ? [sheet, pdf] : [sheet]);
+    }
+    for (const pdf of pdfs) if (!usedPdf.has(pdf)) batches.push([pdf]);
+    for (const file of other) batches.push([file]);
+    return batches;
+  }
+
   async function ingest(input) {
     const files = (typeof FileList !== 'undefined' && input instanceof FileList)
       ? [...input]
@@ -1225,18 +1258,30 @@ export function renderFsa(root) {
       return;
     }
     if (state.job?.busy) return;
-    const xlsx = files.filter(f => /\.xlsx?$/i.test(f.name));
-    const pdfs = files.filter(f => /\.pdf$/i.test(f.name));
-    const batches = (files.length === 2 && xlsx.length === 1 && pdfs.length === 1)
-      ? [[xlsx[0], pdfs[0]]]
-      : files.map(f => [f]);
-    for (const batch of batches) {
-      await ingestBatch(batch);
+    const batches = groupFiles(files);
+    state.job = {
+      busy: true,
+      step: 'read',
+      pct: 2,
+      name: files.length === 1 ? files[0].name : `${files.length} files`,
+      size: files.reduce((n, f) => n + (f.size || 0), 0)
+    };
+    setBusy(true);
+    paintProgress();
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    try {
+      for (let i = 0; i < batches.length; i++) {
+        await ingestBatch(batches[i], { linger: i === batches.length - 1 });
+        if (state.job?.step === 'fail') break;
+      }
+    } finally {
+      if (state.job) state.job.busy = false;
+      setBusy(false);
     }
   }
 
-  async function ingestBatch(files) {
-    if (!files?.length || state.job?.busy) return;
+  async function ingestBatch(files, { linger = true } = {}) {
+    if (!files?.length) return;
     const lead = files[0];
     setErr('');
     state.job = {
@@ -1246,19 +1291,15 @@ export function renderFsa(root) {
       name: files.length > 1 ? `${lead.name} + ${files[1].name}` : lead.name,
       size: files.reduce((n, f) => n + (f.size || 0), 0)
     };
-    setBusy(true);
     paintProgress();
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     try {
       const filing = await uploadFiling(files, onJob);
       if (!filing?.id) throw new Error('The extractor returned no filing');
-      await finishJob(filing, filing.extract?.warnings?.[0] || '');
+      await finishJob(filing, filing.extract?.warnings?.[0] || '', { linger });
     } catch (err) {
       onJob({ step: 'fail', pct: 0, hint: err.message, busy: false });
       setErr(err.message);
-    } finally {
-      if (state.job) state.job.busy = false;
-      setBusy(false);
     }
   }
 

@@ -6,14 +6,14 @@ function send(res, code, body) {
   res.end(JSON.stringify(body));
 }
 
-function readBody(req, limit = 16_000_000) {
+function readBody(req, limit = 48_000_000) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     let n = 0;
     req.on('data', (c) => {
       n += c.length;
       if (n > limit) {
-        reject(new Error('Upload is larger than 12 MB'));
+        reject(new Error('Upload is larger than 32 MB'));
         req.destroy();
         return;
       }

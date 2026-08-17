@@ -64,15 +64,25 @@ export async function getFiling(id) {
 export async function addUpload({ name, mime, buffer, companions = [] }) {
   if (!buffer?.length) throw new Error('Empty file');
   const extra = (companions || []).reduce((n, c) => n + (c.buffer?.length || 0), 0);
-  if (buffer.length + extra > 12_000_000) throw new Error('File is larger than 12 MB');
+  if (buffer.length + extra > 32_000_000) throw new Error('File is larger than 32 MB');
   const filing = await extractBuffer(buffer, { name, mime, companions });
   const storedBuf = filing._displayBuffer || buffer;
   const storedName = filing.file?.name || name;
   const storedMime = filing.file?.mime || mime;
   delete filing._displayBuffer;
   filing._stored = await persistBytes(filing.id, storedBuf, storedName, storedMime);
+  const queued = Array.isArray(filing._queue) ? filing._queue : [];
+  delete filing._queue;
+  const extras = [];
+  for (const sib of queued) {
+    const sibBuf = sib._displayBuffer || sib.file?._raw;
+    delete sib._displayBuffer;
+    const raw = sibBuf || null;
+    if (raw?.length) sib._stored = await persistBytes(sib.id, raw, sib.file?.name || 'filing', sib.file?.mime || 'application/octet-stream');
+    extras.push(sib);
+  }
   const doc = await load();
-  doc.filings = [filing, ...doc.filings.filter(f => f.id !== filing.id)];
+  doc.filings = [filing, ...extras, ...doc.filings.filter(f => f.id !== filing.id && !extras.some(s => s.id === f.id))];
   await save(doc);
   return publicFiling(filing);
 }

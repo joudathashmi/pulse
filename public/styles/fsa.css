@@ -68,8 +68,46 @@
 .fsa-upload .fsa-dropzone em { font-size: 13px }
 .fsa-lib {
   margin-top: 14px;
-  padding-top: 14px;
+  padding-top: 12px;
   border-top: 1px solid var(--line-soft);
+  min-width: 0;
+}
+.fsa-lib > summary {
+  display: block;
+  cursor: pointer;
+  list-style: none;
+  padding: 2px 0;
+}
+.fsa-lib > summary::-webkit-details-marker,
+.fsa-lib > summary::marker { display: none; content: ""; }
+.fsa-lib > summary:focus-visible {
+  outline: 2px solid var(--g600);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.fsa-lib-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.fsa-lib-head .fsa-card-k {
+  flex: 1;
+  margin-bottom: 0;
+}
+.fsa-lib-head::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-inline-end: 1.6px solid var(--muted);
+  border-bottom: 1.6px solid var(--muted);
+  transform: rotate(45deg);
+  margin-inline-end: 2px;
+}
+.fsa-lib[open] .fsa-lib-head::after {
+  transform: rotate(225deg);
+  margin-top: 3px;
 }
 .fsa-page {
   display: grid;
@@ -100,16 +138,16 @@
 .fsa-ask {
   display: flex;
   flex-direction: column;
-  min-height: 320px;
+  min-height: 0;
   padding: 0;
   overflow: hidden;
 }
 .fsa-ask .fsa-stream {
-  flex: 1;
-  min-height: 140px;
+  flex: 0 1 auto;
+  min-height: 0;
   max-height: min(42vh, 360px);
 }
-.fsa-ask .fsa-form { margin-top: auto }
+.fsa-ask .fsa-form { margin-top: 0 }
 
 .fsa-process { display: none }
 
@@ -437,15 +475,17 @@ html[data-theme="night"] .fsa-stage {
 .fsa-progress-hint.is-ok { color: var(--ok); font-weight: 650; }
 .fsa-progress-hint.is-fail { color: var(--risk); font-weight: 650; }
 
-.fsa-lib { min-width: 0 }
 .fsa-lib-head {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+  min-width: 0;
+  margin-bottom: 0;
 }
-.fsa-lib-head .fsa-card-k { margin-bottom: 0; }
+.fsa-lib-head .fsa-card-k {
+  flex: 1;
+  margin-bottom: 0;
+}
 .fsa-lib-n {
   font-size: 11px;
   color: var(--muted);
@@ -458,13 +498,13 @@ html[data-theme="night"] .fsa-stage {
   line-height: 1.4;
 }
 .fsa-lib-err {
-  margin: 0 0 10px;
-  padding: 10px 12px;
-  font-size: 13px;
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  font-size: 12px;
   font-weight: 650;
   color: var(--risk);
   background: color-mix(in srgb, var(--risk) 12%, var(--surf));
-  border-radius: 10px;
+  border-radius: 8px;
 }
 .fsa-lib-err[hidden] { display: none }
 
@@ -574,112 +614,125 @@ html[data-theme="night"] .fsa-stage {
 .fsa-tick-wrap { margin-top: 14px; }
 .fsa-tick-wrap .fsa-card-k { margin-bottom: 8px; }
 
+.fsa-lib-list {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 4px;
+  margin-top: 8px;
+  max-height: 148px;
+  overflow: auto;
+}
 .fsa-file {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 0;
   border-inline-start: 2px solid transparent;
   background: var(--surf);
-  border-radius: 10px;
-  margin-bottom: 8px;
+  border-radius: 8px;
   outline: 1px solid var(--line-soft);
   overflow: hidden;
 }
 .fsa-file-main {
   appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
-  text-align: start;
+  min-width: 0;
+  min-height: 36px;
+  height: auto;
+  margin: 0;
+  padding: 6px 10px;
   border: 0;
   background: transparent;
   color: inherit;
   font: inherit;
-  border-radius: 0;
-  padding: 10px 12px 8px;
+  text-align: start;
   cursor: pointer;
-  display: grid;
-  gap: 2px;
 }
 .fsa-file-main:hover { background: var(--tint); }
 .fsa-file-main:focus-visible {
   outline: 2px solid var(--g600);
   outline-offset: -2px;
 }
-.fsa-file-top {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
+.fsa-file b {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.fsa-file b { font-size: 13px; font-weight: 650; min-width: 0; }
-.fsa-file span, .fsa-file em, .fsa-file time {
-  font-style: normal;
+.fsa-file-main > span {
+  flex: 0 1 auto;
+  max-width: 38%;
   font-size: 11px;
   color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.fsa-file time {
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-soft);
-}
-.fsa-file i {
+.fsa-file-st {
+  flex: 0 0 auto;
   font-style: normal;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ok);
-  flex: 0 0 auto;
+  white-space: nowrap;
 }
-.fsa-file i.failed, .fsa-file i.risk { color: var(--risk) }
+.fsa-file-st.is-fail, .fsa-file-st.is-failed { color: var(--risk); }
+.fsa-file-st.is-watch, .fsa-file-st.is-wait { color: var(--watch); }
 .fsa-file.is-on {
   border-inline-start-color: var(--g600);
   background: var(--tint);
 }
-.fsa-file.is-busy {
-  outline-color: var(--g600);
-  background: var(--tint);
-}
+.fsa-file.is-busy { outline-color: var(--g600); background: var(--tint); }
 .fsa-file.is-busy .fsa-file-main { cursor: default }
-.fsa-file i.watch { color: var(--watch) }
 .fsa-file-bar {
-  height: 4px;
-  border-radius: 999px;
+  height: 3px;
   background: var(--tint-deep);
   overflow: hidden;
-  margin-top: 8px;
 }
-.fsa-file-bar i {
+.fsa-file-bar span {
   display: block;
   height: 100%;
   background: var(--g600);
-  border-radius: inherit;
 }
-.fsa-file-hint {
-  margin: 6px 0 0;
-  font-size: 11px;
+.fsa-file-x {
+  appearance: none;
+  position: absolute;
+  inset-inline-end: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
   color: var(--muted);
-  line-height: 1.35;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 6px;
 }
-.fsa-file-hint.is-fail { color: var(--risk) }
-.fsa-file-warn {
-  margin: 6px 0 0;
-  font-size: 11px;
-  color: var(--risk);
-  line-height: 1.35;
+.fsa-file:has(.fsa-file-x) {
+  position: relative;
 }
-.fsa-file-acts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  padding: 0 10px 10px;
-}
-.fsa-file-acts a.wh-act {
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-}
-.fsa-file-acts .wh-act.is-risk { color: var(--risk); }
-.fsa-file-keep {
-  font-size: 11px;
-  color: var(--faint);
-}
+.fsa-file:has(.fsa-file-x) .fsa-file-main { padding-inline-end: 34px; }
+.fsa-file-x:hover { color: var(--risk); background: color-mix(in srgb, var(--risk) 10%, transparent); }
+.fsa-file-hint,
+.fsa-file-warn,
+.fsa-file-acts,
+.fsa-file-keep { display: none }
 
 .fsa-work {
   min-width: 0;
@@ -1199,11 +1252,13 @@ html[dir="rtl"] .fsa-chat-scope {
   color: var(--faint);
 }
 .fsa-stream {
-  min-height: 140px;
+  min-height: 0;
   max-height: min(42vh, 320px);
   overflow: auto;
-  display: grid;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   gap: 8px;
   padding: 14px 16px 8px;
   background:
@@ -1240,7 +1295,10 @@ html[dir="rtl"] .fsa-chat-scope {
   color: var(--faint);
 }
 .fsa-bubble {
+  width: fit-content;
   max-width: min(92%, 56ch);
+  height: auto;
+  min-height: 0;
   padding: 10px 13px;
   border-radius: 12px;
   font-size: 13.5px;
@@ -1248,14 +1306,14 @@ html[dir="rtl"] .fsa-chat-scope {
   line-height: 1.45;
 }
 .fsa-bubble.bot {
-  justify-self: start;
+  align-self: flex-start;
   background: var(--surf-raised);
   border: 1px solid var(--line-soft);
   color: var(--ink);
   border-radius: 4px 12px 12px 12px;
 }
 .fsa-bubble.me {
-  justify-self: end;
+  align-self: flex-end;
   background: var(--g800);
   color: #fff;
   border-radius: 12px 12px 4px 12px;
@@ -1318,10 +1376,16 @@ html[dir="rtl"] .fsa-bubble.me { justify-self: start; border-radius: 12px 12px 1
 .fsa-suggest {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  align-content: flex-start;
   gap: 6px;
   padding: 4px 16px 10px;
 }
 .fsa-suggest .chat-chip {
+  flex: 0 0 auto;
+  align-self: center;
+  height: auto;
+  min-height: 0;
   background: var(--surf-raised);
   color: var(--ink-soft);
   border-color: var(--line);
@@ -1372,7 +1436,9 @@ html[data-shell="desk"] #v-fsa .stage { max-width: 1180px; margin-inline: auto }
   padding: 10px 12px;
   border-radius: 10px;
   cursor: pointer;
-  min-height: 64px;
+  height: auto;
+  min-height: 0;
+  align-self: start;
 }
 .fsa-kpi:hover,
 .fsa-kpi.is-on {
@@ -1452,6 +1518,9 @@ html[data-theme="night"] .fsa-paper .fsa-inspect {
   border-radius: 10px;
   background: var(--tint);
   outline: 1px solid var(--line-soft);
+  height: auto;
+  min-height: 0;
+  align-self: start;
 }
 .fsa-inspect.is-idle p { margin: 0; color: var(--muted); font-size: 13px; }
 .fsa-inspect h3 {
@@ -1503,10 +1572,11 @@ html[data-theme="night"] .fsa-paper .fsa-inspect {
 }
 .fsa-empty .btn-primary { margin-top: 12px; }
 
+body.is-fsa-job { overflow: hidden; }
 .fsa-jobbox {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  z-index: 240;
   display: grid;
   place-items: center;
   padding: 20px;
@@ -1702,7 +1772,7 @@ html[data-shell="phone"] .fsa-upload-btn {
 html[data-shell="phone"] .fsa-dropzone { min-height: 44px }
 html[data-shell="phone"] .fsa-ask {
   position: static;
-  min-height: 360px;
+  min-height: 0;
   max-height: none;
 }
 html[data-shell="phone"] .fsa-fold > summary { display: none }
@@ -1739,7 +1809,8 @@ html[data-shell="phone"] .fsa-stmt-nav {
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
 }
-html[data-shell="phone"] .fsa-src-scroll { max-height: 42vh }
+html[data-shell="phone"] .fsa-file-main > span { display: none }
+html[data-shell="phone"] .fsa-lib-list { max-height: 132px }
 html[data-shell="phone"] .fsa-view-frame,
 html[data-shell="phone"] .fsa-view-img { max-height: 42vh; height: 42vh }
 html[data-shell="phone"] .fsa-jobbox {

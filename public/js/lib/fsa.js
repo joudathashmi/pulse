@@ -12,7 +12,7 @@ function postJsonProgress(url, payload, onUploadPct) {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', url);
     xhr.setRequestHeader('content-type', 'application/json');
-    xhr.timeout = 180000;
+    xhr.timeout = 300000;
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable && e.total) onUploadPct?.(Math.round((e.loaded / e.total) * 100));
     };

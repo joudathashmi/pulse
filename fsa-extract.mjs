@@ -30,19 +30,19 @@ export const STATEMENTS = [
  */
 export const TAXONOMY = [
   { key: 'cash', statement: 'sfp', ifrs: 'IAS 1.54(i)', en: 'Cash and cash equivalents', ar: 'نقد وما في حكمه',
-    aliases: ['cash and cash equivalents', 'cash & cash equivalents', 'cash and bank', 'نقد وما في حكمه', 'النقد وما في حكمه', 'نقدية وما يعادلها', 'نقد لدى البنوك'] },
+    aliases: ['cash and cash equivalents', 'cash & cash equivalents', 'cash and bank', 'نقد وما في حكمه', 'النقد وما في حكمه', 'نقدية وما يعادلها', 'نقد لدى البنوك', 'النقدية بالصندوق ولدي البنوك', 'النقدية بالصندوق'] },
   { key: 'receivables', statement: 'sfp', ifrs: 'IAS 1.54(h)', en: 'Trade receivables', ar: 'ذمم مدينة تجارية',
     aliases: ['trade receivables', 'trade and other receivables', 'accounts receivable', 'ذمم مدينة', 'مدينون', 'ذمم مدينة تجارية'] },
   { key: 'inventory', statement: 'sfp', ifrs: 'IAS 2', en: 'Inventories', ar: 'مخزون',
     aliases: ['inventories', 'inventory', 'مخزون', 'بضاعة'] },
   { key: 'current_assets', statement: 'sfp', ifrs: 'IAS 1.66', en: 'Total current assets', ar: 'إجمالي الأصول المتداولة',
-    aliases: ['total current assets', 'current assets', 'مجموع الأصول المتداولة', 'إجمالي الأصول المتداولة', 'الأصول المتداولة', 'موجودات متداولة'] },
+    aliases: ['total current assets', 'current assets', 'مجموع الأصول المتداولة', 'إجمالي الأصول المتداولة', 'الأصول المتداولة', 'موجودات متداولة', 'إجمالي الموجودات المتداولة'] },
   { key: 'ppe', statement: 'sfp', ifrs: 'IAS 16', en: 'Property, plant and equipment', ar: 'ممتلكات وآلات ومعدات',
-    aliases: ['property plant and equipment', 'property, plant and equipment', 'ppe', 'ممتلكات وآلات ومعدات', 'ممتلكات ومعدات'] },
+    aliases: ['property plant and equipment', 'property, plant and equipment', 'ppe', 'ممتلكات وآلات ومعدات', 'ممتلكات ومعدات', 'ممتلكات ومعدات صافي'] },
   { key: 'intangibles', statement: 'sfp', ifrs: 'IAS 38', en: 'Intangible assets', ar: 'أصول غير ملموسة',
     aliases: ['intangible assets', 'intangibles', 'أصول غير ملموسة', 'موجودات غير ملموسة'] },
   { key: 'noncurrent_assets', statement: 'sfp', ifrs: 'IAS 1.66', en: 'Total non-current assets', ar: 'إجمالي الأصول غير المتداولة',
-    aliases: ['total non-current assets', 'non-current assets', 'noncurrent assets', 'إجمالي الأصول غير المتداولة', 'الأصول غير المتداولة', 'موجودات غير متداولة'] },
+    aliases: ['total non-current assets', 'non-current assets', 'noncurrent assets', 'إجمالي الأصول غير المتداولة', 'الأصول غير المتداولة', 'موجودات غير متداولة', 'إجمالي الموجودات غير المتداولة'] },
   { key: 'total_assets', statement: 'sfp', ifrs: 'IAS 1.54', en: 'Total assets', ar: 'إجمالي الأصول',
     aliases: ['total assets', 'إجمالي الأصول', 'مجموع الأصول', 'إجمالي الموجودات', 'مجموع الموجودات'] },
   { key: 'payables', statement: 'sfp', ifrs: 'IAS 1.54(k)', en: 'Trade payables', ar: 'ذمم دائنة تجارية',
@@ -50,21 +50,21 @@ export const TAXONOMY = [
   { key: 'short_debt', statement: 'sfp', ifrs: 'IFRS 7', en: 'Short-term borrowings', ar: 'قروض قصيرة الأجل',
     aliases: ['short-term borrowings', 'short term borrowings', 'current borrowings', 'قروض قصيرة الأجل', 'تمويل قصير الأجل'] },
   { key: 'current_liab', statement: 'sfp', ifrs: 'IAS 1.69', en: 'Total current liabilities', ar: 'إجمالي الالتزامات المتداولة',
-    aliases: ['total current liabilities', 'current liabilities', 'إجمالي الالتزامات المتداولة', 'الالتزامات المتداولة', 'مطلوبات متداولة'] },
+    aliases: ['total current liabilities', 'current liabilities', 'إجمالي الالتزامات المتداولة', 'الالتزامات المتداولة', 'مطلوبات متداولة', 'إجمالي المطلوبات المتداولة'] },
   { key: 'long_debt', statement: 'sfp', ifrs: 'IFRS 7', en: 'Long-term borrowings', ar: 'قروض طويلة الأجل',
     aliases: ['long-term borrowings', 'long term borrowings', 'non-current borrowings', 'قروض طويلة الأجل', 'تمويل طويل الأجل'] },
   { key: 'noncurrent_liab', statement: 'sfp', ifrs: 'IAS 1.69', en: 'Total non-current liabilities', ar: 'إجمالي الالتزامات غير المتداولة',
-    aliases: ['total non-current liabilities', 'non-current liabilities', 'إجمالي الالتزامات غير المتداولة', 'الالتزامات غير المتداولة', 'مطلوبات غير متداولة'] },
+    aliases: ['total non-current liabilities', 'non-current liabilities', 'إجمالي الالتزامات غير المتداولة', 'الالتزامات غير المتداولة', 'مطلوبات غير متداولة', 'إجمالي المطلوبات غير المتداولة'] },
   { key: 'total_liab', statement: 'sfp', ifrs: 'IAS 1.54', en: 'Total liabilities', ar: 'إجمالي الالتزامات',
     aliases: ['total liabilities', 'إجمالي الالتزامات', 'مجموع الالتزامات', 'إجمالي المطلوبات'] },
   { key: 'share_capital', statement: 'sfp', ifrs: 'IAS 1.54(r)', en: 'Share capital', ar: 'رأس المال',
     aliases: ['share capital', 'issued capital', 'رأس المال', 'رأس المال المصدر'] },
   { key: 'retained', statement: 'sfp', ifrs: 'IAS 1.54(r)', en: 'Retained earnings', ar: 'أرباح مبقاة',
-    aliases: ['retained earnings', 'retained profits', 'أرباح مبقاة', 'أرباح محتجزة'] },
+    aliases: ['retained earnings', 'retained profits', 'أرباح مبقاة', 'أرباح محتجزة', 'الخسائر المبقاة', 'الأرباح المبقاة'] },
   { key: 'equity', statement: 'sfp', ifrs: 'IAS 1.54(r)', en: 'Total equity', ar: 'إجمالي حقوق الملكية',
-    aliases: ['total equity', 'equity attributable', 'shareholders equity', 'إجمالي حقوق الملكية', 'حقوق الملكية', 'حقوق المساهمين'] },
+    aliases: ['total equity', 'equity attributable', 'shareholders equity', 'إجمالي حقوق الملكية', 'حقوق الملكية', 'حقوق المساهمين', 'إجمالي حقوق الشركاء', 'حقوق الشركاء'] },
   { key: 'equity_liab', statement: 'sfp', ifrs: 'IAS 1.54', en: 'Total equity and liabilities', ar: 'إجمالي حقوق الملكية والالتزامات',
-    aliases: ['total equity and liabilities', 'equity and liabilities', 'إجمالي حقوق الملكية والالتزامات', 'مجموع حقوق الملكية والمطلوبات'] },
+    aliases: ['total equity and liabilities', 'equity and liabilities', 'إجمالي حقوق الملكية والالتزامات', 'مجموع حقوق الملكية والمطلوبات', 'إجمالي المطلوبات وحقوق الشركاء'] },
   { key: 'revenue', statement: 'pl', ifrs: 'IAS 1.82(a)', en: 'Revenue', ar: 'الإيرادات',
     aliases: ['revenue', 'turnover', 'sales', 'إيرادات', 'الإيرادات', 'المبيعات', 'إجمالي الإيرادات'] },
   { key: 'cogs', statement: 'pl', ifrs: 'IAS 1.99', en: 'Cost of sales', ar: 'تكلفة الإيرادات',
@@ -101,7 +101,7 @@ const HEADER_RULES = [
   { id: 'sfp', re: /statement of financial position|balance sheet|قائمة المركز المالي|المركز المالي/i },
   { id: 'pl', re: /statement of profit or loss|income statement|comprehensive income|قائمة الربح|قائمة الدخل|الربح أو الخسارة/i },
   { id: 'cf', re: /statement of cash flows|cash flow statement|قائمة التدفقات النقدية|التدفقات النقدية/i },
-  { id: 'eq', re: /changes in equity|statement of changes|قائمة التغيرات في حقوق|التغيرات في حقوق الملكية/i },
+  { id: 'eq', re: /changes in equity|statement of changes|قائمة التغيرات في حقوق|التغيرات في حقوق الملكية|قائمة التغيرات في حقوق الشركاء/i },
   { id: 'notes', re: /notes to the financial|notes to the statements|إيضاحات حول|الإيضاحات/i }
 ];
 
@@ -115,6 +115,10 @@ export function normalizeDigits(s) {
 export function fold(s) {
   return normalizeDigits(s)
     .toLowerCase()
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/(^|[^\p{L}])ال(?=\p{L})/gu, '$1')
     .replace(/[^\p{L}\p{N}\s]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
@@ -250,6 +254,39 @@ function detectIdentity(lines, fileName) {
   return identity;
 }
 
+function statementAmounts(line) {
+  const nums = amountsIn(line);
+  const big = nums.filter(n => Math.abs(n) >= 100);
+  return big.length ? big : nums;
+}
+
+function stitchLines(lines) {
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    const a = lines[i];
+    const b = lines[i + 1];
+    if (!b) {
+      out.push(a);
+      continue;
+    }
+    const aNums = statementAmounts(a);
+    const bNums = statementAmounts(b);
+    const aLab = fold(labelOf(a));
+    const bLab = fold(labelOf(b));
+    const aAmt = aNums.length >= 1 && aLab.length <= 2;
+    const bAmt = bNums.length >= 1 && bLab.length <= 2;
+    const aLbl = aLab.length >= 4 && aNums.length <= 1;
+    const bLbl = bLab.length >= 4 && bNums.length <= 1;
+    if ((aAmt && bLbl) || (aLbl && bAmt)) {
+      out.push(`${a} ${b}`);
+      i += 1;
+      continue;
+    }
+    out.push(a);
+  }
+  return out;
+}
+
 function linesFromPdfItems(items) {
   const rows = new Map();
   for (const it of items) {
@@ -262,7 +299,14 @@ function linesFromPdfItems(items) {
   }
   return [...rows.entries()]
     .sort((a, b) => b[0] - a[0])
-    .map(([, bits]) => bits.sort((a, b) => a.x - b.x).map(b => b.str).join(' ').replace(/\s+/g, ' ').trim())
+    .map(([, bits]) => {
+      const ordered = bits.sort((a, b) => a.x - b.x);
+      const joined = ordered.map(b => b.str).join(' ');
+      const ar = (joined.match(/[\u0600-\u06FF]/g) || []).length;
+      const la = (joined.match(/[A-Za-z0-9]/g) || []).length;
+      const use = ar > la ? ordered.slice().reverse() : ordered;
+      return use.map(b => b.str).join(' ').replace(/\s+/g, ' ').trim();
+    })
     .filter(Boolean);
 }
 
@@ -294,8 +338,94 @@ async function extractPdfPages(buffer) {
   return pages;
 }
 
+function inflateEntry(method, raw) {
+  if (method === 0) return raw;
+  if (method === 8) return inflateRawSync(raw);
+  return null;
+}
+
+function zipExtra64(extra, needSize, needOff) {
+  let i = 0;
+  const out = { size: needSize, off: needOff };
+  while (i + 4 <= extra.length) {
+    const id = extra.readUInt16LE(i);
+    const n = extra.readUInt16LE(i + 2);
+    const body = extra.slice(i + 4, i + 4 + n);
+    i += 4 + n;
+    if (id !== 1) continue;
+    let p = 0;
+    if (needSize === 0xffffffff && p + 8 <= body.length) {
+      out.size = Number(body.readBigUInt64LE(p));
+      p += 8;
+    }
+    if (p + 8 <= body.length) p += 8;
+    if (needOff === 0xffffffff && p + 8 <= body.length) out.off = Number(body.readBigUInt64LE(p));
+  }
+  return out;
+}
+
+function unzipFromCentral(buf) {
+  const entries = new Map();
+  const min = Math.max(0, buf.length - 22 - 65535);
+  let eocd = -1;
+  for (let i = buf.length - 22; i >= min; i--) {
+    if (buf.readUInt32LE(i) !== 0x06054b50) continue;
+    const commentLen = buf.readUInt16LE(i + 20);
+    if (i + 22 + commentLen <= buf.length) {
+      eocd = i;
+      break;
+    }
+  }
+  if (eocd < 0) return entries;
+  let cdOff = buf.readUInt32LE(eocd + 16);
+  let cdCount = buf.readUInt16LE(eocd + 10);
+  if (cdOff === 0xffffffff || cdCount === 0xffff) {
+    const loc = eocd - 20;
+    if (loc >= 0 && buf.readUInt32LE(loc) === 0x07064b50) {
+      const z64 = Number(buf.readBigUInt64LE(loc + 8));
+      if (buf.readUInt32LE(z64) === 0x06064b50) {
+        cdCount = Number(buf.readBigUInt64LE(z64 + 32));
+        cdOff = Number(buf.readBigUInt64LE(z64 + 48));
+      }
+    }
+  }
+  let i = cdOff;
+  for (let n = 0; n < cdCount && i + 46 <= buf.length; n++) {
+    if (buf.readUInt32LE(i) !== 0x02014b50) break;
+    const method = buf.readUInt16LE(i + 10);
+    let compSize = buf.readUInt32LE(i + 20);
+    const nameLen = buf.readUInt16LE(i + 28);
+    const extraLen = buf.readUInt16LE(i + 30);
+    const commentLen = buf.readUInt16LE(i + 32);
+    let localOff = buf.readUInt32LE(i + 42);
+    const name = buf.slice(i + 46, i + 46 + nameLen).toString('utf8');
+    const extra = buf.slice(i + 46 + nameLen, i + 46 + nameLen + extraLen);
+    if (compSize === 0xffffffff || localOff === 0xffffffff) {
+      const z = zipExtra64(extra, compSize, localOff);
+      compSize = z.size;
+      localOff = z.off;
+    }
+    if (localOff + 30 <= buf.length && buf.readUInt32LE(localOff) === 0x04034b50) {
+      const lName = buf.readUInt16LE(localOff + 26);
+      const lExtra = buf.readUInt16LE(localOff + 28);
+      const start = localOff + 30 + lName + lExtra;
+      const raw = buf.slice(start, start + compSize);
+      try {
+        const data = inflateEntry(method, raw);
+        if (data) entries.set(name, data);
+      } catch {
+        /* skip a bad entry */
+      }
+    }
+    i += 46 + nameLen + extraLen + commentLen;
+  }
+  return entries;
+}
+
 function unzip(buffer) {
   const buf = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+  const central = unzipFromCentral(buf);
+  if (central.size) return central;
   const entries = new Map();
   let i = 0;
   while (i < buf.length - 30) {
@@ -306,14 +436,16 @@ function unzip(buffer) {
       continue;
     }
     const method = buf.readUInt16LE(i + 8);
+    const flags = buf.readUInt16LE(i + 6);
     const compSize = buf.readUInt32LE(i + 18);
     const nameLen = buf.readUInt16LE(i + 26);
     const extraLen = buf.readUInt16LE(i + 28);
     const name = buf.slice(i + 30, i + 30 + nameLen).toString('utf8');
     const start = i + 30 + nameLen + extraLen;
+    if ((flags & 8) && !compSize) break;
     const raw = buf.slice(start, start + compSize);
     try {
-      const data = method === 0 ? raw : method === 8 ? inflateRawSync(raw) : null;
+      const data = inflateEntry(method, raw);
       if (data) entries.set(name, data);
     } catch {
       /* skip a bad entry */
@@ -365,6 +497,21 @@ function unpackZip(buffer) {
   return files;
 }
 
+function unpackZipDeep(buffer, prefix = '', depth = 0) {
+  if (depth > 5) return [];
+  const out = [];
+  for (const f of unpackZip(buffer)) {
+    const path = prefix ? `${prefix.replace(/\/?$/, '/')}${f.path}` : f.path;
+    const nested = /\.zip$/i.test(f.name) && !looksLikeWorkbook(f.buffer);
+    if (nested) {
+      out.push(...unpackZipDeep(f.buffer, path.replace(/\.zip$/i, ''), depth + 1));
+    } else {
+      out.push({ ...f, path });
+    }
+  }
+  return out;
+}
+
 function looksLikeWorkbook(buffer) {
   try {
     return unzip(buffer).has('xl/workbook.xml');
@@ -373,16 +520,14 @@ function looksLikeWorkbook(buffer) {
   }
 }
 
-const SCAN_WARN = 'This PDF has no usable text layer. Upload the MCI iFile Excel (MCI_*.xlsx) from the same pack. The PDF is kept as the signed copy.';
+const SCAN_WARN = 'This PDF is a scan with no text the extractor can read. Upload the MCI iFile Excel (MCI_*.xlsx) from the same pack. The PDF is kept as the signed copy.';
+const MAP_WARN = 'The PDF was read, but IFRS lines could not be mapped cleanly. Upload the MCI iFile Excel (MCI_*.xlsx) from the same pack. The PDF is kept as the signed copy.';
 const MCI_FAIL_WARN = 'This looks like an MCI iFile workbook, but the statement sheets could not be read. Use the Ministry Excel from the same pack, not a PDF scan.';
 
 function pdfScanKind(pages) {
   const text = pages.map(p => p.text || '').join('\n');
   const compact = text.replace(/\s+/g, '');
-  const avg = compact.length / Math.max(pages.length, 1);
-  if (!pages.length || compact.length < 200 || avg < 40) return 'empty';
-  const hasStmt = /statement of financial position|قائمة المركز المالي|statement of profit|قائمة الربح|قائمة الدخل|statement of cash flows|التدفقات النقدية/i.test(text);
-  if (!hasStmt) return 'empty';
+  if (!pages.length || compact.length < 80) return 'empty';
   return '';
 }
 
@@ -399,7 +544,7 @@ function mapPages(pages) {
   const lines = [];
   let current = 'sfp';
   for (const page of pages) {
-    for (const text of page.lines) {
+    for (const text of stitchLines(page.lines || [])) {
       const header = detectHeader(text);
       if (header) current = header;
       lines.push({ text, page: page.n, statement: current });
@@ -410,16 +555,17 @@ function mapPages(pages) {
   for (const row of lines) {
     const header = detectHeader(row.text);
     if (header) continue;
-    const nums = amountsIn(row.text);
+    if (row.statement === 'notes') continue;
+    const nums = statementAmounts(row.text);
     if (!nums.length) continue;
     const label = labelOf(row.text);
     const hit = matchTaxonomy(label, row.statement) || matchTaxonomy(label);
     if (!hit) continue;
-    const current = nums[0];
+    const currentAmt = nums[0];
     const prior = nums.length > 1 ? nums[1] : null;
     const prev = found.get(hit.key);
     const confidence = fold(label) === fold(hit.aliases[0]) ? 0.96 : 0.78;
-    if (!prev || confidence >= (prev.confidence || 0)) {
+    if (!prev || confidence > (prev.confidence || 0)) {
       found.set(hit.key, {
         id: `ln-${hit.key}`,
         key: hit.key,
@@ -428,7 +574,7 @@ function mapPages(pages) {
         labelAr: hit.ar,
         sourceLabel: label,
         ifrs: hit.ifrs,
-        current,
+        current: currentAmt,
         prior,
         page: row.page,
         confidence
@@ -606,7 +752,7 @@ export function assembleFiling({ id, file, pages, lines, identity, synthetic = f
     id,
     synthetic,
     source,
-    status: lines.length ? assessment.status : 'failed',
+    status: lines.length ? assessment.status : (pages.length ? 'watch' : 'failed'),
     file: {
       name: file?.name || 'statement.pdf',
       mime: file?.mime || 'application/pdf',
@@ -714,6 +860,7 @@ async function extractPdfFiling(buffer, name, mime) {
     return filing;
   }
   const scan = pdfScanKind(pages);
+  const compact = pages.map(p => p.text || '').join('').replace(/\s+/g, '');
   if (scan) {
     const identity = detectIdentity(pages.flatMap(p => p.lines), name);
     return assembleFiling({
@@ -728,27 +875,25 @@ async function extractPdfFiling(buffer, name, mime) {
   }
   const allLines = pages.flatMap(p => p.lines);
   const identity = detectIdentity(allLines, name);
-  let lines = mapPages(pages);
-  const trusted = lines.some(l => (l.confidence || 0) >= 0.9);
-  if (!lines.length || !trusted) {
-    const filing = assembleFiling({
+  const lines = mapPages(pages);
+  if (lines.length) {
+    return assembleFiling({
       id: newId('fs'),
       file: { name, mime: mime || 'application/pdf', bytes: buffer.length },
       pages,
-      lines: [],
+      lines,
       identity,
-      source: 'upload',
-      warnings: [SCAN_WARN]
+      source: 'upload'
     });
-    return filing;
   }
   return assembleFiling({
     id: newId('fs'),
     file: { name, mime: mime || 'application/pdf', bytes: buffer.length },
     pages,
-    lines,
+    lines: [],
     identity,
-    source: 'upload'
+    source: 'upload',
+    warnings: [compact.length >= 80 ? MAP_WARN : SCAN_WARN]
   });
 }
 
@@ -822,7 +967,26 @@ export async function extractBuffer(buffer, { name = 'statement.pdf', mime = 'ap
 
   const zipName = /\.zip$/.test(lower) || (type.includes('zip') && !type.includes('sheet'));
   if (zipName) {
-    const inner = unpackZip(buffer);
+    const inner = unpackZipDeep(buffer);
+    const books = inner.filter(f => /\.xlsx?$/i.test(f.name) || looksLikeWorkbook(f.buffer));
+    const pdfs = inner.filter(f => /\.pdf$/i.test(f.name));
+    if (books.length > 1) {
+      const filings = [];
+      for (const book of books) {
+        const dir = String(book.path || '').replace(/[^/]+$/, '');
+        const nums = String(book.name).match(/\d{7,}/g) || [];
+        const pdf = pdfs.find(p => String(p.path || '').startsWith(dir) && p !== book)
+          || pdfs.find(p => nums.some(n => `${p.path || ''} ${p.name}`.includes(n)))
+          || null;
+        const one = await extractFromParts([book, pdf].filter(Boolean), book.name, mimeOf(book.name), book.buffer);
+        if (!one._displayBuffer) one._displayBuffer = pdf?.buffer || book.buffer;
+        filings.push(one);
+      }
+      if (filings.length) {
+        filings[0]._queue = filings.slice(1);
+        return filings[0];
+      }
+    }
     if (inner.some(f => /\.xlsx?$/i.test(f.name) || /\.pdf$/i.test(f.name) || looksLikeWorkbook(f.buffer))) {
       return extractFromParts(inner, name, mime, buffer);
     }
