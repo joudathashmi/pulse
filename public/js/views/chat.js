@@ -148,7 +148,7 @@ export function mountChat(host, { getData, openDrill, go, openAskOwner, openDesk
       const page = pageHelp(getView?.());
       addBubble('bot', `How can I help? You are on ${page.name}. ${page.hint} Ask for support on a number, this page, or a named owner.`);
     }
-    input.focus();
+    input.focus({ preventScroll: true });
   }
 
   function close() {

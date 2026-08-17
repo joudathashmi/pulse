@@ -27,7 +27,7 @@ export function stayPutOnDetails(root = document) {
   root.addEventListener('click', (e) => {
     const summary = e.target.closest?.('summary');
     if (!summary || !root.contains(summary)) return;
-    if (e.target.closest('a, button, input, textarea, select, label')) return;
+    if (e.target.closest('a, button, input, textarea, select, label, #chat-root, #float-root')) return;
     const details = summary.parentElement;
     if (!(details instanceof HTMLDetailsElement)) return;
     e.preventDefault();

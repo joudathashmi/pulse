@@ -20,7 +20,6 @@ body {
   font-size: var(--fs-body);
   line-height: var(--lh);
   -webkit-font-smoothing: antialiased;
-  overflow-x: clip;
 }
 
 /* -- Shell -- */
@@ -1002,7 +1001,7 @@ html[dir="rtl"] .head-val span { margin-left: 0; margin-right: 8px }
   position: fixed;
   right: max(16px, env(safe-area-inset-right));
   bottom: calc(96px + env(safe-area-inset-bottom));
-  z-index: 45;
+  z-index: 50;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -1057,7 +1056,7 @@ html[dir="rtl"] .head-val span { margin-left: 0; margin-right: 8px }
   position: fixed;
   right: max(12px, env(safe-area-inset-right));
   bottom: calc(96px + env(safe-area-inset-bottom));
-  z-index: 46;
+  z-index: 51;
   width: min(400px, calc(100vw - 24px));
   height: min(560px, calc(100dvh - 120px));
   display: flex;

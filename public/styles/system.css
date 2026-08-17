@@ -44,13 +44,12 @@ details.tv,
   touch-action: pan-x pan-y;
 }
 #chat-root {
-  position: fixed;
-  inset: 0;
-  z-index: 45;
   pointer-events: none;
 }
 #chat-root .chat-fab,
-#chat-root .chat-panel { pointer-events: auto }
+#chat-root .chat-panel {
+  pointer-events: auto;
+}
 
 .sys-kicker {
   font-size: 11px;

@@ -682,7 +682,7 @@ html[data-theme="night"] .tab[aria-selected="true"] {
 }
 html[data-theme="night"] .chat-fab,
 html[data-theme="night"] .chat-head-mark {
-  color: var(--accent);
+  color: #f4f7f5;
 }
 html[data-theme="aurora"] .wh-hl-stack { background: var(--tint) }
 
