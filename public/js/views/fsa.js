@@ -1172,8 +1172,8 @@ export function renderFsa(root) {
     }
   }
 
-  uploadBtn?.addEventListener('click', () => fileInput.click());
-  zoneBtn?.addEventListener('click', () => fileInput.click());
+  uploadBtn?.addEventListener('click', () => fileInput?.click());
+  zoneBtn?.addEventListener('click', () => fileInput?.click());
 
   function jump(id) {
     state.focus = id || 'add';
@@ -1197,7 +1197,7 @@ export function renderFsa(root) {
     b.onclick = () => jump(b.dataset.jump);
   }
 
-  sampleBtn.onclick = async () => {
+  sampleBtn?.addEventListener('click', async () => {
     if (state.job?.busy) return;
     setErr('');
     state.job = { busy: true, step: 'upload', pct: 12, name: 'Horizon-KSA-FY2025-IFRS.pdf' };
@@ -1220,7 +1220,11 @@ export function renderFsa(root) {
     const files = (typeof FileList !== 'undefined' && input instanceof FileList)
       ? [...input]
       : Array.isArray(input) ? input : input ? [input] : [];
-    if (!files.length || state.job?.busy) return;
+    if (!files.length) {
+      setErr('No file was received. Choose the PDF, Excel, or zip again.');
+      return;
+    }
+    if (state.job?.busy) return;
     const xlsx = files.filter(f => /\.xlsx?$/i.test(f.name));
     const pdfs = files.filter(f => /\.pdf$/i.test(f.name));
     const batches = (files.length === 2 && xlsx.length === 1 && pdfs.length === 1)
@@ -1258,8 +1262,8 @@ export function renderFsa(root) {
     }
   }
 
-  fileInput.addEventListener('change', () => {
-    const files = fileInput.files;
+  fileInput?.addEventListener('change', () => {
+    const files = [...(fileInput.files || [])];
     fileInput.value = '';
     ingest(files);
   });
@@ -1274,7 +1278,7 @@ export function renderFsa(root) {
     e.preventDefault();
     e.stopPropagation();
     addCard.classList.remove('is-over');
-    ingest(e.dataTransfer?.files);
+    ingest([...(e.dataTransfer?.files || [])]);
   });
   panel?.addEventListener('dragover', (e) => {
     if (![...e.dataTransfer.types].includes('Files')) return;
@@ -1288,7 +1292,7 @@ export function renderFsa(root) {
     if (![...e.dataTransfer.types].includes('Files')) return;
     e.preventDefault();
     addCard?.classList.remove('is-over');
-    ingest(e.dataTransfer?.files);
+    ingest([...(e.dataTransfer?.files || [])]);
   });
 
   refresh();
