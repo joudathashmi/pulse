@@ -76,17 +76,9 @@
   gap: 16px;
   min-width: 0;
 }
-@media (min-width: 960px) {
-  html[data-shell="desk"] .fsa-page {
-    grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
-    align-items: start;
-  }
-}
 .fsa-analysis,
 .fsa-ask {
   min-width: 0;
-  isolation: isolate;
-  overflow: hidden;
 }
 .fsa-analysis { padding: 0 0 14px }
 .fsa-analysis-h {
@@ -108,21 +100,14 @@
 .fsa-ask {
   display: flex;
   flex-direction: column;
-  min-height: 420px;
+  min-height: 320px;
   padding: 0;
   overflow: hidden;
 }
-@media (min-width: 960px) {
-  html[data-shell="desk"] .fsa-ask {
-    position: sticky;
-    top: 72px;
-    max-height: calc(100dvh - 96px);
-  }
-}
 .fsa-ask .fsa-stream {
   flex: 1;
-  min-height: 160px;
-  max-height: none;
+  min-height: 140px;
+  max-height: min(42vh, 360px);
 }
 .fsa-ask .fsa-form { margin-top: auto }
 
@@ -473,9 +458,13 @@ html[data-theme="night"] .fsa-stage {
   line-height: 1.4;
 }
 .fsa-lib-err {
-  margin: 0 0 8px;
-  font-size: 12px;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 650;
   color: var(--risk);
+  background: color-mix(in srgb, var(--risk) 12%, var(--surf));
+  border-radius: 10px;
 }
 .fsa-lib-err[hidden] { display: none }
 
@@ -814,12 +803,20 @@ html[dir="rtl"] .fsa-id-meta { justify-content: flex-start }
 html[data-theme="night"] .fsa-stmt.is-on { background: var(--tint-deep) }
 
 @media (min-width: 960px) {
-  html[data-shell="desk"] .fsa-pane-nav { display: flex }
+  html[data-shell="desk"] .fsa-pane-nav { display: none }
 }
 
 .fsa-body { display: grid; gap: 14px; min-width: 0 }
-.fsa-body.is-extract .fsa-viewer,
-.fsa-body.is-source .fsa-extract { display: none }
+@media (min-width: 960px) {
+  html[data-shell="desk"] .fsa-body {
+    grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+    align-items: start;
+  }
+}
+@media (max-width: 959px) {
+  .fsa-body.is-extract .fsa-viewer,
+  .fsa-body.is-source .fsa-extract { display: none }
+}
 
 .fsa-extract, .fsa-viewer { min-width: 0 }
 
@@ -1354,7 +1351,7 @@ html[dir="rtl"] .fsa-bubble.me { justify-self: start; border-radius: 12px 12px 1
 }
 .fsa-form .chat-send:disabled { opacity: 0.45; cursor: wait }
 
-html[data-shell="desk"] #v-fsa .stage { max-width: 1080px; margin-inline: auto }
+html[data-shell="desk"] #v-fsa .stage { max-width: 1180px; margin-inline: auto }
 
 .fsa-kpis {
   display: grid;

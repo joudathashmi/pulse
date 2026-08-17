@@ -701,6 +701,7 @@ export function renderFsa(root) {
 
   function paintWork() {
     const fx = copy();
+    try {
     const row = current();
     if (!row) {
       work.innerHTML = `<article class="fsa-page">
@@ -920,6 +921,7 @@ export function renderFsa(root) {
         if (p) state.page = p;
         paintWork();
         work.querySelector(`[data-line="${key}"]`)?.focus({ preventScroll: true });
+        work.querySelector('.fsa-src tr.is-on, iframe.fsa-view-frame, .fsa-view-img')?.scrollIntoView({ block: 'nearest' });
       };
       tr.addEventListener('click', pick);
       tr.addEventListener('keydown', (e) => {
@@ -1115,6 +1117,13 @@ export function renderFsa(root) {
       requestAnimationFrame(() => window.scrollTo({ left: pinX, top: pinY, behavior: 'auto' }));
     }
     if (keepAsk) work.querySelector('[data-q]')?.focus({ preventScroll: true });
+    } catch (err) {
+      setErr(err.message || String(err));
+      work.innerHTML = `<article class="fsa-page"><section class="fsa-card fsa-analysis fsa-empty">
+        <h2>${esc(fx.pickTitle || 'Could not open the filing')}</h2>
+        <p>${esc(err.message || err)}</p>
+      </section></article>`;
+    }
   }
 
   function onJob(p) {
@@ -1142,7 +1151,8 @@ export function renderFsa(root) {
     setErr(warning || '');
     paintList();
     paintWork();
-    intoViewIfNeeded(work.querySelector('.fsa-analysis'));
+    const workspace = work.querySelector('.fsa-analysis');
+    if (workspace) workspace.scrollIntoView({ behavior: 'auto', block: 'start' });
     await new Promise(r => setTimeout(r, 900));
     if (state.job?.step === 'done' && !state.job?.busy) {
       state.job = null;
@@ -1237,7 +1247,8 @@ export function renderFsa(root) {
     await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     try {
       const filing = await uploadFiling(files, onJob);
-      await finishJob(filing, '');
+      if (!filing?.id) throw new Error('The extractor returned no filing');
+      await finishJob(filing, filing.extract?.warnings?.[0] || '');
     } catch (err) {
       onJob({ step: 'fail', pct: 0, hint: err.message, busy: false });
       setErr(err.message);
