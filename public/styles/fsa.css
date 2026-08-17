@@ -15,24 +15,57 @@
 
 .fsa-upload { padding: 16px }
 .fsa-upload-h .fsa-card-lede { margin-bottom: 12px }
-.fsa-upload-row {
-  display: grid;
+.fsa-upload-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
-}
-@media (min-width: 640px) {
-  .fsa-upload-row {
-    grid-template-columns: minmax(160px, auto) minmax(0, 1fr);
-    align-items: stretch;
-  }
+  margin-bottom: 10px;
 }
 .fsa-upload-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 52px;
-  width: 100%;
-  padding: 0 18px;
+  flex: 0 0 auto;
+  width: auto;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  padding: 0 16px;
+  align-self: center;
 }
+.fsa-upload .fsa-sample {
+  width: auto;
+  margin: 0;
+  padding: 8px 4px;
+  text-align: start;
+}
+.fsa-upload .fsa-dropzone {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  height: auto;
+  padding: 10px 14px;
+  text-align: start;
+  justify-items: start;
+}
+.fsa-upload .fsa-dropzone svg {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  margin: 0;
+}
+.fsa-upload .fsa-dropzone span {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 6px;
+  font-size: 12px;
+}
+.fsa-upload .fsa-dropzone em { font-size: 13px }
 .fsa-lib {
   margin-top: 14px;
   padding-top: 14px;
@@ -339,10 +372,6 @@ html[data-theme="night"] .fsa-stage {
 }
 .fsa-upload.is-over {
   border-color: var(--g600);
-}
-.fsa-upload .fsa-dropzone {
-  min-height: 52px;
-  padding: 10px 14px;
 }
 .fsa-inbox.is-busy .fsa-dropzone { cursor: wait }
 
@@ -1616,7 +1645,12 @@ html[data-theme="night"] .fsa-jobbox { background: rgba(8, 8, 10, 0.62); }
 .fsa-jobbox-hint.is-ok { color: var(--ok); font-weight: 650; }
 .fsa-jobbox-hint.is-fail { color: var(--risk); font-weight: 650; }
 
-.fsa-upload-btn { display: inline-flex }
+.fsa-upload-btn {
+  display: inline-flex;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
+}
 
 .fsa-fold > summary {
   list-style: none;
@@ -1659,15 +1693,16 @@ html[data-shell="phone"] .fsa {
 }
 html[data-shell="phone"] .fsa-mast .lede { display: none }
 html[data-shell="phone"] .fsa-upload-btn {
-  display: flex;
-  width: 100%;
-  min-height: 48px;
+  display: inline-flex;
+  width: auto;
+  min-height: 40px;
+  max-height: 40px;
+  height: 40px;
   margin: 0;
   justify-content: center;
   align-items: center;
 }
-html[data-shell="phone"] .fsa-upload-row { grid-template-columns: 1fr }
-html[data-shell="phone"] .fsa-dropzone { min-height: 88px }
+html[data-shell="phone"] .fsa-dropzone { min-height: 44px }
 html[data-shell="phone"] .fsa-ask {
   position: static;
   min-height: 360px;

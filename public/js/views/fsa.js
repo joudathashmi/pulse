@@ -358,15 +358,14 @@ export function renderFsa(root) {
           <p class="fsa-card-lede">${esc(f.addLede || '')}</p>
         </div>
         <input type="file" data-file accept=".pdf,.xlsx,.xls,.zip,application/pdf,application/zip,image/*" multiple hidden />
-        <div class="fsa-upload-row">
+        <div class="fsa-upload-acts">
           <button type="button" class="btn-primary fsa-upload-btn" data-upload>${esc(f.uploadBtn || 'Upload filing')}</button>
-          <button type="button" class="fsa-dropzone" data-zone title="${esc(f.accepts || '')}">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.2V4.8M8.2 8.2 12 4.8l3.8 3.4M5.2 19.2h13.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <em>${esc(f.dropHere || 'Click or drop a file')}</em>
-            <span>${esc(f.dropHint || '')}</span>
-          </button>
+          <button type="button" class="fsa-sample" data-sample>${esc(f.sample || 'Load sample')}</button>
         </div>
-        <button type="button" class="fsa-sample" data-sample>${esc(f.sample || 'Load sample')}</button>
+        <button type="button" class="fsa-dropzone" data-zone title="${esc(f.accepts || '')}">
+          <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.2V4.8M8.2 8.2 12 4.8l3.8 3.4M5.2 19.2h13.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span><em>${esc(f.dropHere || 'Click or drop a file')}</em> ${esc(f.dropHint || '')}</span>
+        </button>
         <div class="fsa-progress" data-job-inline hidden></div>
         <div class="fsa-lib">
           <div class="fsa-lib-head">
