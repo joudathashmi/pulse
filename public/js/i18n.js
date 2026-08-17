@@ -264,6 +264,77 @@ export const STRINGS = {
     workOpen: 'Open',
     workNoHold: 'Nothing is held.',
     workNoAct: 'No open actions.',
+    infoAbout: 'About',
+    info: {
+      pace: {
+        title: 'Pace of year',
+        body: 'How fast certified FDI is running versus the 2026 target. 1.0x is on track to hit the year. Below 1.0x means the remaining year has to run faster.'
+      },
+      work: {
+        title: 'Work on the pack',
+        body: 'Open signals, held values, and the next action this cycle. Held items do not enter the certified Pulse.'
+      },
+      open: {
+        title: 'Open',
+        body: 'Signals still waiting on an owner this cycle. Open the card to assign or close them.'
+      },
+      overdue: {
+        title: 'Overdue',
+        body: 'Signals past their due date. They stay on Alerts until someone acts.'
+      },
+      quarantine: {
+        title: 'Quarantine',
+        body: 'A held value. It does not enter the certified Pulse until the owner clears it.'
+      },
+      actions: {
+        title: 'Actions',
+        body: 'Next steps assigned on this pack. Open the card to take the action.'
+      },
+      explore: {
+        title: 'Explore',
+        body: 'The certified series on this board. Tap a row to trace the number to the source record.'
+      },
+      series: {
+        title: 'FDI and GFCF',
+        body: 'Last eight certified quarters. Solid is FDI. Dashed is GFCF. Both stay in SAR billion.'
+      },
+      nowcast: {
+        title: 'In-quarter estimate',
+        body: 'A populated synthetic path while GASTAT has not issued the quarter. It is not a MISA calculation and never replaces the official print.'
+      },
+      raw: {
+        title: 'Raw pack',
+        body: 'The JSON behind this board. Use Show to read it here, or JSON to download.'
+      },
+      fdiMon: {
+        title: 'FDI monitor',
+        body: 'Net foreign direct investment under IMF BPM6. Status is a word plus a mark, never colour alone. Tap to trace the number.'
+      },
+      gfcfMon: {
+        title: 'GFCF monitor',
+        body: 'Gross fixed capital formation under SNA 2008. Tap to trace the number.'
+      },
+      stock: {
+        title: 'Stock',
+        body: 'The published FDI position for the selected counterpart, in SAR billion.'
+      },
+      netflow: {
+        title: 'Net flow',
+        body: 'Inflow minus outflow for that counterpart in the selected year.'
+      },
+      inflow: {
+        title: 'Inflow',
+        body: 'Gross inflow from the immediate country, as published on the FDI Insights sheet.'
+      },
+      country: {
+        title: 'Immediate country',
+        body: 'The counterpart economy on the published sheet. It is the origin of the inflow, not a modelled arrow.'
+      },
+      sector: {
+        title: 'Sector',
+        body: 'Published sector cut of the same FDI sheet for the selected year.'
+      }
+    },
     setTitle: 'Settings',
     setLede: 'Help, the data glossary, KPI owners, and email-alert preferences. On your desk and in Display.',
     setHelpShort: 'Help',
@@ -345,7 +416,7 @@ export const STRINGS = {
     ctrlNoCases: 'No quarantined cases this cycle. Pull live sources on Intake.',
     fsa: {
       title: 'Financial statements',
-      lede: 'Upload an IFRS filing. Extract the lines. Verify IAS 1 completeness. Ask the selected filing. A person still signs. The Pulse is not written here.',
+      lede: 'A steward desk for IFRS filings. A person still signs. The Pulse is not written here.',
       synthNote: 'The sample is synthetic. Do not upload real investee books to a public host.',
       pipe: 'How a filing is read',
       stepFile: 'Upload',
@@ -379,9 +450,11 @@ export const STRINGS = {
       progVerifyHint: 'Checking IAS 1 completeness.',
       progReadyHint: 'The filing is open in the workspace.',
       jobFile: 'File',
-      library: 'Filings on this desk',
+      library: 'Filings',
       libLede: 'Open a filing to read it. Remove clears it from this desk.',
+      stageTitle: 'Workspace',
       libCount: 'on this desk',
+      processing: 'Processing',
       readyWord: 'Ready',
       synthShort: 'Sample',
       timeReady: 'Ready',
@@ -389,8 +462,8 @@ export const STRINGS = {
       removeAsk: 'Remove this filing from the desk?',
       keepSample: 'The sample stays on the desk',
       drop: 'Upload filing',
-      dropHint: 'PDF, MCI iFile Excel, zip pack, or a scan.',
-      sample: 'Load sample PDF',
+      dropHint: 'PDF, Excel, zip, or scan',
+      sample: 'Load sample',
       empty: 'No filings on this desk yet.',
       pickTitle: 'No filing selected',
       pick: 'Upload a filing, or choose one from the list. The statements, source file, and questions all belong to that filing.',
@@ -448,7 +521,7 @@ export const STRINGS = {
       showSource: 'Show in source',
       compare: 'Current vs prior',
       kpis: 'Headline figures',
-      dropHere: 'Drop the pack here',
+      dropHere: 'Click or drop a file',
       jumpUpload: 'Go to upload',
       jumpExtract: 'Go to extract',
       jumpGate: 'Go to verify',
@@ -726,6 +799,77 @@ export const STRINGS = {
     workOpen: 'فتح',
     workNoHold: 'لا شيء محجوز.',
     workNoAct: 'لا إجراء مفتوح.',
+    infoAbout: 'حول',
+    info: {
+      pace: {
+        title: 'وتيرة السنة',
+        body: 'سرعة الاستثمار الأجنبي المعتمد مقابل مستهدف 2026. 1.0x تعني المسار حتى نهاية السنة. أقل من 1.0x يعني أن ما تبقى من السنة يجب أن يجري أسرع.'
+      },
+      work: {
+        title: 'العمل على الحزمة',
+        body: 'إشارات مفتوحة وقيم محجوزة والإجراء التالي في هذه الدورة. المحجوز لا يدخل النبض المعتمد.'
+      },
+      open: {
+        title: 'مفتوحة',
+        body: 'إشارات تنتظر مالكاً في هذه الدورة. افتح البطاقة لإسنادها أو إغلاقها.'
+      },
+      overdue: {
+        title: 'متأخر',
+        body: 'إشارات تجاوزت تاريخ الاستحقاق. تبقى في التنبيهات حتى يتصرف أحد.'
+      },
+      quarantine: {
+        title: 'الحجر',
+        body: 'قيمة موقوفة. لا تدخل النبض المعتمد حتى يفرج عنها المالك.'
+      },
+      actions: {
+        title: 'الإجراءات',
+        body: 'الخطوات التالية المسندة على هذه الحزمة. افتح البطاقة لتنفيذ الإجراء.'
+      },
+      explore: {
+        title: 'استكشف',
+        body: 'السلسلة المعتمدة على هذه اللوحة. اضغط صفاً لتتبع الرقم إلى سجل المصدر.'
+      },
+      series: {
+        title: 'الاستثمار وتكوين رأس المال',
+        body: 'آخر ثمانية أرباع معتمدة. الخط الصلب استثمار أجنبي. المتقطع تكوين رأس المال. كلاهما مليار ريال.'
+      },
+      nowcast: {
+        title: 'تقدير الربع',
+        body: 'مسار تركيبي مُعبَّأ ما دامت الهيئة لم تصدر الربع. ليس حساباً وزارياً ولا يحل محل الرقم الرسمي.'
+      },
+      raw: {
+        title: 'الحزمة الخام',
+        body: 'JSON خلف هذه اللوحة. استخدم إظهار للقراءة هنا أو JSON للتنزيل.'
+      },
+      fdiMon: {
+        title: 'مراقب الاستثمار الأجنبي',
+        body: 'صافي الاستثمار وفق BPM6. الحالة كلمة وعلامة، لا لون وحده. اضغط لتتبع الرقم.'
+      },
+      gfcfMon: {
+        title: 'مراقب تكوين رأس المال',
+        body: 'إجمالي تكوين رأس المال الثابت وفق SNA 2008. اضغط لتتبع الرقم.'
+      },
+      stock: {
+        title: 'الرصيد',
+        body: 'مركز الاستثمار المنشور للطرف المقابل المختار، بالمليار ريال.'
+      },
+      netflow: {
+        title: 'صافي التدفق',
+        body: 'التدفق الداخل ناقص الخارج لذلك الطرف في السنة المختارة.'
+      },
+      inflow: {
+        title: 'التدفق الداخل',
+        body: 'إجمالي التدفق الداخل من الدولة المباشرة كما نُشر في صحيفة الرؤى.'
+      },
+      country: {
+        title: 'الدولة المباشرة',
+        body: 'الاقتصاد المقابل على الصحيفة المنشورة. أصل التدفق، وليس سهماً منمذجاً.'
+      },
+      sector: {
+        title: 'القطاع',
+        body: 'قطع القطاع المنشور من الصحيفة نفسها للسنة المختارة.'
+      }
+    },
     setTitle: 'الإعدادات',
     setLede: 'المساعدة، مسرد البيانات، ملاك المؤشرات، وتفضيلات تنبيه البريد. في مكتبك وفي العرض.',
     setHelpShort: 'مساعدة',
@@ -807,7 +951,7 @@ export const STRINGS = {
     ctrlNoCases: 'لا حالات محجوزة في هذه الدورة. اسحب المصادر الحية من الورود.',
     fsa: {
       title: 'القوائم المالية',
-      lede: 'ارفع قائمة IFRS. استخرج البنود. تحقق من اكتمال معيار 1. اسأل القائمة المختارة. الشخص يوقّع. النبض لا يُكتب هنا.',
+      lede: 'مكتب وصاية لقوائم IFRS. الشخص يوقّع. النبض لا يُكتب هنا.',
       synthNote: 'العينة تركيبية. لا ترفع دفاتر مستثمر حقيقية على مستضيف عام.',
       pipe: 'كيف تُقرأ القائمة',
       stepFile: 'رفع',
@@ -841,9 +985,11 @@ export const STRINGS = {
       progVerifyHint: 'فحص اكتمال معيار 1.',
       progReadyHint: 'القائمة مفتوحة في مساحة العمل.',
       jobFile: 'الملف',
-      library: 'القوائم على هذا المكتب',
+      library: 'القوائم',
       libLede: 'افتح قائمة لقراءتها. الإزالة تمسحها من هذا المكتب.',
+      stageTitle: 'مساحة العمل',
       libCount: 'على هذا المكتب',
+      processing: 'جاري المعالجة',
       readyWord: 'جاهزة',
       synthShort: 'عينة',
       timeReady: 'جاهزة',
@@ -851,8 +997,8 @@ export const STRINGS = {
       removeAsk: 'إزالة هذه القائمة من المكتب؟',
       keepSample: 'العينة تبقى على المكتب',
       drop: 'رفع القائمة',
-      dropHint: 'PDF أو إكسل iFile أو حزمة مضغوطة أو صورة.',
-      sample: 'تحميل عينة PDF',
+      dropHint: 'PDF أو إكسل أو حزمة مضغوطة أو صورة',
+      sample: 'تحميل عينة',
       empty: 'لا قوائم على هذا المكتب بعد.',
       pickTitle: 'لا قائمة مختارة',
       pick: 'ارفع قائمة أو اختر واحدة من القائمة. القوائم وملف المصدر والأسئلة تخص تلك القائمة.',
@@ -910,7 +1056,7 @@ export const STRINGS = {
       showSource: 'أظهر في المصدر',
       compare: 'الحالي مقابل السابق',
       kpis: 'الأرقام البارزة',
-      dropHere: 'أفلت الحزمة هنا',
+      dropHere: 'اضغط أو أفلت ملفاً',
       jumpUpload: 'إلى الرفع',
       jumpExtract: 'إلى المستخرج',
       jumpGate: 'إلى التحقق',

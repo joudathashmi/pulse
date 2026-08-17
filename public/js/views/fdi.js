@@ -2,6 +2,7 @@ import { $ } from '../lib/dom.js';
 import { num } from '../lib/format.js';
 import { exportCsv } from '../lib/export.js';
 import { hideTip } from '../lib/tooltip.js';
+import { bindInfo } from '../lib/infoMark.js';
 import { loadWorld, renderFdiWorld } from '../charts/world.js';
 import { bindCharts } from '../lib/crosshair.js';
 import { pullFdiInvestSaudi } from '../data/index.js';
@@ -195,7 +196,7 @@ export async function renderFdi(root, data, { openDrill } = {}) {
       <div class="fdi-split">
         <article class="wh-card">
           <div class="wh-dash-h" style="margin:0 0 8px">
-            <div class="wh-k" style="margin:0">Immediate country</div>
+            <div class="wh-k" style="margin:0" data-info="country">Immediate country</div>
             <span>
               <span data-origin-meta></span>
               <button type="button" class="wh-act" data-fdi-csv>CSV</button>
@@ -210,7 +211,7 @@ export async function renderFdi(root, data, { openDrill } = {}) {
         </article>
         <article class="wh-card">
           <div class="wh-dash-h" style="margin:0 0 8px">
-            <div class="wh-k" style="margin:0">Sector</div>
+            <div class="wh-k" style="margin:0" data-info="sector">Sector</div>
             <span data-sector-meta></span>
           </div>
           <div data-sectors></div>
@@ -219,15 +220,15 @@ export async function renderFdi(root, data, { openDrill } = {}) {
 
       <div class="fdi-series">
         <article class="wh-card">
-          <div class="wh-k">Stock</div>
+          <div class="wh-k" data-info="stock">Stock</div>
           <div data-spark-stock></div>
         </article>
         <article class="wh-card">
-          <div class="wh-k">Net flow</div>
+          <div class="wh-k" data-info="netflow">Net flow</div>
           <div data-spark-net></div>
         </article>
         <article class="wh-card">
-          <div class="wh-k">Inflow</div>
+          <div class="wh-k" data-info="inflow">Inflow</div>
           <div data-spark-inflow></div>
         </article>
       </div>
@@ -511,6 +512,8 @@ export async function renderFdi(root, data, { openDrill } = {}) {
   } else {
     paint();
   }
+
+  bindInfo(root);
 
   pullFdiInvestSaudi().then(live => {
     if (!live?.countries?.length) return;

@@ -1,6 +1,16 @@
-import { $, el } from '../lib/dom.js';
+import { $, el, intoViewIfNeeded, pinWindow } from '../lib/dom.js';
 import { getLang, t } from '../i18n.js';
 import { askFiling, fileKind, fileUrl, listFilings, loadSample, removeFiling, uploadFiling } from '../lib/fsa.js';
+
+function isPhone() {
+  return document.documentElement.getAttribute('data-shell') === 'phone';
+}
+
+export function releaseFsa() {
+  document.body.classList.remove('is-fsa-job');
+  const box = document.getElementById('fsa-jobbox');
+  if (box) box.hidden = true;
+}
 
 const STMTS = ['sfp', 'pl', 'cf', 'eq', 'notes'];
 
@@ -337,56 +347,55 @@ export function renderFsa(root) {
   root.innerHTML = `
     <div class="stage"><div class="panel fsa">
       <header class="fsa-mast">
-        <div>
-          <div class="wh-k">IAS 1 · IFRS</div>
-          <h1>${esc(f.title || 'Financial statements')}</h1>
-          <p class="lede">${esc(f.lede || '')}</p>
-        </div>
-        <aside class="fsa-callout" role="note">
-          <div class="fsa-card-k">${esc(f.synthBadge || 'Synthetic · populated')}</div>
-          <p>${esc(f.synthNote || '')}</p>
-        </aside>
+        <div class="wh-k">IAS 1 · IFRS</div>
+        <h1>${esc(f.title || 'Financial statements')}</h1>
+        <p class="lede">${esc(f.lede || '')}</p>
       </header>
 
-      <ol class="fsa-path" aria-label="${esc(f.pipe || 'How a filing is read')}">
-        <li><button type="button" data-jump="add"><b>1</b><strong>${esc(f.stepFile || 'Upload')}</strong><span>${esc(f.howFile || '')}</span></button></li>
-        <li><button type="button" data-jump="extract"><b>2</b><strong>${esc(f.stepExtract || 'Extract')}</strong><span>${esc(f.howExtract || '')}</span></button></li>
-        <li><button type="button" data-jump="gates"><b>3</b><strong>${esc(f.stepGate || 'Verify')}</strong><span>${esc(f.howGate || '')}</span></button></li>
-        <li><button type="button" data-jump="chat"><b>4</b><strong>${esc(f.stepAsk || 'Ask')}</strong><span>${esc(f.howAsk || '')}</span></button></li>
-      </ol>
+      <nav class="fsa-process" aria-label="${esc(f.pipe || 'How a filing is read')}">
+        <details class="fsa-fold" data-fold="process">
+          <summary>${esc(f.pipe || 'How a filing is read')}</summary>
+          <ol class="fsa-path">
+            <li><button type="button" data-jump="add"><b>1</b><strong>${esc(f.stepFile || 'Upload')}</strong><span>${esc(f.howFile || '')}</span></button></li>
+            <li><button type="button" data-jump="extract"><b>2</b><strong>${esc(f.stepExtract || 'Extract')}</strong><span>${esc(f.howExtract || '')}</span></button></li>
+            <li><button type="button" data-jump="gates"><b>3</b><strong>${esc(f.stepGate || 'Verify')}</strong><span>${esc(f.howGate || '')}</span></button></li>
+            <li><button type="button" data-jump="chat"><b>4</b><strong>${esc(f.stepAsk || 'Ask')}</strong><span>${esc(f.howAsk || '')}</span></button></li>
+          </ol>
+          <p class="fsa-note">${esc(f.synthNote || '')}</p>
+        </details>
+      </nav>
 
       <div class="fsa-desk">
-        <div class="fsa-rail">
-          <section class="fsa-card fsa-add" data-add>
-            <div class="fsa-card-k">${esc(f.addTitle || 'Add a filing')}</div>
-            <p class="fsa-card-lede">${esc(f.addLede || '')}</p>
-            <input type="file" data-file accept=".pdf,.xlsx,.xls,.zip,application/pdf,application/zip,image/*" multiple hidden />
-            <button type="button" class="fsa-dropzone" data-zone>
-              <em>${esc(f.dropHere || 'Drop the pack here')}</em>
-              <span>${esc(f.orDrop || '')}</span>
-            </button>
-            <div class="fsa-add-row">
-              <button type="button" class="btn-primary" data-upload>${esc(f.uploadBtn || 'Upload filing')}</button>
-              <button type="button" class="btn-ghost" data-sample>${esc(f.sample || 'Load sample PDF')}</button>
+        <aside class="fsa-rail" aria-label="${esc(f.library || 'Filings')}">
+          <section class="fsa-card fsa-inbox" data-add>
+            <div class="fsa-inbox-add">
+              <div class="fsa-card-k">${esc(f.stepFile || 'Upload')}</div>
+              <input type="file" data-file accept=".pdf,.xlsx,.xls,.zip,application/pdf,application/zip,image/*" multiple hidden />
+              <button type="button" class="btn-primary fsa-upload-btn" data-upload>${esc(f.uploadBtn || 'Upload filing')}</button>
+              <button type="button" class="fsa-dropzone" data-zone title="${esc(f.accepts || '')}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.2V4.8M8.2 8.2 12 4.8l3.8 3.4M5.2 19.2h13.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <em>${esc(f.dropHere || 'Click or drop a file')}</em>
+                <span>${esc(f.dropHint || '')}</span>
+              </button>
+              <button type="button" class="fsa-sample" data-sample>${esc(f.sample || 'Load sample')}</button>
             </div>
-            <p class="fsa-add-accept">${esc(f.accepts || '')}</p>
-          </section>
-
-          <section class="fsa-card fsa-lib">
-            <div class="fsa-lib-head">
-              <div class="fsa-card-k">${esc(f.library || 'Filings on this desk')}</div>
-              <span class="fsa-lib-n" data-lib-n></span>
+            <div class="fsa-inbox-lib">
+              <div class="fsa-lib-head">
+                <div class="fsa-card-k">${esc(f.library || 'Filings')}</div>
+                <span class="fsa-lib-n" data-lib-n></span>
+              </div>
+              <p class="fsa-lib-err" data-lib-err hidden></p>
+              <div data-list></div>
             </div>
-            <p class="fsa-lib-lede">${esc(f.libLede || '')}</p>
-            <p class="fsa-lib-err" data-lib-err hidden></p>
-            <div data-list></div>
           </section>
-        </div>
+        </aside>
         <div class="fsa-work" data-work></div>
       </div>
     </div></div>`;
 
-  const state = { filings: [], selected: null, stmt: 'sfp', chat: [], page: 1, pane: 'split', src: 0, waiting: false, job: null, sel: null };
+  const state = { filings: [], selected: null, stmt: 'sfp', chat: [], page: 1, pane: 'split', src: 0, waiting: false, job: null, sel: null, focus: 'add', fold: { process: !isPhone(), extract: true, ask: !isPhone() } };
+
+  releaseFsa();
 
   const listEl = $('[data-list]', root);
   const libN = $('[data-lib-n]', root);
@@ -398,6 +407,21 @@ export function renderFsa(root) {
   const addCard = $('[data-add]', root);
   const zoneBtn = $('[data-zone]', root);
   const panel = $('.panel.fsa', root);
+
+  function applyFolds(scope = root) {
+    const phone = isPhone();
+    pinWindow(() => {
+      for (const d of scope.querySelectorAll('details[data-fold]')) {
+        const id = d.dataset.fold;
+        const next = phone ? !!state.fold[id] : true;
+        if (d.open !== next) d.open = next;
+        d.ontoggle = () => {
+          state.fold[id] = d.open;
+        };
+      }
+    });
+  }
+  applyFolds(root);
 
   function jobBox() {
     let box = document.getElementById('fsa-jobbox');
@@ -433,12 +457,51 @@ export function renderFsa(root) {
   }
 
   function setBusy(on) {
+    const fx = copy();
     if (uploadBtn) {
       uploadBtn.disabled = on;
-      uploadBtn.textContent = on ? (copy().uploadingBtn || 'Working…') : (copy().uploadBtn || 'Upload filing');
+      uploadBtn.textContent = on ? (fx.uploadingBtn || 'Working…') : (fx.uploadBtn || 'Upload filing');
+    }
+    if (zoneBtn) {
+      zoneBtn.disabled = on;
+      const label = zoneBtn.querySelector('em');
+      if (label) label.textContent = on ? (fx.uploadingBtn || 'Working…') : (fx.dropHere || 'Click or drop a file');
     }
     if (sampleBtn) sampleBtn.disabled = on;
     addCard?.classList.toggle('is-busy', on);
+  }
+
+  function pathStep() {
+    const job = state.job;
+    if (job?.busy) {
+      if (job.step === 'read' || job.step === 'upload') return 'add';
+      if (job.step === 'extract') return 'extract';
+      if (job.step === 'verify') return 'gates';
+      return 'extract';
+    }
+    if (!current()) return 'add';
+    return state.focus || 'extract';
+  }
+
+  function paintPath() {
+    const order = ['add', 'extract', 'gates', 'chat'];
+    const row = current();
+    const on = pathStep();
+    const idx = Math.max(0, order.indexOf(on));
+    for (const li of root.querySelectorAll('.fsa-path li')) {
+      const id = li.querySelector('[data-jump]')?.dataset.jump;
+      const i = order.indexOf(id);
+      const isOn = id === on;
+      const isDone = Boolean(row) && i >= 0 && i < idx;
+      li.classList.toggle('is-on', isOn);
+      li.classList.toggle('is-done', isDone);
+      li.classList.toggle('is-wait', !row && i > 0);
+      const btn = li.querySelector('button');
+      if (btn) {
+        if (isOn) btn.setAttribute('aria-current', 'step');
+        else btn.removeAttribute('aria-current');
+      }
+    }
   }
 
   function paintProgress() {
@@ -450,6 +513,8 @@ export function renderFsa(root) {
       box.hidden = true;
       box.classList.remove('is-work', 'is-fail', 'is-ok');
       document.body.classList.remove('is-fsa-job');
+      paintList();
+      paintPath();
       return;
     }
     const steps = [
@@ -488,17 +553,51 @@ export function renderFsa(root) {
     dismiss.hidden = !failed && job.step !== 'done';
     dismiss.textContent = fx.progDismiss || 'Close';
     box.setAttribute('aria-valuenow', String(pct));
+    if (isPhone()) {
+      box.hidden = true;
+      document.body.classList.remove('is-fsa-job');
+    }
+    paintList();
+    paintPath();
   }
 
   function paintList() {
     const fx = copy();
+    const job = state.job;
+    const showJob = job && job.step !== 'done';
     const n = state.filings.length;
-    if (libN) libN.textContent = n ? `${n} ${fx.libCount || 'on this desk'}` : '';
-    if (!n) {
+    if (libN) libN.textContent = n || showJob ? `${n + (showJob ? 1 : 0)} ${fx.libCount || 'on this desk'}` : '';
+    const jobCard = showJob ? (() => {
+      const failed = job.step === 'fail';
+      const order = ['read', 'upload', 'extract', 'verify', 'done'];
+      const idx = failed ? 0 : Math.max(0, order.indexOf(job.step));
+      const pct = failed ? 0 : Math.max(1, Math.min(100, Math.round(Number(job.pct) || ((idx + 1) / 5) * 100)));
+      const step = failed
+        ? (fx.progFail || 'Failed')
+        : job.step === 'extract' ? (fx.progExtract || 'Extracting')
+          : job.step === 'verify' ? (fx.progVerify || 'Verifying')
+            : job.step === 'read' ? (fx.progRead || 'Reading')
+              : (fx.progUpload || 'Uploading');
+      const size = fileSize(job.size);
+      return `<article class="fsa-file is-busy ${failed ? 'is-fail' : ''}" data-job-row>
+        <div class="fsa-file-main">
+          <div class="fsa-file-top">
+            <b>${esc(job.name || fx.jobFile || 'File')}</b>
+            <i class="${failed ? 'failed' : 'watch'}">${esc(failed ? (fx.progFail || 'Failed') : (fx.processing || 'Processing'))}</i>
+          </div>
+          <span>${esc(step)} · ${pct}%</span>
+          ${size ? `<em>${esc(size)}</em>` : ''}
+          <div class="fsa-file-bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+          <p class="fsa-file-hint${failed ? ' is-fail' : ''}">${esc(job.hint || jobHint(job.step, fx))}</p>
+        </div>
+      </article>`;
+    })() : '';
+    if (!n && !jobCard) {
       listEl.innerHTML = `<p class="fsa-empty-line">${esc(fx.empty || 'No filings on this desk yet.')}</p>`;
+      paintPath();
       return;
     }
-    listEl.innerHTML = state.filings.map(row => {
+    listEl.innerHTML = jobCard + state.filings.map(row => {
       const on = row.id === state.selected;
       const id = row.identity || {};
       const st = listStatus(row, fx);
@@ -523,8 +622,7 @@ export function renderFsa(root) {
           ${warn ? `<p class="fsa-file-warn">${esc(warn)}</p>` : ''}
         </button>
         <div class="fsa-file-acts">
-          <button type="button" class="wh-act" data-id="${esc(row.id)}">${esc(fx.openFiling || 'Open')}</button>
-          ${row.hasFile ? `<a class="wh-act" href="${esc(fileUrl(row.id))}" target="_blank" rel="noopener">${esc(fx.openFile || 'Source')}</a>` : ''}
+          ${row.hasFile ? `<a class="wh-act" href="${esc(fileUrl(row.id))}" target="_blank" rel="noopener">${esc(fx.sourceView || 'Source')}</a>` : ''}
           ${canRemove
             ? `<button type="button" class="wh-act is-risk" data-drop="${esc(row.id)}">${esc(fx.remove || 'Remove')}</button>`
             : `<span class="fsa-file-keep">${esc(fx.keepSample || '')}</span>`}
@@ -537,6 +635,7 @@ export function renderFsa(root) {
       state.chat = [];
       state.waiting = false;
       state.sel = null;
+      state.focus = 'extract';
       setErr('');
       paintList();
       paintWork();
@@ -551,6 +650,7 @@ export function renderFsa(root) {
         dropFiling(b.dataset.drop);
       };
     }
+    paintPath();
   }
 
   async function dropFiling(id) {
@@ -585,17 +685,21 @@ export function renderFsa(root) {
     const fx = copy();
     const row = current();
     if (!row) {
-      work.innerHTML = `<article class="fsa-card fsa-empty" data-empty>
-        <div class="fsa-card-k">${esc(fx.identity || 'Filing')}</div>
+      work.innerHTML = `<article class="fsa-stage fsa-empty" data-empty>
+        <div class="fsa-card-k">${esc(fx.stageTitle || 'Workspace')}</div>
         <h2>${esc(fx.pickTitle || 'No filing selected')}</h2>
         <p>${esc(fx.pick || '')}</p>
         <button type="button" class="btn-primary" data-empty-up>${esc(fx.uploadBtn || 'Upload filing')}</button>
       </article>`;
       work.querySelector('[data-empty-up]')?.addEventListener('click', () => fileInput.click());
+      paintPath();
       return;
     }
     state.selected = row.id;
     row._sel = state.sel;
+    const pinX = window.scrollX;
+    const pinY = window.scrollY;
+    const keepAsk = state.focus === 'chat' && work.querySelector('[data-q]') === document.activeElement;
     const pages = Math.max(1, Number(row.file?.pages) || 1);
     if (!state.page || state.page > pages) state.page = 1;
     const kind = fileKind(row);
@@ -619,17 +723,16 @@ export function renderFsa(root) {
 
     const gateHtml = gates.map(g => {
       const on = state.sel?.type === 'gate' && state.sel.id === g.id ? ' is-on' : '';
+      const name = getLang() === 'ar' ? g.nameAr : g.name;
+      const detail = getLang() === 'ar' ? g.detailAr : g.detail;
       return `<li class="${g.status}${on}">
-            <button type="button" data-gate="${esc(g.id)}">
+            <button type="button" data-gate="${esc(g.id)}" title="${esc(detail || '')}">
               <i></i>
-              <div>
-                <b>${esc(getLang() === 'ar' ? g.nameAr : g.name)}</b>
-                <p>${esc(getLang() === 'ar' ? g.detailAr : g.detail)}</p>
-              </div>
+              <b>${esc(name)}</b>
               <em>${esc(statusWord(g.status, fx))}</em>
             </button>
           </li>`;
-    }).join('') || `<li class="watch"><i></i><div><b>${esc(fx.gates || 'Gates')}</b></div></li>`;
+    }).join('') || `<li class="watch"><i></i><b>${esc(fx.gates || 'Gates')}</b></li>`;
 
     const stmtTabs = stmts.map(s =>
       `<button type="button" class="fsa-stmt ${s.id === active?.id ? 'is-on' : ''}" data-stmt="${s.id}" role="tab" aria-selected="${s.id === active?.id}">${esc(stmtTitle(s, fx))}</button>`
@@ -661,6 +764,11 @@ export function renderFsa(root) {
               <p class="wh-est">${esc(fx.sheetHint || 'Excel opens in a spreadsheet. The extract stays on this desk.')}</p>
               <a class="wh-act on" href="${esc(fileUrl(row.id))}" download>${esc(fx.download || 'Download workbook')}</a>
             </div>`;
+      } else if (isPhone()) {
+        viewer = `<div class="fsa-view-sheet">
+              <p class="wh-est">${esc(fx.openFile || 'Open')} ${esc(row.file?.name || '')}</p>
+              <a class="btn-primary" href="${esc(src)}" target="_blank" rel="noopener">${esc(fx.openFile || 'Open')}</a>
+            </div>`;
       } else {
         viewer = `<iframe class="fsa-view-frame" title="${esc(fx.sourceView || 'Source file')}" src="${esc(src)}"></iframe>`;
       }
@@ -669,10 +777,11 @@ export function renderFsa(root) {
     const activeTitle = stmtTitle(active || { title: '', titleAr: '' }, fx);
 
     work.innerHTML = `
-      <article class="fsa-card fsa-id" data-id-card>
-        <div class="fsa-card-k">${esc(fx.identity || 'Filing')}</div>
+      <article class="fsa-stage">
+      <header class="fsa-stage-h" data-id-card>
         <div class="fsa-id-row">
           <div>
+            <div class="fsa-card-k">${esc(fx.identity || 'Filing')}</div>
             <h2>${esc(filingTitle(row, fx))}</h2>
             <p>${esc(id.framework || 'IFRS')} · ${esc(id.unit || '')} · ${esc(period)}${prior ? ` / ${esc(prior)}` : ''}</p>
             ${readyClock(row.updatedAt || row.createdAt) ? `<p class="fsa-id-time">${esc(fx.timeReady || 'Ready')} ${esc(readyClock(row.updatedAt || row.createdAt))}</p>` : ''}
@@ -686,15 +795,21 @@ export function renderFsa(root) {
           </div>
         </div>
         ${kpiHtml(row, fx)}
-      </article>
+        <section class="fsa-verify" data-gates>
+          <div class="fsa-verify-h">
+            <div class="fsa-card-k">${esc(fx.stepGate || 'Verify')}</div>
+            <p>${esc(fx.howGate || '')}</p>
+          </div>
+          <ul class="fsa-gates">${gateHtml}</ul>
+        </section>
+      </header>
 
-      <section class="fsa-card" data-gates>
-        <div class="fsa-card-k">${esc(fx.completeness || fx.gates || 'IAS 1 completeness')}</div>
-        <ul class="fsa-gates">${gateHtml}</ul>
-      </section>
-
-      <section class="fsa-card" data-extract>
-        <div class="fsa-card-k">${esc(fx.extractView || 'Extract')}</div>
+      <details class="fsa-fold fsa-paper-wrap" data-fold="extract" data-extract>
+        <summary>${esc(fx.stepExtract || 'Extract')}</summary>
+        <div class="fsa-verify-h">
+          <div class="fsa-card-k">${esc(fx.stepExtract || 'Extract')}</div>
+          <p>${esc(fx.howExtract || '')}</p>
+        </div>
         <div class="fsa-toolbar">
           <div class="fsa-stmt-nav" role="tablist">${stmtTabs}</div>
           <div class="fsa-pane-nav" role="tablist" aria-label="${esc(fx.view || 'View')}">
@@ -734,17 +849,19 @@ export function renderFsa(root) {
           ${viewer}
         </aside>
         </div>
-      </section>
+      </details>
 
-      <section class="fsa-card fsa-chat" data-chat aria-label="${esc(fx.chatTitle || 'Ask this filing')}">
+      <details class="fsa-fold fsa-chat" data-fold="ask" data-chat aria-label="${esc(fx.chatTitle || 'Ask this filing')}">
+        <summary>${esc(fx.stepAsk || 'Ask')}</summary>
         <header class="fsa-chat-h">
           <div class="fsa-chat-id">
             <span class="fsa-chat-mark" aria-hidden="true">
               <svg viewBox="0 0 24 24"><path d="M7 3.8h7.2L19 8.4V20.2H7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14.1 3.8v4.7H19M9.2 12.2h7.2M9.2 15.4h7.2M9.2 18.4h4.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             </span>
             <div>
+              <div class="fsa-card-k">${esc(fx.stepAsk || 'Ask')}</div>
               <div class="fsa-chat-title">${esc(fx.chatTitle || 'Ask this filing')}</div>
-              <p class="fsa-chat-sub">${esc(fx.chatSub || '')}</p>
+              <p class="fsa-chat-sub">${esc(fx.howAsk || fx.chatSub || '')}</p>
             </div>
           </div>
           <div class="fsa-chat-scope">
@@ -761,7 +878,8 @@ export function renderFsa(root) {
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 12h14.2M13.2 6.8 19.4 12l-6.2 5.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
         </form>
-      </section>`;
+      </details>
+      </article>`;
 
     for (const b of work.querySelectorAll('[data-stmt]')) {
       b.onclick = () => {
@@ -795,11 +913,12 @@ export function renderFsa(root) {
         const key = tr.dataset.line;
         const ln = lineByKey(row, key);
         state.sel = { type: 'line', key, stmt: tr.dataset.stmt || ln?.statement || state.stmt };
+        state.focus = 'extract';
         if (tr.dataset.stmt) state.stmt = tr.dataset.stmt;
         const p = Number(tr.dataset.page);
         if (p) state.page = p;
         paintWork();
-        work.querySelector(`[data-line="${key}"]`)?.focus();
+        work.querySelector(`[data-line="${key}"]`)?.focus({ preventScroll: true });
       };
       tr.addEventListener('click', pick);
       tr.addEventListener('keydown', (e) => {
@@ -829,10 +948,15 @@ export function renderFsa(root) {
     for (const b of work.querySelectorAll('[data-gate]')) {
       b.onclick = () => {
         state.sel = { type: 'gate', id: b.dataset.gate };
+        state.focus = 'gates';
         const stmt = GATE_STMT[b.dataset.gate];
         if (stmt) state.stmt = stmt;
         paintWork();
-        if (b.dataset.gate === 'signoff') work.querySelector('[data-chat]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (b.dataset.gate === 'signoff') {
+          state.fold.ask = true;
+          applyFolds(work);
+          intoViewIfNeeded(work.querySelector('[data-chat]'));
+        }
       };
     }
     for (const b of work.querySelectorAll('[data-kpi-line]')) {
@@ -863,7 +987,7 @@ export function renderFsa(root) {
       if (p) state.page = p;
       if (window.matchMedia('(max-width: 959px)').matches) state.pane = 'source';
       paintWork();
-      work.querySelector('.fsa-viewer')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      work.querySelector('.fsa-viewer')?.scrollIntoView({ behavior: 'auto', block: 'nearest' });
     });
     for (const tr of work.querySelectorAll('[data-src-row]')) {
       tr.addEventListener('click', () => {
@@ -927,6 +1051,7 @@ export function renderFsa(root) {
           if (b.dataset.citeStmt) state.stmt = b.dataset.citeStmt;
           if (b.dataset.citePage) state.page = Number(b.dataset.citePage) || state.page;
           if (b.dataset.citeKey) state.sel = { type: 'line', key: b.dataset.citeKey, stmt: b.dataset.citeStmt || state.stmt };
+          state.focus = 'extract';
           paintWork();
         };
       }
@@ -965,8 +1090,14 @@ export function renderFsa(root) {
 
     form.onsubmit = (e) => {
       e.preventDefault();
+      state.focus = 'chat';
+      paintPath();
       ask();
     };
+    input?.addEventListener('focus', () => {
+      state.focus = 'chat';
+      paintPath();
+    });
     work.querySelector('[data-ask-line]')?.addEventListener('click', () => {
       const key = work.querySelector('[data-ask-line]').dataset.askLine;
       const ln = lineByKey(row, key);
@@ -974,7 +1105,15 @@ export function renderFsa(root) {
       ask(getLang() === 'ar' ? `ما ${label}؟` : `What is ${label}?`);
     });
     paintChat();
-    work.querySelector('tr.is-on')?.scrollIntoView({ block: 'nearest' });
+    applyFolds(work);
+    paintPath();
+    if (state.focus === 'extract') {
+      intoViewIfNeeded(work.querySelector('tr.is-on'));
+    } else {
+      window.scrollTo({ left: pinX, top: pinY, behavior: 'auto' });
+      requestAnimationFrame(() => window.scrollTo({ left: pinX, top: pinY, behavior: 'auto' }));
+    }
+    if (keepAsk) work.querySelector('[data-q]')?.focus({ preventScroll: true });
   }
 
   function onJob(p) {
@@ -998,6 +1137,7 @@ export function renderFsa(root) {
     state.chat = [];
     state.waiting = false;
     state.sel = null;
+    state.focus = 'extract';
     setErr(warning || '');
     paintList();
     paintWork();
@@ -1020,20 +1160,26 @@ export function renderFsa(root) {
     }
   }
 
-  uploadBtn.addEventListener('click', () => fileInput.click());
+  uploadBtn?.addEventListener('click', () => fileInput.click());
   zoneBtn?.addEventListener('click', () => fileInput.click());
 
   function jump(id) {
+    state.focus = id || 'add';
+    if (id === 'extract') state.fold.extract = true;
+    if (id === 'chat') state.fold.ask = true;
+    if (id !== 'add') applyFolds(work);
+    paintPath();
     if (id === 'add') {
-      addCard?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      intoViewIfNeeded(addCard, { block: 'nearest' });
       addCard?.classList.add('is-over');
       setTimeout(() => addCard?.classList.remove('is-over'), 900);
       return;
     }
     const map = { extract: '[data-extract]', gates: '[data-gates]', chat: '[data-chat]' };
     const node = work.querySelector(map[id]);
-    if (node) node.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    else addCard?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (!node) return;
+    if (node.matches('details')) node.open = true;
+    intoViewIfNeeded(node);
   }
   for (const b of root.querySelectorAll('[data-jump]')) {
     b.onclick = () => jump(b.dataset.jump);

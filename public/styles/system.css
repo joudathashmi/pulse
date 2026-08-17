@@ -145,6 +145,8 @@ details.tv,
   border-top: 1px solid var(--line-soft);
 }
 
+[data-info] { cursor: help }
+
 .head-name {
   display: inline-flex;
   align-items: center;

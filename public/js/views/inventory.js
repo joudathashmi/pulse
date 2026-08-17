@@ -1,4 +1,4 @@
-import { $ } from '../lib/dom.js';
+import { $, intoViewIfNeeded } from '../lib/dom.js';
 
 const uniq = a => [...new Set(a)].filter(Boolean).sort();
 
@@ -64,7 +64,7 @@ export function renderInventory(root, inventory) {
           <p class="wh-est">${r.q || 'No quality note on this row.'}</p>
           <p class="wh-est">This row is the ministry catalogue. It does not enter Pulse until a steward certifies a series against the six DQAF gates.</p>
         </article>`;
-        detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        intoViewIfNeeded(detail);
       };
       tr.addEventListener('click', show);
       tr.addEventListener('keydown', (e) => {

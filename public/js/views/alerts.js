@@ -1,6 +1,7 @@
 import { el, $ } from '../lib/dom.js';
 import { ALERTS } from '../fixtures/alerts.js';
 import { getLang, t } from '../i18n.js';
+import { bindInfo } from '../lib/infoMark.js';
 import {
   loadQueries, createQuery, answerQuery, closeQuery, pendingCount
 } from '../lib/queries.js';
@@ -36,7 +37,7 @@ export function renderAlerts(root, data = {}, ctx = {}) {
       <header class="sig-head">
         <div>
           <div class="wh-k">${s.tabs.alerts}</div>
-          <h1>${s.workTitle || 'Work on the pack'}</h1>
+          <h1 data-info="work">${s.workTitle || 'Work on the pack'}</h1>
           <p class="lede">${s.workSub || 'Open signals, quarantined values, and the next action. Held items do not enter the certified Pulse.'}</p>
         </div>
         <div class="seg" data-tabs>
@@ -249,6 +250,7 @@ export function renderAlerts(root, data = {}, ctx = {}) {
     b.onclick = () => show(b.dataset.tab);
   }
   show(start);
+  bindInfo(root);
 }
 
 /** Compact ask-owner control for Pulse / chat. */

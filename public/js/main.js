@@ -1,6 +1,6 @@
 import { TAB_IDS, STAMP } from './config.js';
 import { mountFloatNav } from './views/floatNav.js';
-import { $, $$, el } from './lib/dom.js';
+import { $, $$, el, stayPutOnDetails } from './lib/dom.js';
 import { loadAll } from './data/index.js';
 import { getLang, setLang, onLangChange, t } from './i18n.js';
 import { renderPulse } from './views/pulse.js';
@@ -14,7 +14,7 @@ import { mountChat } from './views/chat.js';
 import { THEMES, initTheme, applyTheme, getTheme } from './lib/theme.js';
 import { initShell, applyShell, getShell } from './lib/shell.js';
 import { renderIntake } from './views/intake.js';
-import { renderFsa } from './views/fsa.js';
+import { renderFsa, releaseFsa } from './views/fsa.js';
 import { renderFdi } from './views/fdi.js';
 import { mountTour } from './lib/tour.js';
 import { mountDesk } from './views/desk.js';
@@ -86,14 +86,16 @@ let login = null;
 let tour = null;
 let floatNav = null;
 
-function go(view, { scroll = true } = {}) {
+function go(view, { scroll } = {}) {
+  const changing = state.view !== view;
+  if (view !== 'fsa') releaseFsa();
   state.view = view;
   for (const tab of $$('#tabs .tab')) tab.setAttribute('aria-selected', String(tab.dataset.v === view));
   for (const id of TAB_IDS) $(`#v-${id}`)?.classList.toggle('hide', id !== view);
   chat?.onView?.(view);
   floatNav?.closeMore();
   floatNav?.refresh();
-  if (scroll) window.scrollTo({ top: 0 });
+  if (scroll ?? changing) window.scrollTo({ top: 0, behavior: 'auto' });
 }
 
 function openView(id) {
@@ -101,12 +103,15 @@ function openView(id) {
     openDrill(state.path.length ? state.path : ['fdi']);
     return;
   }
+  if (id === state.view) {
+    go(id);
+    return;
+  }
   if (id === 'pulse') {
     renderPulse($('#v-pulse'), state.data, pulseCtx());
     go('pulse');
     return;
   }
-  state.view = id;
   if (id === 'fdi') renderFdi($('#v-fdi'), state.data, { openDrill });
   if (id === 'now') renderNowcastView($('#v-now'), state.data);
   if (id === 'alerts') renderAlerts($('#v-alerts'), state.data, workCtx());
@@ -151,7 +156,7 @@ function openDrill(path) {
     state.path = next;
     renderDrill($('#v-drill'), state.path, state.data, openDrill);
   });
-  go('drill');
+  go('drill', { scroll: true });
 }
 
 function renderActive() {
@@ -272,6 +277,7 @@ function mountDisplay() {
 }
 
 async function boot() {
+  stayPutOnDetails();
   initTheme();
   initShell();
   mountTheme();

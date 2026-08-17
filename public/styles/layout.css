@@ -1,9 +1,14 @@
 *, *::before, *::after { box-sizing: border-box }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
   overflow-x: clip;
+}
+
+details,
+details > summary {
+  overflow-anchor: none;
 }
 
 body {

@@ -1,4 +1,4 @@
-import { el, $ } from '../lib/dom.js';
+import { el, $, intoViewIfNeeded } from '../lib/dom.js';
 import { num } from '../lib/format.js';
 import { ALERTS } from '../fixtures/alerts.js';
 import { nowStamp } from '../config.js';
@@ -11,6 +11,7 @@ import { exportRawJson, exportBriefCsv, exportReportTxt, exportPdfPrint } from '
 import { shareEmail, shareTeams, copyText, pulseShareBody } from '../lib/share.js';
 import { workQueue } from '../lib/work.js';
 import { bindCharts } from '../lib/crosshair.js';
+import { bindInfo } from '../lib/infoMark.js';
 
 /**
  * Pulse home - living orb + the operating system around it.
@@ -210,6 +211,7 @@ function activateOnEnter(node, fn) {
 }
 
 function gaugeHtml(pace, badge) {
+  const s = t();
   const x = Math.max(-1, Math.min(3, pace));
   const pct = ((x + 1) / 4) * 100;
   const ticks = Array.from({ length: 41 }, (_, i) => {
@@ -219,7 +221,7 @@ function gaugeHtml(pace, badge) {
   }).join('');
   return `<div class="wh-gauge" role="meter" aria-valuenow="${pace.toFixed(2)}" aria-valuemin="-1" aria-valuemax="3">
     <div class="wh-gauge-head">
-      <div class="wh-k" style="margin:0">Pace of year</div>
+      <div class="wh-k" style="margin:0" data-info="pace">${s.paceOfYear || 'Pace of year'}</div>
       <span class="wh-badge ${pace < 1 ? 'watch' : 'ok'}">${badge}</span>
     </div>
     <div class="wh-gauge-val">${pace.toFixed(1)}<span>×</span></div>
@@ -420,18 +422,18 @@ export function renderPulse(root, data, onOpen) {
       ${gaugeHtml(pace, badge)}
 
       <div class="wh-work no-print">
-        <div class="wh-k">Work on the pack</div>
+        <div class="wh-k" data-info="work">${s.workTitle || 'Work on the pack'}</div>
         <div class="wh-work-row">
-          <button type="button" data-work="signals"><span>Open</span><b>${work.counts.open}</b></button>
-          <button type="button" data-work="signals"><span>Overdue</span><b class="risk">${work.counts.overdue}</b></button>
-          <button type="button" data-work="quarantine"><span>Quarantine</span><b>${work.counts.quarantine}</b></button>
-          <button type="button" data-work="actions"><span>Actions</span><b>${work.counts.actions}</b></button>
+          <button type="button" data-work="signals" data-info="open"><span>${s.workOpen || 'Open'}</span><b>${work.counts.open}</b></button>
+          <button type="button" data-work="signals" data-info="overdue"><span>${s.overdue || 'Overdue'}</span><b class="risk">${work.counts.overdue}</b></button>
+          <button type="button" data-work="quarantine" data-info="quarantine"><span>${s.workQuarantine || 'Quarantine'}</span><b>${work.counts.quarantine}</b></button>
+          <button type="button" data-work="actions" data-info="actions"><span>${s.workActions || 'Actions'}</span><b>${work.counts.actions}</b></button>
         </div>
       </div>
 
       <div class="wh-dash-h" data-tour="share">
         <div>
-          <h2>Explore</h2>
+          <h2 data-info="explore">Explore</h2>
           <span>Certified series · ${rows.length} · tap a row to drill to the source record</span>
         </div>
         <div class="wh-sec-acts no-print">
@@ -459,7 +461,7 @@ export function renderPulse(root, data, onOpen) {
 
       <article class="wh-card">
         <div class="wh-dash-h" style="margin:0 0 10px">
-          <div class="wh-k" style="margin:0">FDI · GFCF · last eight quarters</div>
+          <div class="wh-k" style="margin:0" data-info="series">FDI · GFCF · last eight quarters</div>
           <div class="seg wh-filters" data-chart-kind>
             <span class="seg-track">
               <button type="button" class="seg-opt ${chartKind === 'trend' ? 'on' : ''}" data-kind="trend">Trend</button>
@@ -486,7 +488,7 @@ export function renderPulse(root, data, onOpen) {
 
       <article class="wh-card wh-raw" data-raw-panel>
         <div class="wh-dash-h" style="margin:0 0 8px">
-          <div class="wh-k" style="margin:0">Raw pack</div>
+          <div class="wh-k" style="margin:0" data-info="raw">Raw pack</div>
           <div class="wh-sec-acts no-print">
             <button type="button" class="wh-act" data-raw>Show</button>
             <button type="button" class="wh-act" data-json>JSON</button>
@@ -660,7 +662,7 @@ export function renderPulse(root, data, onOpen) {
     }
     const open = pre.classList.toggle('hide') === false;
     if (btn) btn.textContent = open ? 'Hide' : 'Show';
-    if (open) pre.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (open) intoViewIfNeeded(pre);
   };
   root.querySelector('[data-raw]')?.addEventListener('click', showRaw);
   root.querySelector('[data-json]')?.addEventListener('click', () => exportRawJson(data));
@@ -735,6 +737,7 @@ export function renderPulse(root, data, onOpen) {
     brief: pack,
     onAskDefinition: (meta, id) => askDefinition(meta, id, pack)
   });
+  bindInfo(root);
 
   const stampEl = $('[data-live-stamp]', root);
   if (stampTimer) clearInterval(stampTimer);

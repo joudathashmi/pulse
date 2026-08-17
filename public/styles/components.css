@@ -24,7 +24,8 @@ td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: m
 
 .tip {
   position: fixed; pointer-events: none; background: var(--g800); color: #fff;
-  padding: 8px 10px; font-size: 12px; opacity: 0; transition: opacity 0.1s; z-index: 50; max-width: 260px;
+  padding: 8px 10px; font-size: 12px; opacity: 0; transition: opacity 0.1s; z-index: 50; max-width: 280px;
+  line-height: 1.4;
 }
 .tip b { display: block; margin-bottom: 2px }
 
